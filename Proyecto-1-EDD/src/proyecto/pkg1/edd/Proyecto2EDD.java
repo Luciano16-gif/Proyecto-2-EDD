@@ -9,8 +9,13 @@ import Objetos.Persona;
 import Objetos.ArbolGenealogico;
 
 /**
- *
- * @author nicolagabrielecolarusso
+
+ * Esta clase define la clase main
+
+ * @author: Ricardo Paez - Luciano Minardo - Gabriele Colarusso
+
+ * @version: 4/11/2024
+
  */
 public class Proyecto2EDD {
 

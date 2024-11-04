@@ -3,6 +3,14 @@ package Objetos;
 import Primitivas.HashTable;
 import Primitivas.Lista;
 
+/**
+ * Esta clase define el objeto ArbolGenealogico, donde se elabora el arbol ( donde hay diferentes atributos y metodos)
+
+ * @author: Ricardo Paez - Luciano Minardo - Gabriele Colarusso
+
+ * @version: 4/11/2024
+ */
+
 public class ArbolGenealogico {
     private NodoArbol raiz;
     private HashTable<String, NodoArbol> tablaPersonas;

@@ -10,7 +10,7 @@ import Primitivas.Lista;
  * 
  * @author: Ricardo Paez - Luciano Minardo - Gabriele Colarusso
  * 
- * @version: 16/10/2024
+ * @version: 4/11/2024
  */
 public class Grafos {
     private Lista<Arco> arcos;
