@@ -9,6 +9,16 @@ import java.io.File;
 import java.io.FileReader;
 import javax.swing.JFileChooser;
 
+/**
+
+ * Esta clase define el objeto Funcion, con la cual tiene diferentes atributos y funciones que lo definen para leer los Json
+
+ * @author: Ricardo Paez - Luciano Minardo - Gabriele Colarusso
+
+ * @version: 4/11/2024
+
+ */
+
 public class Funcion {
 
     public static Lista<Persona> leerJsonConFileChooser() {

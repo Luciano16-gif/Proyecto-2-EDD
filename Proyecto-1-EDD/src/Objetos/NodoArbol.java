@@ -2,6 +2,16 @@ package Objetos;
 
 import Primitivas.Lista;
 
+/**
+
+ * Esta clase define la clase NodoArbol con la cual tiene diferentes atributos y funciones que lo definen
+
+ * @author: Ricardo Paez - Luciano Minardo - Gabriele Colarusso
+
+ * @version: 4/11/2024
+
+ */
+
 public class NodoArbol {
     private Persona persona;
     private NodoArbol padre;
