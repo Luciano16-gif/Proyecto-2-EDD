@@ -10,7 +10,7 @@ public class Persona {
     // Atributos de la clase
     private String nombre;
     private String ofHisName;     // Numeral del nombre, e.g., "First", "Second"
-    private String bornTo;        // Nombre del padre
+    private Lista<String> bornTo; // Lista de nombres de los padres
     private String apodo;         // "Known throughout as"
     private String title;         // Título nobiliario
     private String wedTo;         // Con quién está casado
@@ -25,6 +25,7 @@ public class Persona {
         this.nombre = nombre;
         this.hijos = new Lista<>();
         this.notas = new Lista<>();
+        this.bornTo = new Lista<>(); // Inicializar la lista de padres
     }
 
     // Getters y Setters
@@ -44,11 +45,11 @@ public class Persona {
         this.ofHisName = ofHisName;
     }
 
-    public String getBornTo() {
+    public Lista<String> getBornTo() {
         return bornTo;
     }
 
-    public void setBornTo(String bornTo) {
+    public void setBornTo(Lista<String> bornTo) {
         this.bornTo = bornTo;
     }
 
@@ -116,13 +117,17 @@ public class Persona {
         this.notas = notas;
     }
 
-    // Métodos para agregar hijos y notas
+    // Métodos para agregar hijos, notas y padres
     public void addHijo(String hijo) {
         this.hijos.append(hijo);
     }
 
     public void addNota(String nota) {
         this.notas.append(nota);
+    }
+
+    public void addBornTo(String padreOMadre) {
+        this.bornTo.append(padreOMadre);
     }
 
     // Método estático para construir una Persona a partir de los datos JSON
@@ -141,7 +146,7 @@ public class Persona {
                         persona.setOfHisName(valor);
                         break;
                     case "Born to":
-                        persona.setBornTo(valor);
+                        persona.addBornTo(valor); // Agregar a la lista de padres
                         break;
                     case "Known throughout as":
                         persona.setApodo(valor);
@@ -161,18 +166,11 @@ public class Persona {
                     case "Fate":
                         persona.setFate(valor);
                         break;
-                    case "Father to":
-                        // Suponiendo que los hijos están separados por comas
-                        String[] hijosArray = valor.split(",");
-                        for (String hijo : hijosArray) {
-                            persona.addHijo(hijo.trim());
-                        }
-                        break;
                     case "Notes":
                         persona.addNota(valor);
                         break;
                     default:
-                        // Puedes manejar otros casos o ignorarlos
+                        // Otras claves pueden ser ignoradas o manejadas según necesidad
                         break;
                 }
             }
@@ -186,30 +184,40 @@ public class Persona {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Nombre: ").append(nombre).append("\n");
-        if (ofHisName != null) sb.append("Of his name: ").append(ofHisName).append("\n");
-        if (bornTo != null) sb.append("Born to: ").append(bornTo).append("\n");
-        if (apodo != null) sb.append("Known throughout as: ").append(apodo).append("\n");
-        if (title != null) sb.append("Held title: ").append(title).append("\n");
-        if (wedTo != null) sb.append("Wed to: ").append(wedTo).append("\n");
-        if (colorOjos != null) sb.append("Of eyes: ").append(colorOjos).append("\n");
-        if (colorCabello != null) sb.append("Of hair: ").append(colorCabello).append("\n");
-        if (fate != null) sb.append("Fate: ").append(fate).append("\n");
+        if (ofHisName != null)
+            sb.append("Of his name: ").append(ofHisName).append("\n");
+        if (bornTo != null && bornTo.getSize() > 0) {
+            sb.append("Born to:\n");
+            for (int i = 0; i < bornTo.getSize(); i++) {
+                sb.append("  - ").append(bornTo.get(i)).append("\n");
+            }
+        }
+        if (apodo != null)
+            sb.append("Known throughout as: ").append(apodo).append("\n");
+        if (title != null)
+            sb.append("Held title: ").append(title).append("\n");
+        if (wedTo != null)
+            sb.append("Wed to: ").append(wedTo).append("\n");
+        if (colorOjos != null)
+            sb.append("Of eyes: ").append(colorOjos).append("\n");
+        if (colorCabello != null)
+            sb.append("Of hair: ").append(colorCabello).append("\n");
+        if (fate != null)
+            sb.append("Fate: ").append(fate).append("\n");
         if (hijos != null && hijos.getSize() > 0) {
-            sb.append("Father to: ").append("\n");
+            sb.append("Father to:\n");
             for (int i = 0; i < hijos.getSize(); i++) {
                 sb.append("  - ").append(hijos.get(i)).append("\n");
             }
-    }
-        
-    if (notas != null && notas.getSize() > 0) {
-        sb.append("Notes: ").append("\n");
-        for (int i = 0; i < notas.getSize(); i++) {
-            sb.append("  - ").append(notas.get(i)).append("\n");
         }
+        if (notas != null && notas.getSize() > 0) {
+            sb.append("Notes:\n");
+            for (int i = 0; i < notas.getSize(); i++) {
+                sb.append("  - ").append(notas.get(i)).append("\n");
+            }
+        }
+        return sb.toString();
     }
-    return sb.toString();
-}
-
 
     // Métodos equals y hashCode para uso en tablas hash
     @Override
