@@ -12,7 +12,7 @@ import Objetos.ArbolGenealogico;
  *
  * @author nicolagabrielecolarusso
  */
-public class Proyecto1EDD {
+public class Proyecto2EDD {
 
     public static void main(String[] args) {
         Lista<Persona> personas = Funcion.leerJsonConFileChooser();
@@ -20,11 +20,10 @@ public class Proyecto1EDD {
         if (personas != null && personas.getSize() > 0) {
             System.out.println("Personas cargadas exitosamente:");
             for (int i = 0; i < personas.getSize(); i++) {
-            Persona persona = personas.get(i);
-            System.out.println(persona);
-            System.out.println("----------------------------------------------------");
-                
-            }
+                Persona persona = personas.get(i);
+                System.out.println(persona);
+                System.out.println("----------------------------------------------------");
+                }
             // Continuar con la construcción del árbol genealógico
             // Por ejemplo:
             ArbolGenealogico arbol = new ArbolGenealogico();
