@@ -4,7 +4,12 @@ import Primitivas.Lista;
 
 /**
  * Clase que representa una Persona en el contexto de los datos genealógicos.
+ * 
  * Almacena la información básica y opcional de cada persona, como su título, padres, hijos, etc.
+ *
+ * @author: Ricardo Paez - Luciano Minardo - Gabriele Colarusso
+
+ * @version: 15/10/2024
  */
 public class Persona {
     // Atributos de la clase
