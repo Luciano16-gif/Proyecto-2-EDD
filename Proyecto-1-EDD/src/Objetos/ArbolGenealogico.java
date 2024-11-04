@@ -24,18 +24,27 @@ public class ArbolGenealogico {
             Persona persona = personas.get(i);
             NodoArbol nodoActual = tablaPersonas.get(persona.getNombre());
 
-            // Establecer padre
-            if (persona.getBornTo() != null && !persona.getBornTo().equals("[Unknown]")) {
-                NodoArbol nodoPadre = tablaPersonas.get(persona.getBornTo());
-                if (nodoPadre != null) {
-                    nodoPadre.agregarHijo(nodoActual);
+            // Establecer padres
+            Lista<String> padres = persona.getBornTo();
+            if (padres != null && padres.getSize() > 0) {
+                for (int j = 0; j < padres.getSize(); j++) {
+                    String nombrePadreOMadre = padres.get(j);
+                    NodoArbol nodoPadreOMadre = tablaPersonas.get(nombrePadreOMadre);
+                    //if (nodoPadreOMadre != null) {
+                    //    nodoPadreOMadre.agregarHijo(nodoActual);
+                    //    System.out.println("Establecida relación: " + nodoPadreOMadre.getPersona().getNombre() + " -> " + nodoActual.getPersona().getNombre());
+                    //} else {
+                    //    System.out.println("Padre/Madre no encontrado para: " + persona.getNombre() + ". Nombre: " + nombrePadreOMadre);
+                    //}
                 }
             } else {
-                // Si no tiene padre conocido, es una posible raíz
+                // Si no tiene padres conocidos, es una posible raíz
                 if (raiz == null) {
                     raiz = nodoActual;
+                    System.out.println("Nodo raíz establecido: " + nodoActual.getPersona().getNombre());
                 }
             }
+
 
             // Establecer hijos
             Lista<String> nombresHijos = persona.getHijos();
