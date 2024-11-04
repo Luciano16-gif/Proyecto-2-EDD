@@ -1,113 +1,143 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+package Objetos;
+
 import Primitivas.Lista;
-import Objetos.Persona;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import javax.swing.JFileChooser;
 
+public class Funcion {
 
-public class Funcion{
-    
-    public static Lista<Lista<String[]>> parseJsonToList(String json) {
-    Gson gson = new Gson();
-    JsonObject jsonObject = gson.fromJson(json, JsonObject.class);
-
-    // Lista para almacenar las listas de atributos de cada persona
-    Lista<Lista<String[]>> listaPersonas = new Lista<>();
-
-    // Acceder al objeto de la casa Baratheon
-    JsonElement houseBaratheon = jsonObject.get("House Baratheon");
-
-    // Iterar sobre cada persona en la casa
-    for (String nombre : houseBaratheon.getAsJsonArray().toString().replaceAll("[{}\"]", "").split(",")) {
-        String[] nombreYValor = nombre.split(":");
-        String personaNombre = nombreYValor[0].trim();
-        String atributosString = nombreYValor[1].trim();
-
-        // Crear una lista para almacenar los atributos de la persona
-        Lista<String[]> atributos = new Lista<>();
-
-        // Split para obtener los pares clave-valor
-        String[] pares = atributosString.split("\\}, \\{");
-        for (String par : pares) {
-            par = par.replace("{", "").replace("}", "").trim(); // Limpiar
-            String[] claveValor = par.split(":");
-
-            if (claveValor.length == 2) {
-                String clave = claveValor[0].trim().replaceAll("[\" ]", "");
-                String valor = claveValor[1].trim().replaceAll("[\" ]", "");
-                
-                // Si el valor está en formato de lista (indicado por "Father to" por ejemplo)
-                if (clave.equals("Father to")) {
-                    String[] valores = valor.substring(1, valor.length() - 1).split(", ");
-                    atributos.append(new String[]{clave, String.join(", ", valores)});
-                } else {
-                    atributos.append(new String[]{clave, valor});
-                }
-            }
-        }
-
-        // Añadir la lista de atributos de esta persona a la lista general
-        listaPersonas.append(atributos);
-    }
-
-    return listaPersonas;
-}
-
-    public static Lista<Persona> leerJson(String archivoJson) {
+    public static Lista<Persona> leerJsonConFileChooser() {
         Lista<Persona> personas = new Lista<>();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(archivoJson))) {
-            String linea;
-            while ((linea = reader.readLine()) != null) {
-                if (linea.trim().startsWith("{")) {
-                    // Leer el objeto JSON de la casa Baratheon
-                    Lista<Lista<String[]>> listaAtributos = extraerAtributos(linea);
-                    
-                    // Obtener el nombre (la clave principal) del JSON
-                    String nombre = extraerNombre(linea);
-                    
-                    // Crear la persona a partir de los atributos extraídos
-                    Persona persona = Persona.fromJson(nombre, listaAtributos);
-                    personas.append(persona);
+        try {
+            // Abrir un JFileChooser para seleccionar el archivo JSON
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Seleccione el archivo JSON del árbol genealógico");
+
+            int userSelection = fileChooser.showOpenDialog(null);
+
+            if (userSelection == JFileChooser.APPROVE_OPTION) {
+                File jsonFile = fileChooser.getSelectedFile();
+
+                // Leer el contenido del archivo JSON
+                BufferedReader in = new BufferedReader(new FileReader(jsonFile));
+                StringBuilder content = new StringBuilder();
+                String inputLine;
+                while ((inputLine = in.readLine()) != null) {
+                    content.append(inputLine.trim()); // Eliminar espacios en blanco al inicio y fin
                 }
+                in.close();
+
+                // Convertir el contenido en una cadena
+                String jsonString = content.toString();
+
+                // Parsear el JSON
+                personas = parseJsonString(jsonString);
+
+            } else {
+                System.out.println("No se seleccionó ningún archivo.");
             }
-        } catch (IOException e) {
-            e.printStackTrace(); // Maneja la excepción según sea necesario
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return personas;
     }
 
-    private static String extraerNombre(String jsonLine) {
-        // Extrae el nombre del objeto JSON (la clave del primer nivel)
-        // Ejemplo: "Orys Baratheon"
-        int inicio = jsonLine.indexOf("\"") + 1;
-        int fin = jsonLine.indexOf("\"", inicio);
-        return jsonLine.substring(inicio, fin);
-    }
+    private static Lista<Persona> parseJsonString(String jsonString) {
+        Lista<Persona> personas = new Lista<>();
 
-    private static Lista<Lista<String[]>> extraerAtributos(String jsonLine) {
-        Lista<Lista<String[]>> atributos = new Lista<>();
+        try {
+            Gson gson = new Gson();
+            JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);
 
-        // Aquí debes implementar la lógica para extraer los atributos del objeto JSON
-        // Ejemplo simplificado, deberías parsear correctamente el JSON
-        String[] partes = jsonLine.split("\\},\\{");
-        for (String parte : partes) {
-            parte = parte.replaceAll("[{}]", ""); // Elimina llaves
-            Lista<String[]> listaAtributos = new Lista<>();
-            String[] atributosRaw = parte.split(",");
-            for (String atributoRaw : atributosRaw) {
-                String[] par = atributoRaw.split(":");
-                String clave = par[0].trim().replaceAll("\"", "");
-                String valor = par[1].trim().replaceAll("\"", "");
-                listaAtributos.append(new String[]{clave, valor});
+            // Iterar sobre las casas en el JSON (por si hay más de una)
+            for (String houseName : jsonObject.keySet()) {
+                JsonArray houseArray = jsonObject.getAsJsonArray(houseName);
+
+                // Iterar sobre cada persona en la casa
+                for (JsonElement personElement : houseArray) {
+                    JsonObject personObject = personElement.getAsJsonObject();
+
+                    // Cada persona tiene su nombre como clave
+                    for (String personName : personObject.keySet()) {
+                        JsonArray attributesArray = personObject.getAsJsonArray(personName);
+
+                        // Crear una nueva instancia de Persona
+                        Persona persona = new Persona(personName);
+
+                        // Recorrer los atributos de la persona
+                        for (JsonElement attributeElement : attributesArray) {
+                            JsonObject attributeObject = attributeElement.getAsJsonObject();
+
+                            // Cada atributo tiene una clave y un valor
+                            for (String attributeKey : attributeObject.keySet()) {
+                                JsonElement valueElement = attributeObject.get(attributeKey);
+
+                                switch (attributeKey) {
+                                    case "Of his name":
+                                        persona.setOfHisName(valueElement.getAsString());
+                                        break;
+                                    case "Born to":
+                                        persona.setBornTo(valueElement.getAsString());
+                                        break;
+                                    case "Known throughout as":
+                                        persona.setApodo(valueElement.getAsString());
+                                        break;
+                                    case "Held title":
+                                        persona.setTitle(valueElement.getAsString());
+                                        break;
+                                    case "Wed to":
+                                        persona.setWedTo(valueElement.getAsString());
+                                        break;
+                                    case "Of eyes":
+                                        persona.setColorOjos(valueElement.getAsString());
+                                        break;
+                                    case "Of hair":
+                                        persona.setColorCabello(valueElement.getAsString());
+                                        break;
+                                    case "Fate":
+                                        persona.setFate(valueElement.getAsString());
+                                        break;
+                                    case "Father to":
+                                        // Manejar lista de hijos
+                                        if (valueElement.isJsonArray()) {
+                                            JsonArray hijosArray = valueElement.getAsJsonArray();
+                                            for (JsonElement hijoElement : hijosArray) {
+                                                String hijoNombre = hijoElement.getAsString();
+                                                persona.addHijo(hijoNombre);
+                                            }
+                                        }
+                                        break;
+                                    case "Notes":
+                                        persona.addNota(valueElement.getAsString());
+                                        break;
+                                    // Puedes agregar otros casos si hay más atributos
+                                    default:
+                                        // Manejar otros atributos si es necesario
+                                        break;
+                                }
+                            }
+                        }
+
+                        // Agregar la persona a la lista
+                        personas.append(persona);
+                    }
+                }
             }
-            atributos.append(listaAtributos);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        return atributos;
+        return personas;
     }
 }
