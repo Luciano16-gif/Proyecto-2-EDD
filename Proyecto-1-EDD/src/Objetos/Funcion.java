@@ -87,7 +87,7 @@ public class Funcion {
                                         persona.setOfHisName(valueElement.getAsString());
                                         break;
                                     case "Born to":
-                                        persona.setBornTo(valueElement.getAsString());
+                                        persona.addBornTo(valueElement.getAsString()); // Agregar a la lista de padres
                                         break;
                                     case "Known throughout as":
                                         persona.setApodo(valueElement.getAsString());
