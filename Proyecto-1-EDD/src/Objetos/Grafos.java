@@ -14,7 +14,7 @@ import Primitivas.Lista;
  */
 public class Grafos {
     private Lista<Arco> arcos;
-    private Lista<Persona> personas;
+    public Lista<Persona> personas;
     private Graph graph;
 
     /**
@@ -23,6 +23,7 @@ public class Grafos {
     public Grafos() {
         arcos = new Lista<>();
         personas = new Lista<>();
+        this.graph = new SingleGraph("Grafo"); 
     }
 
     /**
@@ -36,6 +37,19 @@ public class Grafos {
             arcos.append(new Arco(src, dest, 1));
         }
     }
+    
+    public void addArco1(String nombrePadre, String nombreHijo) {
+    // Asegúrate de que el grafo contenga ambos nodos
+    if (graph.getNode(nombrePadre) != null && graph.getNode(nombreHijo) != null) {
+        // Genera un ID único para el arco usando el nombre de los nodos
+        String edgeId = nombrePadre + "-" + nombreHijo;
+
+        // Verifica si el arco ya existe antes de agregarlo
+        if (graph.getEdge(edgeId) == null) {
+            graph.addEdge(edgeId, nombrePadre, nombreHijo, true); // true para crear un arco dirigido
+        }
+    }
+}
 
     /**
      * Verifica si existe un arco entre dos estaciones
@@ -59,9 +73,13 @@ public class Grafos {
      * 
      * @param estacion Objeto Estacion que se va a añadir al grafo
      */
-    public void addPersona(Persona estacion) {
-        personas.append(estacion);
+    public void addPersona(Persona persona) {
+    String nombre = persona.getNombre();
+    // Verifica si el nodo ya existe antes de agregar
+    if (graph.getNode(nombre) == null) {
+        graph.addNode(nombre); // Crea el nodo con el nombre de la persona
     }
+}
 
     /**
      * Muestra el grafo de estaciones y arcos en una ventana de visualización.
@@ -75,19 +93,17 @@ public class Grafos {
 
         // Agregar nodos al grafo
         for (int i = 0; i < estaciones.len(); i++) {
-            Persona estacion = estaciones.get(i);
-            String nodeId = String.valueOf(i);
-            graph.addNode(nodeId);
-            //graph.getNode(nodeId).setAttribute("ui.label", estacion.getNombre());
+    Persona estacion = estaciones.get(i);
+    String nodeId = String.valueOf(i);
+    graph.addNode(nodeId);
+    graph.getNode(nodeId).setAttribute("ui.label", estacion.getNombre());
 
-            // Si la estación pertenece a múltiples líneas, asignar un color especial
-            //String nodeColor = estacion.getColor();
-            //if (estacion.getLineas().len() > 1) {
-            //    nodeColor = "Gray"; // Color para intersecciones
-            //}
+    // Asignar un color de nodo
+    String nodeColor = "blue"; // Valor por defecto
+    // Aquí podrías establecer la lógica para cambiar nodeColor según tu lógica
 
-            //graph.getNode(nodeId).setAttribute("ui.style", "fill-color: " + nodeColor + "; shape: circle; size: 15px;");
-        }
+    graph.getNode(nodeId).setAttribute("ui.style", "fill-color: " + nodeColor + "; shape: circle; size: 15px;");
+}
 
         // Agregar arcos al grafo
         for (int i = 0; i < arcos.len(); i++) {
@@ -180,8 +196,17 @@ public class Grafos {
                 //if (estacion.getLineas().len() > 1) {
                 //    nodeColor = "gray"; // Color para intersecciones
                 //}
-                //graph.getNode(nodeId).setAttribute("ui.style", "fill-color: " + nodeColor + "; shape: circle; size: 15px;");
+                graph.getNode(nodeId).setAttribute("ui.style", "fill-color: " + "; shape: circle; size: 15px;");
             }
         }
     }
+    
+    public int indexOf(Persona persona) {
+    for (int i = 0; i < this.personas.len(); i++) {
+        if (this.personas.get(i).getNombre().equals(persona.getNombre())) {
+            return i;
+        }
+    }
+    return -1; // No se encontró
+}
 }

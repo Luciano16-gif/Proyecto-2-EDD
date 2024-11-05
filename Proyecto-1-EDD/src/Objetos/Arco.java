@@ -32,6 +32,7 @@ public class Arco implements Comparable<Arco> {
         this.dest = dest;
         this.distancia = distancia;
     }
+    
 
     /**
      *Compara este arco con el arco especificado para el orden
