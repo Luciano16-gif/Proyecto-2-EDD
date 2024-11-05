@@ -78,59 +78,61 @@ public class Grafos {
     // Verifica si el nodo ya existe antes de agregar
     if (graph.getNode(nombre) == null) {
         graph.addNode(nombre); // Crea el nodo con el nombre de la persona
+        personas.append(persona); // Agrega la persona a la lista de personas
+    } else {
+        // Si ya existe, podrías optar por actualizar algunos atributos de la persona existente
+        // o simplemente dejarlo como está, dependiendo de tus necesidades
+        System.out.println("La persona " + nombre + " ya existe en el grafo.");
     }
 }
+
 
     /**
      * Muestra el grafo de estaciones y arcos en una ventana de visualización.
      * 
      * @param estaciones Lista de estaciones que se van a mostrar en el grafo.
      */
-    public void mostrarGrafo(Lista<Persona> estaciones) {
-        this.personas = estaciones;
-        System.setProperty("org.graphstream.ui", "swing");
-        graph = new SingleGraph("Grafo Metro");
+    /**
+ * Muestra el grafo de personas y sus conexiones en una ventana de visualización.
+ */
+public void mostrarGrafo() {
+    System.setProperty("org.graphstream.ui", "swing");
+    graph = new SingleGraph("Grafo de Personas");
 
-        // Agregar nodos al grafo
-        for (int i = 0; i < estaciones.len(); i++) {
-    Persona estacion = estaciones.get(i);
-    String nodeId = String.valueOf(i);
-    graph.addNode(nodeId);
-    graph.getNode(nodeId).setAttribute("ui.label", estacion.getNombre());
+    // Agregar nodos al grafo
+    for (int i = 0; i < personas.len(); i++) {
+        Persona persona = personas.get(i);
+        String nombre = persona.getNombre();
+        
+        // Crea el nodo con el nombre de la persona
+        graph.addNode(nombre);
+        graph.getNode(nombre).setAttribute("ui.label", nombre);
 
-    // Asignar un color de nodo
-    String nodeColor = "blue"; // Valor por defecto
-    // Aquí podrías establecer la lógica para cambiar nodeColor según tu lógica
+        // Establecer el color de los nodos
+        graph.getNode(nombre).setAttribute("ui.style", "fill-color: yellow; shape: circle; size: 15px;");
+    }
 
-    graph.getNode(nodeId).setAttribute("ui.style", "fill-color: " + nodeColor + "; shape: circle; size: 15px;");
+    // Agregar arcos al grafo
+    for (int i = 0; i < arcos.len(); i++) {
+        Arco arco = arcos.get(i);
+        String nombrePadre = personas.get(arco.getSrc()).getNombre();
+        String nombreHijo = personas.get(arco.getDest()).getNombre();
+        
+        // Generar un ID único para el arco usando los nombres de los nodos
+        String arcoId = nombrePadre + "-" + nombreHijo;
+
+        // Agregar el arco si no existe ya
+        if (graph.getEdge(arcoId) == null) {
+            graph.addEdge(arcoId, nombrePadre, nombreHijo, true); // true para crear un arco dirigido
+            graph.getEdge(arcoId).setAttribute("ui.style", "fill-color: gray;");
+        }
+    }
+
+    // Mostrar el grafo
+    Viewer viewer = graph.display();
+    viewer.setCloseFramePolicy(Viewer.CloseFramePolicy.CLOSE_VIEWER);
 }
 
-        // Agregar arcos al grafo
-        for (int i = 0; i < arcos.len(); i++) {
-            Arco arco = arcos.get(i);
-            int src = arco.getSrc();
-            int dest = arco.getDest();
-            String arcoId;
-
-            // Ordenar los nodos para el identificador de la arista
-            if (src < dest) {
-                arcoId = src + "-" + dest;
-            } else {
-                arcoId = dest + "-" + src;
-                // Intercambiar src y dest para asegurar que la arista se agrega correctamente
-                int temp = src;
-                src = dest;
-                dest = temp;
-            }
-
-            if (graph.getEdge(arcoId) == null) { // Evitar duplicados en GraphStream
-                graph.addEdge(arcoId, String.valueOf(src), String.valueOf(dest), false);
-                graph.getEdge(arcoId).setAttribute("ui.style", "fill-color: gray;");
-            }
-        }
-        Viewer viewer = graph.display();
-        viewer.setCloseFramePolicy(Viewer.CloseFramePolicy.CLOSE_VIEWER); 
-    }
 
 
     /**
