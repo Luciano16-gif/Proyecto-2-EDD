@@ -4,9 +4,14 @@ import Primitivas.Lista;
 
 /**
  * Clase que representa una Persona en el contexto de los datos genealógicos.
+ * 
  * Almacena la información básica y opcional de cada persona, como su título, padres, hijos, etc.
+ *
+ * @author: Ricardo Paez - Luciano Minardo - Gabriele Colarusso
+
+ * @version: 15/10/2024
  */
-public class Persona {
+ public class Persona {
     // Atributos de la clase
     private String nombre;
     private String ofHisName;     // Numeral del nombre, e.g., "First", "Second"
@@ -19,6 +24,7 @@ public class Persona {
     private String fate;          // Destino o causa de muerte
     private Lista<String> hijos;  // Lista de nombres de hijos
     private Lista<String> notas;  // Lista de notas adicionales
+    private Lista<String> lineas;
 
     // Constructor
     public Persona(String nombre) {
@@ -231,5 +237,11 @@ public class Persona {
     @Override
     public int hashCode() {
         return nombre.toLowerCase().hashCode();
+    }
+    
+    public void agregarLinea(String linea) {
+        if (!lineas.exist(linea)) {
+            lineas.append(linea);
+        }
     }
 }

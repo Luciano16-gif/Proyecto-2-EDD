@@ -1,5 +1,14 @@
 package Primitivas;
 
+/**
+
+ * Esta clase define la clase HashTable con sus metodos, y atributos
+
+ * @author: Ricardo Paez - Luciano Minardo - Gabriele Colarusso
+
+ * @version: 4/11/2024
+
+ */
 public class HashTable<K, V> {
     private int size = 128; // Tamaño inicial de la tabla
     private Lista<NodoHash<K, V>>[] table;

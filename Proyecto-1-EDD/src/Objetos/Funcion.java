@@ -2,14 +2,22 @@ package Objetos;
 
 import Primitivas.Lista;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import javax.swing.JFileChooser;
+
+/**
+
+ * Esta clase define el objeto Funcion, con la cual tiene diferentes atributos y funciones que lo definen para leer los Json
+
+ * @author: Ricardo Paez - Luciano Minardo - Gabriele Colarusso
+
+ * @version: 4/11/2024
+
+ */
 
 public class Funcion {
 
@@ -59,26 +67,30 @@ public class Funcion {
             Gson gson = new Gson();
             JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);
 
-            // Iterar sobre las casas en el JSON (por si hay más de una)
+            // Iterar sobre las casas en el JSON
             for (String houseName : jsonObject.keySet()) {
-                JsonArray houseArray = jsonObject.getAsJsonArray(houseName);
+                JsonElement houseElement = jsonObject.get(houseName);
+
+                // Convertir el elemento de la casa en un JsonArray personalizado
+                JsonArray houseArray = parseJsonElementToJsonArray(houseElement);
 
                 // Iterar sobre cada persona en la casa
-                for (JsonElement personElement : houseArray) {
-                    JsonObject personObject = personElement.getAsJsonObject();
+                for (int i = 0; i < houseArray.size(); i++) {
+                    JsonObject personObject = houseArray.get(i).getAsJsonObject();
 
-                    // Cada persona tiene su nombre como clave
                     for (String personName : personObject.keySet()) {
-                        JsonArray attributesArray = personObject.getAsJsonArray(personName);
+                        JsonElement attributesElement = personObject.get(personName);
 
                         // Crear una nueva instancia de Persona
                         Persona persona = new Persona(personName);
 
-                        // Recorrer los atributos de la persona
-                        for (JsonElement attributeElement : attributesArray) {
-                            JsonObject attributeObject = attributeElement.getAsJsonObject();
+                        // Convertir los atributos en un JsonArray personalizado
+                        JsonArray attributesArray = parseJsonElementToJsonArray(attributesElement);
 
-                            // Cada atributo tiene una clave y un valor
+                        // Recorrer los atributos
+                        for (int j = 0; j < attributesArray.size(); j++) {
+                            JsonObject attributeObject = attributesArray.get(j).getAsJsonObject();
+
                             for (String attributeKey : attributeObject.keySet()) {
                                 JsonElement valueElement = attributeObject.get(attributeKey);
 
@@ -87,7 +99,7 @@ public class Funcion {
                                         persona.setOfHisName(valueElement.getAsString());
                                         break;
                                     case "Born to":
-                                        persona.addBornTo(valueElement.getAsString()); // Agregar a la lista de padres
+                                        persona.addBornTo(valueElement.getAsString());
                                         break;
                                     case "Known throughout as":
                                         persona.setApodo(valueElement.getAsString());
@@ -109,20 +121,18 @@ public class Funcion {
                                         break;
                                     case "Father to":
                                         // Manejar lista de hijos
-                                        if (valueElement.isJsonArray()) {
-                                            JsonArray hijosArray = valueElement.getAsJsonArray();
-                                            for (JsonElement hijoElement : hijosArray) {
-                                                String hijoNombre = hijoElement.getAsString();
-                                                persona.addHijo(hijoNombre);
-                                            }
+                                        JsonArray hijosArray = parseJsonElementToJsonArray(valueElement);
+                                        for (int k = 0; k < hijosArray.size(); k++) {
+                                            String hijoNombre = hijosArray.get(k).getAsString();
+                                            persona.addHijo(hijoNombre);
                                         }
                                         break;
                                     case "Notes":
                                         persona.addNota(valueElement.getAsString());
                                         break;
-                                    // Puedes agregar otros casos si hay más atributos
+                                    // Agregar otros casos si es necesario
                                     default:
-                                        // Manejar otros atributos si es necesario
+                                        // Manejar otros atributos
                                         break;
                                 }
                             }
@@ -139,5 +149,24 @@ public class Funcion {
         }
 
         return personas;
+    }
+
+    // Método para convertir un JsonElement en un JsonArray personalizado
+    private static JsonArray parseJsonElementToJsonArray(JsonElement element) {
+        JsonArray jsonArray = new JsonArray();
+
+        if (element.isJsonArray()) {
+            // Iterar sobre los elementos del array sin usar JsonArray de Gson
+            for (JsonElement el : element.getAsJsonArray()) {
+                jsonArray.add(el);
+            }
+        } else if (element.isJsonObject()) {
+            jsonArray.add(element);
+        } else {
+            // Si es un elemento simple
+            jsonArray.add(element);
+        }
+
+        return jsonArray;
     }
 }

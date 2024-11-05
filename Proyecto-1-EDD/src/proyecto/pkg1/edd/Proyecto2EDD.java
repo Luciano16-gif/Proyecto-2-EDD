@@ -7,35 +7,39 @@ import Objetos.Funcion;
 import Primitivas.Lista;
 import Objetos.Persona;
 import Objetos.ArbolGenealogico;
+import Objetos.Grafos;
 
 /**
- *
- * @author nicolagabrielecolarusso
+
+ * Esta clase define la clase main
+
+ * @author: Ricardo Paez - Luciano Minardo - Gabriele Colarusso
+
+ * @version: 4/11/2024
+
  */
 public class Proyecto2EDD {
-
     public static void main(String[] args) {
-        Lista<Persona> personas = Funcion.leerJsonConFileChooser();
-
-        if (personas != null && personas.getSize() > 0) {
+    Lista<Persona> personas = Funcion.leerJsonConFileChooser(); // Cargar datos desde el JSON
+     if (personas != null && personas.getSize() > 0) {
             System.out.println("Personas cargadas exitosamente:");
             for (int i = 0; i < personas.getSize(); i++) {
                 Persona persona = personas.get(i);
                 System.out.println(persona);
                 System.out.println("----------------------------------------------------");
                 }
-            // Continuar con la construcción del árbol genealógico
-            // Por ejemplo:
-            ArbolGenealogico arbol = new ArbolGenealogico();
-            arbol.construirArbol(personas);
+            Grafos grafos = new Grafos(); // Crear instancia de Grafos
+            ArbolGenealogico arbolGenealogico = new ArbolGenealogico(); // Crear instancia de ArbolGenealogico
 
-            // Mostrar el árbol o inicializar la interfaz gráfica
-            // ...
-        } else {
+            // Construir el árbol y el grafo
+            arbolGenealogico.construirArbol(personas, grafos);
+
+            // Mostrar el grafo
+            grafos.mostrarGrafo();
+            arbolGenealogico.mostrarPadres();
+            arbolGenealogico.mostrarHijos();
+            } else {
             System.out.println("No se pudo cargar el árbol genealógico.");
         }
     }
 }
-
-    
-

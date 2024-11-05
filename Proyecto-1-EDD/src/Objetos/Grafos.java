@@ -10,11 +10,11 @@ import Primitivas.Lista;
  * 
  * @author: Ricardo Paez - Luciano Minardo - Gabriele Colarusso
  * 
- * @version: 16/10/2024
+ * @version: 4/11/2024
  */
 public class Grafos {
     private Lista<Arco> arcos;
-    private Lista<Persona> personas;
+    public Lista<Persona> personas;
     private Graph graph;
 
     /**
@@ -23,6 +23,7 @@ public class Grafos {
     public Grafos() {
         arcos = new Lista<>();
         personas = new Lista<>();
+        this.graph = new SingleGraph("Grafo"); 
     }
 
     /**
@@ -36,6 +37,19 @@ public class Grafos {
             arcos.append(new Arco(src, dest, 1));
         }
     }
+    
+    public void addArco1(String nombrePadre, String nombreHijo) {
+    // Asegúrate de que el grafo contenga ambos nodos
+    if (graph.getNode(nombrePadre) != null && graph.getNode(nombreHijo) != null) {
+        // Genera un ID único para el arco usando el nombre de los nodos
+        String edgeId = nombrePadre + "-" + nombreHijo;
+
+        // Verifica si el arco ya existe antes de agregarlo
+        if (graph.getEdge(edgeId) == null) {
+            graph.addEdge(edgeId, nombrePadre, nombreHijo, true); // true para crear un arco dirigido
+        }
+    }
+}
 
     /**
      * Verifica si existe un arco entre dos estaciones
@@ -59,62 +73,66 @@ public class Grafos {
      * 
      * @param estacion Objeto Estacion que se va a añadir al grafo
      */
-    public void addPersona(Persona estacion) {
-        personas.append(estacion);
+    public void addPersona(Persona persona) {
+    String nombre = persona.getNombre();
+    // Verifica si el nodo ya existe antes de agregar
+    if (graph.getNode(nombre) == null) {
+        graph.addNode(nombre); // Crea el nodo con el nombre de la persona
+        personas.append(persona); // Agrega la persona a la lista de personas
+    } else {
+        // Si ya existe, podrías optar por actualizar algunos atributos de la persona existente
+        // o simplemente dejarlo como está, dependiendo de tus necesidades
+        System.out.println("La persona " + nombre + " ya existe en el grafo.");
     }
+}
+
 
     /**
      * Muestra el grafo de estaciones y arcos en una ventana de visualización.
      * 
      * @param estaciones Lista de estaciones que se van a mostrar en el grafo.
      */
-    public void mostrarGrafo(Lista<Persona> estaciones) {
-        this.personas = estaciones;
-        System.setProperty("org.graphstream.ui", "swing");
-        graph = new SingleGraph("Grafo Metro");
+    /**
+ * Muestra el grafo de personas y sus conexiones en una ventana de visualización.
+ */
+public void mostrarGrafo() {
+    System.setProperty("org.graphstream.ui", "swing");
+    graph = new SingleGraph("Grafo de Personas");
 
-        // Agregar nodos al grafo
-        for (int i = 0; i < estaciones.len(); i++) {
-            Persona estacion = estaciones.get(i);
-            String nodeId = String.valueOf(i);
-            graph.addNode(nodeId);
-            //graph.getNode(nodeId).setAttribute("ui.label", estacion.getNombre());
+    // Agregar nodos al grafo
+    for (int i = 0; i < personas.len(); i++) {
+        Persona persona = personas.get(i);
+        String nombre = persona.getNombre();
+        
+        // Crea el nodo con el nombre de la persona
+        graph.addNode(nombre);
+        graph.getNode(nombre).setAttribute("ui.label", nombre);
 
-            // Si la estación pertenece a múltiples líneas, asignar un color especial
-            //String nodeColor = estacion.getColor();
-            //if (estacion.getLineas().len() > 1) {
-            //    nodeColor = "Gray"; // Color para intersecciones
-            //}
-
-            //graph.getNode(nodeId).setAttribute("ui.style", "fill-color: " + nodeColor + "; shape: circle; size: 15px;");
-        }
-
-        // Agregar arcos al grafo
-        for (int i = 0; i < arcos.len(); i++) {
-            Arco arco = arcos.get(i);
-            int src = arco.getSrc();
-            int dest = arco.getDest();
-            String arcoId;
-
-            // Ordenar los nodos para el identificador de la arista
-            if (src < dest) {
-                arcoId = src + "-" + dest;
-            } else {
-                arcoId = dest + "-" + src;
-                // Intercambiar src y dest para asegurar que la arista se agrega correctamente
-                int temp = src;
-                src = dest;
-                dest = temp;
-            }
-
-            if (graph.getEdge(arcoId) == null) { // Evitar duplicados en GraphStream
-                graph.addEdge(arcoId, String.valueOf(src), String.valueOf(dest), false);
-                graph.getEdge(arcoId).setAttribute("ui.style", "fill-color: gray;");
-            }
-        }
-        Viewer viewer = graph.display();
-        viewer.setCloseFramePolicy(Viewer.CloseFramePolicy.CLOSE_VIEWER); 
+        // Establecer el color de los nodos
+        graph.getNode(nombre).setAttribute("ui.style", "fill-color: yellow; shape: circle; size: 15px;");
     }
+
+    // Agregar arcos al grafo
+    for (int i = 0; i < arcos.len(); i++) {
+        Arco arco = arcos.get(i);
+        String nombrePadre = personas.get(arco.getSrc()).getNombre();
+        String nombreHijo = personas.get(arco.getDest()).getNombre();
+        
+        // Generar un ID único para el arco usando los nombres de los nodos
+        String arcoId = nombrePadre + "-" + nombreHijo;
+
+        // Agregar el arco si no existe ya
+        if (graph.getEdge(arcoId) == null) {
+            graph.addEdge(arcoId, nombrePadre, nombreHijo, true); // true para crear un arco dirigido
+            graph.getEdge(arcoId).setAttribute("ui.style", "fill-color: gray;");
+        }
+    }
+
+    // Mostrar el grafo
+    Viewer viewer = graph.display();
+    viewer.setCloseFramePolicy(Viewer.CloseFramePolicy.CLOSE_VIEWER);
+}
+
 
 
     /**
@@ -180,8 +198,17 @@ public class Grafos {
                 //if (estacion.getLineas().len() > 1) {
                 //    nodeColor = "gray"; // Color para intersecciones
                 //}
-                //graph.getNode(nodeId).setAttribute("ui.style", "fill-color: " + nodeColor + "; shape: circle; size: 15px;");
+                graph.getNode(nodeId).setAttribute("ui.style", "fill-color: " + "; shape: circle; size: 15px;");
             }
         }
     }
+    
+    public int indexOf(Persona persona) {
+    for (int i = 0; i < this.personas.len(); i++) {
+        if (this.personas.get(i).getNombre().equals(persona.getNombre())) {
+            return i;
+        }
+    }
+    return -1; // No se encontró
+}
 }

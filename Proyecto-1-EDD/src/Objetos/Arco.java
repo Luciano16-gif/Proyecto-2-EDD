@@ -5,12 +5,12 @@ package Objetos;
  * 
  * @author: Ricardo Paez - Luciano Minardo - Gabriele Colarusso
 
- * @version: 15/10/2024
+ * @version: 4/11/2024
  */
 public class Arco implements Comparable<Arco> {
     private int src;
     private int dest;
-    private boolean nodoEstacionVisitado = false;
+    private boolean nodoArbolVisitado = false;
     private int distancia;
 
     /**
@@ -32,6 +32,7 @@ public class Arco implements Comparable<Arco> {
         this.dest = dest;
         this.distancia = distancia;
     }
+    
 
     /**
      *Compara este arco con el arco especificado para el orden
@@ -84,7 +85,7 @@ public class Arco implements Comparable<Arco> {
      *Marca este arco como visitado
      */
     public void marcarComoVisitado() {
-        this.nodoEstacionVisitado = true;
+        this.nodoArbolVisitado = true;
     }
 
     /**
@@ -93,7 +94,7 @@ public class Arco implements Comparable<Arco> {
      * @return true si el arco ha sido visitado, falso si es lo contrario 
      */
     public boolean isNodoEstacionVisitado() {
-        return nodoEstacionVisitado;
+        return nodoArbolVisitado;
     }
 
     /**
@@ -107,7 +108,7 @@ public class Arco implements Comparable<Arco> {
                "src=" + src +
                ", dest=" + dest +
                ", distancia=" + distancia +
-               ", visitado=" + nodoEstacionVisitado +
+               ", visitado=" + nodoArbolVisitado +
                '}';
     }
 }
