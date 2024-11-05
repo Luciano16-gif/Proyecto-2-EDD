@@ -1,172 +1,154 @@
-package Objetos;
+package Funciones;
 
+import Objetos.Persona;
 import Primitivas.Lista;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import java.io.BufferedReader;
+
+import javax.swing.JFileChooser;
 import java.io.File;
 import java.io.FileReader;
-import javax.swing.JFileChooser;
+import java.util.Set;
 
 /**
-
- * Esta clase define el objeto Funcion, con la cual tiene diferentes atributos y funciones que lo definen para leer los Json
-
- * @author: Ricardo Paez - Luciano Minardo - Gabriele Colarusso
-
- * @version: 4/11/2024
-
+ * Clase que contiene funciones útiles para el proyecto, incluyendo la lectura del archivo JSON.
+ *
+ * @author ...
+ * @version 4/11/2024
  */
-
 public class Funcion {
 
+    /**
+     * Método para leer el archivo JSON seleccionado por el usuario y construir una lista de personas.
+     *
+     * @return Lista de objetos Persona construidos a partir del archivo JSON.
+     */
     public static Lista<Persona> leerJsonConFileChooser() {
         Lista<Persona> personas = new Lista<>();
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Seleccione el archivo JSON");
+        int userSelection = fileChooser.showOpenDialog(null);
 
-        try {
-            // Abrir un JFileChooser para seleccionar el archivo JSON
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("Seleccione el archivo JSON del árbol genealógico");
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToOpen = fileChooser.getSelectedFile();
+            try (FileReader reader = new FileReader(fileToOpen)) {
+                Gson gson = new Gson();
+                JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+                JsonObject jsonObject = jsonElement.getAsJsonObject();
 
-            int userSelection = fileChooser.showOpenDialog(null);
+                // Obtener el array de "House Baratheon"
+                JsonElement houseElement = jsonObject.get("House Baratheon");
+                if (houseElement != null && houseElement.isJsonArray()) {
+                    com.google.gson.JsonArray houseArray = houseElement.getAsJsonArray();
 
-            if (userSelection == JFileChooser.APPROVE_OPTION) {
-                File jsonFile = fileChooser.getSelectedFile();
+                    // Iterar sobre cada persona en el array
+                    for (int i = 0; i < houseArray.size(); i++) {
+                        JsonElement personElement = houseArray.get(i);
+                        if (personElement.isJsonObject()) {
+                            JsonObject personObject = personElement.getAsJsonObject();
 
-                // Leer el contenido del archivo JSON
-                BufferedReader in = new BufferedReader(new FileReader(jsonFile));
-                StringBuilder content = new StringBuilder();
-                String inputLine;
-                while ((inputLine = in.readLine()) != null) {
-                    content.append(inputLine.trim()); // Eliminar espacios en blanco al inicio y fin
-                }
-                in.close();
+                            // Cada personObject tiene una clave (nombre de la persona)
+                            Set<String> personNames = personObject.keySet();
+                            for (String nombrePersona : personNames) {
+                                JsonElement atributosElement = personObject.get(nombrePersona);
 
-                // Convertir el contenido en una cadena
-                String jsonString = content.toString();
+                                // Crear un objeto Persona
+                                Persona persona = new Persona(nombrePersona);
 
-                // Parsear el JSON
-                personas = parseJsonString(jsonString);
+                                // Procesar los atributos
+                                if (atributosElement.isJsonArray()) {
+                                    com.google.gson.JsonArray atributosArray = atributosElement.getAsJsonArray();
 
-            } else {
-                System.out.println("No se seleccionó ningún archivo.");
-            }
+                                    for (int j = 0; j < atributosArray.size(); j++) {
+                                        JsonElement atributoElement = atributosArray.get(j);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+                                        if (atributoElement.isJsonObject()) {
+                                            JsonObject atributoObj = atributoElement.getAsJsonObject();
 
-        return personas;
-    }
+                                            // Obtener las claves del atributoObj
+                                            Set<String> atributoKeys = atributoObj.keySet();
 
-    private static Lista<Persona> parseJsonString(String jsonString) {
-        Lista<Persona> personas = new Lista<>();
+                                            for (String attributeKey : atributoKeys) {
+                                                JsonElement valueElement = atributoObj.get(attributeKey);
 
-        try {
-            Gson gson = new Gson();
-            JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);
-
-            // Iterar sobre las casas en el JSON
-            for (String houseName : jsonObject.keySet()) {
-                JsonElement houseElement = jsonObject.get(houseName);
-
-                // Convertir el elemento de la casa en un JsonArray personalizado
-                JsonArray houseArray = parseJsonElementToJsonArray(houseElement);
-
-                // Iterar sobre cada persona en la casa
-                for (int i = 0; i < houseArray.size(); i++) {
-                    JsonObject personObject = houseArray.get(i).getAsJsonObject();
-
-                    for (String personName : personObject.keySet()) {
-                        JsonElement attributesElement = personObject.get(personName);
-
-                        // Crear una nueva instancia de Persona
-                        Persona persona = new Persona(personName);
-
-                        // Convertir los atributos en un JsonArray personalizado
-                        JsonArray attributesArray = parseJsonElementToJsonArray(attributesElement);
-
-                        // Recorrer los atributos
-                        for (int j = 0; j < attributesArray.size(); j++) {
-                            JsonObject attributeObject = attributesArray.get(j).getAsJsonObject();
-
-                            for (String attributeKey : attributeObject.keySet()) {
-                                JsonElement valueElement = attributeObject.get(attributeKey);
-
-                                switch (attributeKey) {
-                                    case "Of his name":
-                                        persona.setOfHisName(valueElement.getAsString());
-                                        break;
-                                    case "Born to":
-                                        persona.addBornTo(valueElement.getAsString());
-                                        break;
-                                    case "Known throughout as":
-                                        persona.setApodo(valueElement.getAsString());
-                                        break;
-                                    case "Held title":
-                                        persona.setTitle(valueElement.getAsString());
-                                        break;
-                                    case "Wed to":
-                                        persona.setWedTo(valueElement.getAsString());
-                                        break;
-                                    case "Of eyes":
-                                        persona.setColorOjos(valueElement.getAsString());
-                                        break;
-                                    case "Of hair":
-                                        persona.setColorCabello(valueElement.getAsString());
-                                        break;
-                                    case "Fate":
-                                        persona.setFate(valueElement.getAsString());
-                                        break;
-                                    case "Father to":
-                                        // Manejar lista de hijos
-                                        JsonArray hijosArray = parseJsonElementToJsonArray(valueElement);
-                                        for (int k = 0; k < hijosArray.size(); k++) {
-                                            String hijoNombre = hijosArray.get(k).getAsString();
-                                            persona.addHijo(hijoNombre);
+                                                // Procesar los atributos como antes
+                                                asignarAtributo(persona, attributeKey, valueElement);
+                                            }
                                         }
-                                        break;
-                                    case "Notes":
-                                        persona.addNota(valueElement.getAsString());
-                                        break;
-                                    // Agregar otros casos si es necesario
-                                    default:
-                                        // Manejar otros atributos
-                                        break;
+                                    }
                                 }
+
+                                // Agregar la persona a la lista
+                                personas.append(persona);
                             }
                         }
-
-                        // Agregar la persona a la lista
-                        personas.append(persona);
                     }
+                } else {
+                    System.out.println("No se encontró 'House Baratheon' o no es un array.");
                 }
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-
         return personas;
     }
 
-    // Método para convertir un JsonElement en un JsonArray personalizado
-    private static JsonArray parseJsonElementToJsonArray(JsonElement element) {
-        JsonArray jsonArray = new JsonArray();
-
-        if (element.isJsonArray()) {
-            // Iterar sobre los elementos del array sin usar JsonArray de Gson
-            for (JsonElement el : element.getAsJsonArray()) {
-                jsonArray.add(el);
-            }
-        } else if (element.isJsonObject()) {
-            jsonArray.add(element);
-        } else {
-            // Si es un elemento simple
-            jsonArray.add(element);
+    // Método auxiliar para asignar atributos a la persona
+    private static void asignarAtributo(Persona persona, String attributeKey, JsonElement valueElement) {
+        switch (attributeKey) {
+            case "Of his name":
+                persona.setOfHisName(valueElement.getAsString());
+                break;
+            case "Born to":
+                if (valueElement.isJsonArray()) {
+                    com.google.gson.JsonArray bornToArray = valueElement.getAsJsonArray();
+                    for (int j = 0; j < bornToArray.size(); j++) {
+                        String padre = bornToArray.get(j).getAsString();
+                        persona.addBornTo(padre);
+                    }
+                } else {
+                    persona.addBornTo(valueElement.getAsString());
+                }
+                break;
+            case "Known throughout as":
+                persona.setApodo(valueElement.getAsString());
+                break;
+            case "Held title":
+                persona.setTitle(valueElement.getAsString());
+                break;
+            case "Wed to":
+                persona.setWedTo(valueElement.getAsString());
+                break;
+            case "Of eyes":
+                persona.setColorOjos(valueElement.getAsString());
+                break;
+            case "Of hair":
+                persona.setColorCabello(valueElement.getAsString());
+                break;
+            case "Fate":
+                persona.setFate(valueElement.getAsString());
+                break;
+            case "Father to":
+                if (valueElement.isJsonArray()) {
+                    com.google.gson.JsonArray hijosArray = valueElement.getAsJsonArray();
+                    for (int k = 0; k < hijosArray.size(); k++) {
+                        String hijoNombre = hijosArray.get(k).getAsString();
+                        persona.addHijo(hijoNombre);
+                    }
+                } else {
+                    persona.addHijo(valueElement.getAsString());
+                }
+                break;
+            case "Notes":
+                persona.addNota(valueElement.getAsString());
+                break;
+            // Agregar otros casos si es necesario
+            default:
+                // Manejar otros atributos
+                break;
         }
-
-        return jsonArray;
     }
 }
