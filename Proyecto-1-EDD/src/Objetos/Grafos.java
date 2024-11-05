@@ -47,9 +47,19 @@ public class Grafos {
         // Verifica si el arco ya existe antes de agregarlo
         if (graph.getEdge(edgeId) == null) {
             graph.addEdge(edgeId, nombrePadre, nombreHijo, true); // true para crear un arco dirigido
+            
+            // Usa el nuevo indexOf para obtener los índices
+            int padreIndex = indexOf(nombrePadre);
+            int hijoIndex = indexOf(nombreHijo);
+            
+            // Agregar el arco a la lista solo si los índices son válidos
+            if (padreIndex != -1 && hijoIndex != -1) {
+                arcos.append(new Arco(padreIndex, hijoIndex, 1)); // Agregar el arco a la lista
+            }
         }
     }
 }
+
 
     /**
      * Verifica si existe un arco entre dos estaciones
@@ -109,22 +119,28 @@ public void mostrarGrafo() {
         graph.getNode(nombre).setAttribute("ui.label", nombre);
 
         // Establecer el color de los nodos
-        graph.getNode(nombre).setAttribute("ui.style", "fill-color: yellow; shape: circle; size: 15px;");
+        graph.getNode(nombre).setAttribute("ui.style", "fill-color: blue; shape: circle; size: 15px;");
     }
 
     // Agregar arcos al grafo
     for (int i = 0; i < arcos.len(); i++) {
         Arco arco = arcos.get(i);
-        String nombrePadre = personas.get(arco.getSrc()).getNombre();
-        String nombreHijo = personas.get(arco.getDest()).getNombre();
         
-        // Generar un ID único para el arco usando los nombres de los nodos
-        String arcoId = nombrePadre + "-" + nombreHijo;
+        // Asegurarse de que los índices están dentro del rango de la lista de personas
+        if (arco.getSrc() < personas.len() && arco.getDest() < personas.len()) {
+            String nombrePadre = personas.get(arco.getSrc()).getNombre();
+            String nombreHijo = personas.get(arco.getDest()).getNombre();
+            
+            // Generar un ID único para el arco usando los nombres de los nodos
+            String arcoId = nombrePadre + "-" + nombreHijo;
 
-        // Agregar el arco si no existe ya
-        if (graph.getEdge(arcoId) == null) {
-            graph.addEdge(arcoId, nombrePadre, nombreHijo, true); // true para crear un arco dirigido
-            graph.getEdge(arcoId).setAttribute("ui.style", "fill-color: gray;");
+            // Agregar el arco si no existe ya
+            if (graph.getEdge(arcoId) == null) {
+                graph.addEdge(arcoId, nombrePadre, nombreHijo, true); // true para crear un arco dirigido
+                graph.getEdge(arcoId).setAttribute("ui.style", "fill-color: gray;");
+            }
+        } else {
+            System.out.println("Índice fuera de rango para los arcos: " + arco.getSrc() + ", " + arco.getDest());
         }
     }
 
@@ -203,12 +219,13 @@ public void mostrarGrafo() {
         }
     }
     
-    public int indexOf(Persona persona) {
+    public int indexOf(String nombre) {
     for (int i = 0; i < this.personas.len(); i++) {
-        if (this.personas.get(i).getNombre().equals(persona.getNombre())) {
+        if (this.personas.get(i).getNombre().equals(nombre)) {
             return i;
         }
     }
     return -1; // No se encontró
 }
+
 }
