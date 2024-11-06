@@ -9,14 +9,10 @@ import com.google.gson.JsonObject;
 import javax.swing.JFileChooser;
 import java.io.File;
 import java.io.FileReader;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Clase que contiene funciones útiles para el proyecto, incluyendo la lectura del archivo JSON.
  *
- * @author Luciano Minardo, Ricardo Paez y Gabriele Colarusso
- * 
  * @version 4/11/2024
  */
 public class Funcion {
@@ -41,9 +37,9 @@ public class Funcion {
                 if (jsonElement.isJsonObject()) {
                     JsonObject jsonObject = jsonElement.getAsJsonObject();
 
-                    // Recorrer cada entrada en el JSON (asume que cada entrada es una familia o grupo de personas)
-                    for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-                        JsonElement groupElement = entry.getValue();
+                    // Procesar cada entrada principal en el JSON como un grupo de personas
+                    for (String key : jsonObject.keySet()) {
+                        JsonElement groupElement = jsonObject.get(key);
                         
                         if (groupElement.isJsonArray()) {
                             com.google.gson.JsonArray groupArray = groupElement.getAsJsonArray();
@@ -56,14 +52,13 @@ public class Funcion {
                                     JsonObject personObject = personElement.getAsJsonObject();
 
                                     // Cada personObject tiene una clave (nombre de la persona)
-                                    Set<String> personNames = personObject.keySet();
-                                    for (String nombrePersona : personNames) {
+                                    for (String nombrePersona : personObject.keySet()) {
                                         JsonElement atributosElement = personObject.get(nombrePersona);
 
                                         // Crear un objeto Persona
                                         Persona persona = new Persona(nombrePersona);
 
-                                        // Procesar los atributos
+                                        // Procesar los atributos de cada persona
                                         if (atributosElement.isJsonArray()) {
                                             com.google.gson.JsonArray atributosArray = atributosElement.getAsJsonArray();
 
@@ -73,10 +68,8 @@ public class Funcion {
                                                 if (atributoElement.isJsonObject()) {
                                                     JsonObject atributoObj = atributoElement.getAsJsonObject();
 
-                                                    // Obtener las claves del atributoObj
-                                                    Set<String> atributoKeys = atributoObj.keySet();
-
-                                                    for (String attributeKey : atributoKeys) {
+                                                    // Iterar sobre cada clave de atributo y asignar a la persona
+                                                    for (String attributeKey : atributoObj.keySet()) {
                                                         JsonElement valueElement = atributoObj.get(attributeKey);
 
                                                         // Procesar los atributos
@@ -92,7 +85,7 @@ public class Funcion {
                                 }
                             }
                         } else {
-                            System.out.println("La entrada '" + entry.getKey() + "' no es un array de personas.");
+                            System.out.println("La entrada '" + key + "' no es un array de personas.");
                         }
                     }
                 } else {
