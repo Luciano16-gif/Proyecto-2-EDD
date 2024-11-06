@@ -3,245 +3,159 @@ package Objetos;
 import Primitivas.Lista;
 
 /**
- * Clase que representa una Persona en el contexto de los datos genealógicos.
- * 
- * Almacena la información básica y opcional de cada persona, como su título, padres, hijos, etc.
+ * Clase que representa una persona en el árbol genealógico.
  *
- * @author: Ricardo Paez - Luciano Minardo - Gabriele Colarusso
-
- * @version: 15/10/2024
+ * @author Luciano Minardo, Ricardo Paez y Gabriele Colarusso
+ * 
+ * @version 4/11/2024
+ * 
  */
- public class Persona {
-    // Atributos de la clase
-    private String nombre;
-    private String ofHisName;     // Numeral del nombre, e.g., "First", "Second"
+public class Persona {
+    private String id; // Identificador único
+    private String nombre; // Nombre canónico
+    private Lista<String> nombresAlternativos; // Nombres alternativos, incluyendo apodos y variaciones
     private Lista<String> bornTo; // Lista de nombres de los padres
-    private String apodo;         // "Known throughout as"
-    private String title;         // Título nobiliario
-    private String wedTo;         // Con quién está casado
-    private String colorOjos;     // Color de ojos
-    private String colorCabello;  // Color de cabello
-    private String fate;          // Destino o causa de muerte
-    private Lista<String> hijos;  // Lista de nombres de hijos
-    private Lista<String> notas;  // Lista de notas adicionales
-    private Lista<String> lineas;
+    private Lista<String> hijos; // Lista de nombres de los hijos
+    private String ofHisName;
+    private String apodo;
+    private String title;
+    private String wedTo;
+    private String colorOjos;
+    private String colorCabello;
+    private String fate;
+    private Lista<String> notas; // Lista de notas
 
-    // Constructor
     public Persona(String nombre) {
         this.nombre = nombre;
+        this.apodo = ""; // Inicializar apodo antes de llamar a generarIdUnico()
+        this.ofHisName = ""; // Inicializar ofHisName antes de llamar a generarIdUnico()
+        this.nombresAlternativos = new Lista<>();
+        this.bornTo = new Lista<>();
         this.hijos = new Lista<>();
         this.notas = new Lista<>();
-        this.bornTo = new Lista<>(); // Inicializar la lista de padres
+        this.id = generarIdUnico(); // Llamar a generarIdUnico() después de inicializar los atributos
     }
 
-    // Getters y Setters
-    public String getNombre() {
-        return nombre;
+    // Método para generar un ID único basado en el nombre, apodo y ofHisName
+    private String generarIdUnico() {
+        String baseId = nombre.toLowerCase().replaceAll("\\s+", "_");
+        if (!apodo.isEmpty()) {
+            baseId += "_" + apodo.toLowerCase().replaceAll("\\s+", "_");
+        } else if (!ofHisName.isEmpty()) {
+            baseId += "_of_his_name_" + ofHisName.toLowerCase().replaceAll("\\s+", "_");
+        }
+        return baseId;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    // Métodos para manejar los atributos adicionales
+
+    public void setOfHisName(String ofHisName) {
+        this.ofHisName = ofHisName;
+        // Actualizar el ID ya que ofHisName ha cambiado
+        this.id = generarIdUnico();
     }
 
     public String getOfHisName() {
         return ofHisName;
     }
 
-    public void setOfHisName(String ofHisName) {
-        this.ofHisName = ofHisName;
-    }
-
-    public Lista<String> getBornTo() {
-        return bornTo;
-    }
-
-    public void setBornTo(Lista<String> bornTo) {
-        this.bornTo = bornTo;
+    public void setApodo(String apodo) {
+        this.apodo = apodo;
+        agregarNombreAlternativo(apodo); // Agregar el apodo a los nombres alternativos
+        // Actualizar el ID ya que el apodo ha cambiado
+        this.id = generarIdUnico();
     }
 
     public String getApodo() {
         return apodo;
     }
 
-    public void setApodo(String apodo) {
-        this.apodo = apodo;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setWedTo(String wedTo) {
+        this.wedTo = wedTo;
     }
 
     public String getWedTo() {
         return wedTo;
     }
 
-    public void setWedTo(String wedTo) {
-        this.wedTo = wedTo;
+    public void setColorOjos(String colorOjos) {
+        this.colorOjos = colorOjos;
     }
 
     public String getColorOjos() {
         return colorOjos;
     }
 
-    public void setColorOjos(String colorOjos) {
-        this.colorOjos = colorOjos;
+    public void setColorCabello(String colorCabello) {
+        this.colorCabello = colorCabello;
     }
 
     public String getColorCabello() {
         return colorCabello;
     }
 
-    public void setColorCabello(String colorCabello) {
-        this.colorCabello = colorCabello;
+    public void setFate(String fate) {
+        this.fate = fate;
     }
 
     public String getFate() {
         return fate;
     }
 
-    public void setFate(String fate) {
-        this.fate = fate;
-    }
-
-    public Lista<String> getHijos() {
-        return hijos;
-    }
-
-    public void setHijos(Lista<String> hijos) {
-        this.hijos = hijos;
+    public void addNota(String nota) {
+        notas.append(nota);
     }
 
     public Lista<String> getNotas() {
         return notas;
     }
 
-    public void setNotas(Lista<String> notas) {
-        this.notas = notas;
-    }
-
-    // Métodos para agregar hijos, notas y padres
-    public void addHijo(String hijo) {
-        this.hijos.append(hijo);
-    }
-
-    public void addNota(String nota) {
-        this.notas.append(nota);
-    }
-
-    public void addBornTo(String padreOMadre) {
-        this.bornTo.append(padreOMadre);
-    }
-
-    // Método estático para construir una Persona a partir de los datos JSON
-    public static Persona fromJson(String nombre, Lista<Lista<String[]>> atributos) {
-        Persona persona = new Persona(nombre);
-
-        for (int i = 0; i < atributos.getSize(); i++) {
-            Lista<String[]> atributo = atributos.get(i);
-            for (int j = 0; j < atributo.getSize(); j++) {
-                String[] par = atributo.get(j);
-                String clave = par[0];
-                String valor = par[1];
-
-                switch (clave) {
-                    case "Of his name":
-                        persona.setOfHisName(valor);
-                        break;
-                    case "Born to":
-                        persona.addBornTo(valor); // Agregar a la lista de padres
-                        break;
-                    case "Known throughout as":
-                        persona.setApodo(valor);
-                        break;
-                    case "Held title":
-                        persona.setTitle(valor);
-                        break;
-                    case "Wed to":
-                        persona.setWedTo(valor);
-                        break;
-                    case "Of eyes":
-                        persona.setColorOjos(valor);
-                        break;
-                    case "Of hair":
-                        persona.setColorCabello(valor);
-                        break;
-                    case "Fate":
-                        persona.setFate(valor);
-                        break;
-                    case "Notes":
-                        persona.addNota(valor);
-                        break;
-                    default:
-                        // Otras claves pueden ser ignoradas o manejadas según necesidad
-                        break;
-                }
-            }
+    // Métodos para agregar padres e hijos
+    public void addBornTo(String nombrePadre) {
+        if (!bornTo.contains(nombrePadre)) {
+            bornTo.append(nombrePadre);
         }
-
-        return persona;
     }
 
-    // Representación en String de la persona
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Nombre: ").append(nombre).append("\n");
-        if (ofHisName != null)
-            sb.append("Of his name: ").append(ofHisName).append("\n");
-        if (bornTo != null && bornTo.getSize() > 0) {
-            sb.append("Born to:\n");
-            for (int i = 0; i < bornTo.getSize(); i++) {
-                sb.append("  - ").append(bornTo.get(i)).append("\n");
-            }
+    public void addHijo(String nombreHijo) {
+        if (!hijos.contains(nombreHijo)) {
+            hijos.append(nombreHijo);
         }
-        if (apodo != null)
-            sb.append("Known throughout as: ").append(apodo).append("\n");
-        if (title != null)
-            sb.append("Held title: ").append(title).append("\n");
-        if (wedTo != null)
-            sb.append("Wed to: ").append(wedTo).append("\n");
-        if (colorOjos != null)
-            sb.append("Of eyes: ").append(colorOjos).append("\n");
-        if (colorCabello != null)
-            sb.append("Of hair: ").append(colorCabello).append("\n");
-        if (fate != null)
-            sb.append("Fate: ").append(fate).append("\n");
-        if (hijos != null && hijos.getSize() > 0) {
-            sb.append("Father to:\n");
-            for (int i = 0; i < hijos.getSize(); i++) {
-                sb.append("  - ").append(hijos.get(i)).append("\n");
-            }
-        }
-        if (notas != null && notas.getSize() > 0) {
-            sb.append("Notes:\n");
-            for (int i = 0; i < notas.getSize(); i++) {
-                sb.append("  - ").append(notas.get(i)).append("\n");
-            }
-        }
-        return sb.toString();
     }
 
-    // Métodos equals y hashCode para uso en tablas hash
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof Persona)) return false;
-        Persona otraPersona = (Persona) obj;
-        return this.nombre.equalsIgnoreCase(otraPersona.nombre);
+    // Método para agregar nombres alternativos
+    public void agregarNombreAlternativo(String nombreAlternativo) {
+        if (!nombresAlternativos.contains(nombreAlternativo)) {
+            nombresAlternativos.append(nombreAlternativo);
+        }
     }
 
-    @Override
-    public int hashCode() {
-        return nombre.toLowerCase().hashCode();
+    // Getters y setters básicos
+    public String getId() {
+        return id;
     }
-    
-    public void agregarLinea(String linea) {
-        if (!lineas.exist(linea)) {
-            lineas.append(linea);
-        }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public Lista<String> getNombresAlternativos() {
+        return nombresAlternativos;
+    }
+
+    public Lista<String> getBornTo() {
+        return bornTo;
+    }
+
+    public Lista<String> getHijos() {
+        return hijos;
     }
 }

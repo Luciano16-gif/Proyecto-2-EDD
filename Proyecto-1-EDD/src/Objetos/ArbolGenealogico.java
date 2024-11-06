@@ -4,23 +4,18 @@ import Primitivas.HashTable;
 import Primitivas.Lista;
 
 /**
- * Esta clase define el objeto ArbolGenealogico, donde se elabora el arbol ( donde hay diferentes atributos y metodos)
-
- * @author: Ricardo Paez - Luciano Minardo - Gabriele Colarusso
-
- * @version: 4/11/2024
+ * Clase que representa el árbol genealógico y maneja la construcción del mismo.
+ *
+ * @author Luciano Minardo, Ricardo Paez y Gabriele Colarusso
+ * @version 4/11/2024
  */
-
 public class ArbolGenealogico {
-    private NodoArbol raiz; // Raíz del árbol genealógico
-    private HashTable<String, NodoArbol> tablaPersonas; // Tabla para buscar nodos por nombre
-    private Lista<String> listaPadres; // Lista para almacenar los padres en el formato deseado
-    private Lista<String> listaHijos; // Lista para almacenar los hijos en el formato deseado
+    private HashTable<String, NodoArbol> tablaPersonasPorId; // Mapea ID de persona a NodoArbol
+    private HashTable<String, String> nombreAId; // Mapea nombres (incluyendo ofHisName) a IDs
 
     public ArbolGenealogico() {
-        tablaPersonas = new HashTable<>();
-        listaPadres = new Lista<>();
-        listaHijos = new Lista<>();
+        tablaPersonasPorId = new HashTable<>();
+        nombreAId = new HashTable<>();
     }
 
     public void construirArbol(Lista<Persona> personas, Grafos grafos) {
@@ -28,80 +23,113 @@ public class ArbolGenealogico {
         for (int i = 0; i < personas.len(); i++) {
             Persona persona = personas.get(i);
             NodoArbol nodo = new NodoArbol(persona);
-            tablaPersonas.put(persona.getNombre(), nodo);
+            tablaPersonasPorId.put(persona.getId(), nodo);
+
+            // Mapear el nombre canónico al ID
+            nombreAId.put(persona.getNombre(), persona.getId());
+
+            // Mapear combinaciones de nombre y ofHisName al ID
+            if (!persona.getOfHisName().isEmpty()) {
+                String clave = persona.getNombre() + ", " + persona.getOfHisName() + " of his name";
+                nombreAId.put(clave, persona.getId());
+            }
+
+            // Mapear nombres alternativos al ID
+            Lista<String> nombresAlternativos = persona.getNombresAlternativos();
+            for (int j = 0; j < nombresAlternativos.len(); j++) {
+                String nombreAlternativo = nombresAlternativos.get(j);
+                nombreAId.put(nombreAlternativo, persona.getId());
+            }
+
             grafos.addPersona(persona); // Añadir persona al grafo
         }
 
         // Establecer relaciones padre-hijo
         for (int i = 0; i < personas.len(); i++) {
             Persona persona = personas.get(i);
-            NodoArbol nodoActual = tablaPersonas.get(persona.getNombre());
-
-            // Establecer padres con el formato "nombre del padre, nombre de la persona"
+            NodoArbol nodoActual = tablaPersonasPorId.get(persona.getId());
+            
+            // Establecer padres
             Lista<String> padres = persona.getBornTo();
             if (padres != null && padres.len() > 0) {
                 for (int j = 0; j < padres.len(); j++) {
                     String nombrePadreOMadre = padres.get(j);
-                    // Formato para la lista de padres
-                    String padreFormato = (nombrePadreOMadre.isEmpty() ? "[Unknown]" : nombrePadreOMadre) + ": " + persona.getNombre();
-                    listaPadres.append(padreFormato); // Agregar a la lista de padres
+                    String idPadreOMadre = resolverIdPorNombre(nombrePadreOMadre);
 
-                    NodoArbol nodoPadreOMadre = tablaPersonas.get(nombrePadreOMadre);
-                    if (nodoPadreOMadre != null) {
+                    if (idPadreOMadre != null) {
+                        NodoArbol nodoPadreOMadre = tablaPersonasPorId.get(idPadreOMadre);
                         nodoPadreOMadre.agregarHijo(nodoActual);
-                        grafos.addArco1(nombrePadreOMadre, persona.getNombre()); // Crear arco en el grafo
+                        grafos.addArco1(nodoPadreOMadre.getPersona().getNombre(), persona.getNombre()); // Usamos los nombres canónicos
                     } else {
-                        // Agregar nuevo padre si no existe
+                        // Si no encontramos al padre, podríamos crear un nuevo nodo
                         Persona nuevoPadre = new Persona(nombrePadreOMadre);
+                        NodoArbol nuevoNodoPadre = new NodoArbol(nuevoPadre);
+                        tablaPersonasPorId.put(nuevoPadre.getId(), nuevoNodoPadre);
+                        nombreAId.put(nuevoPadre.getNombre(), nuevoPadre.getId());
                         grafos.addPersona(nuevoPadre);
-                        grafos.addArco1(nombrePadreOMadre, persona.getNombre()); // Crear arco
+                        grafos.addArco1(nuevoPadre.getNombre(), persona.getNombre());
                     }
                 }
             }
 
-            // Establecer hijos con el formato "nombre del hijo, nombre de la persona"
+            // Establecer hijos
             Lista<String> nombresHijos = persona.getHijos();
-            for (int j = 0; j < nombresHijos.len(); j++) {
-                String nombreHijo = nombresHijos.get(j);
-                // Formato para la lista de hijos
-                String hijoFormato = nombreHijo + ": " + persona.getNombre();
-                listaHijos.append(hijoFormato); // Agregar a la lista de hijos
+            if (nombresHijos != null) {
+                for (int j = 0; j < nombresHijos.len(); j++) {
+                    String nombreHijo = nombresHijos.get(j);
+                    String idHijo = resolverIdPorNombre(nombreHijo);
 
-                NodoArbol nodoHijo = tablaPersonas.get(nombreHijo);
-                if (nodoHijo != null) {
-                    nodoActual.agregarHijo(nodoHijo);
-                    grafos.addArco1(persona.getNombre(), nombreHijo); // Crear arco en el grafo
-                } else {
-                    // Agregar nuevo hijo si no existe
-                    Persona nuevoHijo = new Persona(nombreHijo);
-                    grafos.addPersona(nuevoHijo);
-                    grafos.addArco1(persona.getNombre(), nombreHijo); // Crear arco
+                    if (idHijo != null) {
+                        NodoArbol nodoHijo = tablaPersonasPorId.get(idHijo);
+                        nodoActual.agregarHijo(nodoHijo);
+                        grafos.addArco1(persona.getNombre(), nodoHijo.getPersona().getNombre());
+                    } else {
+                        // Si no encontramos al hijo, podríamos crear un nuevo nodo
+                        Persona nuevoHijo = new Persona(nombreHijo);
+                        NodoArbol nuevoNodoHijo = new NodoArbol(nuevoHijo);
+                        tablaPersonasPorId.put(nuevoHijo.getId(), nuevoNodoHijo);
+                        nombreAId.put(nuevoHijo.getNombre(), nuevoHijo.getId());
+                        grafos.addPersona(nuevoHijo);
+                        grafos.addArco1(persona.getNombre(), nuevoHijo.getNombre());
+                    }
                 }
             }
         }
     }
 
-    // Método para mostrar la lista de padres
-    public void mostrarPadres() {
-        System.out.println("Lista de Padres:");
-        for (int i = 0; i < listaPadres.len(); i++) {
-            System.out.println(listaPadres.get(i));
+    // Método para resolver el ID de una persona dado un nombre, intentando normalizar si es necesario
+    private String resolverIdPorNombre(String nombre) {
+        String id = nombreAId.get(nombre);
+        if (id == null) {
+            nombre = normalizarNombre(nombre);
+            id = nombreAId.get(nombre);
         }
+        return id;
     }
 
-    // Método para mostrar la lista de hijos
-    public void mostrarHijos() {
-        System.out.println("Lista de Hijos:");
-        for (int i = 0; i < listaHijos.len(); i++) {
-            System.out.println(listaHijos.get(i));
+    // Método para normalizar nombres eliminando descriptores comunes y manejando "Of his name"
+    private String normalizarNombre(String nombre) {
+        // Intentar separar el nombre y "Of his name"
+        if (nombre.contains(",")) {
+            String[] partes = nombre.split(",");
+            String nombreBase = partes[0].trim();
+            String ofHisName = partes[1].trim();
+            nombre = nombreBase + ", " + ofHisName;
+        } else {
+            nombre = nombre.trim();
         }
+        return nombre;
     }
 
-    public NodoArbol getRaiz() {
-        return raiz;
+    public NodoArbol buscarPorId(String id) {
+        return tablaPersonasPorId.get(id);
     }
 
     public NodoArbol buscarPorNombre(String nombre) {
-        return tablaPersonas.get(nombre);
+        String id = nombreAId.get(nombre);
+        if (id != null) {
+            return tablaPersonasPorId.get(id);
+        }
+        return null;
     }
 }
