@@ -1,10 +1,19 @@
 package proyecto.pkg1.edd;
 
-import Funciones.Funcion;
+import Objetos.Funcion;
 import Objetos.ArbolGenealogico;
 import Objetos.Grafos;
 import Objetos.Persona;
 import Primitivas.Lista;
+
+/**
+ * Clase que representa el main.
+ *
+ * @author Luciano Minardo, Ricardo Paez y Gabriele Colarusso
+ * 
+ * @version 4/11/2024
+ * 
+ */
 
 public class Proyecto2EDD {
 

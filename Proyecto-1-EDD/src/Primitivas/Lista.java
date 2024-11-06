@@ -1,5 +1,15 @@
 package Primitivas;
 
+/**
+ * Clase que representa la clase lista.
+ *
+ * @author Luciano Minardo, Ricardo Paez y Gabriele Colarusso
+ * 
+ * @version 4/11/2024
+ * 
+ */
+
+
 public class Lista<T> {
     private class Nodo<T> {
         T dato;
