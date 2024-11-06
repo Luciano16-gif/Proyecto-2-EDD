@@ -1,6 +1,5 @@
-package Funciones;
+package Objetos;
 
-import Objetos.Persona;
 import Primitivas.Lista;
 
 import com.google.gson.Gson;
@@ -10,12 +9,14 @@ import com.google.gson.JsonObject;
 import javax.swing.JFileChooser;
 import java.io.File;
 import java.io.FileReader;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * Clase que contiene funciones útiles para el proyecto, incluyendo la lectura del archivo JSON.
  *
- * @author ...
+ * @author Luciano Minardo, Ricardo Paez y Gabriele Colarusso
+ * 
  * @version 4/11/2024
  */
 public class Funcion {
@@ -36,59 +37,68 @@ public class Funcion {
             try (FileReader reader = new FileReader(fileToOpen)) {
                 Gson gson = new Gson();
                 JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
-                JsonObject jsonObject = jsonElement.getAsJsonObject();
+                
+                if (jsonElement.isJsonObject()) {
+                    JsonObject jsonObject = jsonElement.getAsJsonObject();
 
-                // Obtener el array de "House Baratheon"
-                JsonElement houseElement = jsonObject.get("House Baratheon");
-                if (houseElement != null && houseElement.isJsonArray()) {
-                    com.google.gson.JsonArray houseArray = houseElement.getAsJsonArray();
+                    // Recorrer cada entrada en el JSON (asume que cada entrada es una familia o grupo de personas)
+                    for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
+                        JsonElement groupElement = entry.getValue();
+                        
+                        if (groupElement.isJsonArray()) {
+                            com.google.gson.JsonArray groupArray = groupElement.getAsJsonArray();
 
-                    // Iterar sobre cada persona en el array
-                    for (int i = 0; i < houseArray.size(); i++) {
-                        JsonElement personElement = houseArray.get(i);
-                        if (personElement.isJsonObject()) {
-                            JsonObject personObject = personElement.getAsJsonObject();
+                            // Iterar sobre cada persona en el array
+                            for (int i = 0; i < groupArray.size(); i++) {
+                                JsonElement personElement = groupArray.get(i);
+                                
+                                if (personElement.isJsonObject()) {
+                                    JsonObject personObject = personElement.getAsJsonObject();
 
-                            // Cada personObject tiene una clave (nombre de la persona)
-                            Set<String> personNames = personObject.keySet();
-                            for (String nombrePersona : personNames) {
-                                JsonElement atributosElement = personObject.get(nombrePersona);
+                                    // Cada personObject tiene una clave (nombre de la persona)
+                                    Set<String> personNames = personObject.keySet();
+                                    for (String nombrePersona : personNames) {
+                                        JsonElement atributosElement = personObject.get(nombrePersona);
 
-                                // Crear un objeto Persona
-                                Persona persona = new Persona(nombrePersona);
+                                        // Crear un objeto Persona
+                                        Persona persona = new Persona(nombrePersona);
 
-                                // Procesar los atributos
-                                if (atributosElement.isJsonArray()) {
-                                    com.google.gson.JsonArray atributosArray = atributosElement.getAsJsonArray();
+                                        // Procesar los atributos
+                                        if (atributosElement.isJsonArray()) {
+                                            com.google.gson.JsonArray atributosArray = atributosElement.getAsJsonArray();
 
-                                    for (int j = 0; j < atributosArray.size(); j++) {
-                                        JsonElement atributoElement = atributosArray.get(j);
+                                            for (int j = 0; j < atributosArray.size(); j++) {
+                                                JsonElement atributoElement = atributosArray.get(j);
 
-                                        if (atributoElement.isJsonObject()) {
-                                            JsonObject atributoObj = atributoElement.getAsJsonObject();
+                                                if (atributoElement.isJsonObject()) {
+                                                    JsonObject atributoObj = atributoElement.getAsJsonObject();
 
-                                            // Obtener las claves del atributoObj
-                                            Set<String> atributoKeys = atributoObj.keySet();
+                                                    // Obtener las claves del atributoObj
+                                                    Set<String> atributoKeys = atributoObj.keySet();
 
-                                            for (String attributeKey : atributoKeys) {
-                                                JsonElement valueElement = atributoObj.get(attributeKey);
+                                                    for (String attributeKey : atributoKeys) {
+                                                        JsonElement valueElement = atributoObj.get(attributeKey);
 
-                                                // Procesar los atributos como antes
-                                                asignarAtributo(persona, attributeKey, valueElement);
+                                                        // Procesar los atributos
+                                                        asignarAtributo(persona, attributeKey, valueElement);
+                                                    }
+                                                }
                                             }
                                         }
+
+                                        // Agregar la persona a la lista
+                                        personas.append(persona);
                                     }
                                 }
-
-                                // Agregar la persona a la lista
-                                personas.append(persona);
                             }
+                        } else {
+                            System.out.println("La entrada '" + entry.getKey() + "' no es un array de personas.");
                         }
                     }
                 } else {
-                    System.out.println("No se encontró 'House Baratheon' o no es un array.");
+                    System.out.println("El archivo JSON seleccionado no tiene el formato esperado.");
                 }
-
+                
             } catch (Exception e) {
                 e.printStackTrace();
             }

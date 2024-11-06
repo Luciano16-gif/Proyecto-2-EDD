@@ -4,6 +4,10 @@ import Primitivas.Lista;
 
 /**
  * Esta clase representa un nodo en el árbol genealógico.
+ * 
+ * @author Luciano Minardo, Ricardo Paez y Gabriele Colarusso
+ * 
+ * @version 4/11/2024
  */
 public class NodoArbol {
     private Persona persona;
