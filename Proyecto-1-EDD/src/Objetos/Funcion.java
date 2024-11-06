@@ -1,5 +1,6 @@
 package Objetos;
 
+import Primitivas.HashTable;
 import Primitivas.Lista;
 
 import com.google.gson.Gson;
@@ -17,13 +18,10 @@ import java.io.FileReader;
  */
 public class Funcion {
 
-    /**
-     * Método para leer el archivo JSON seleccionado por el usuario y construir una lista de personas.
-     *
-     * @return Lista de objetos Persona construidos a partir del archivo JSON.
-     */
-    public static Lista<Persona> leerJsonConFileChooser() {
+    public static DatosProyecto leerJsonConFileChooser() {
         Lista<Persona> personas = new Lista<>();
+        HashTable<String, Persona> hashTable = new HashTable<>(); // Tabla hash para búsqueda rápida
+
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Seleccione el archivo JSON");
         int userSelection = fileChooser.showOpenDialog(null);
@@ -33,21 +31,21 @@ public class Funcion {
             try (FileReader reader = new FileReader(fileToOpen)) {
                 Gson gson = new Gson();
                 JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
-                
+
                 if (jsonElement.isJsonObject()) {
                     JsonObject jsonObject = jsonElement.getAsJsonObject();
 
                     // Procesar cada entrada principal en el JSON como un grupo de personas
                     for (String key : jsonObject.keySet()) {
                         JsonElement groupElement = jsonObject.get(key);
-                        
+
                         if (groupElement.isJsonArray()) {
                             com.google.gson.JsonArray groupArray = groupElement.getAsJsonArray();
 
                             // Iterar sobre cada persona en el array
                             for (int i = 0; i < groupArray.size(); i++) {
                                 JsonElement personElement = groupArray.get(i);
-                                
+
                                 if (personElement.isJsonObject()) {
                                     JsonObject personObject = personElement.getAsJsonObject();
 
@@ -79,8 +77,9 @@ public class Funcion {
                                             }
                                         }
 
-                                        // Agregar la persona a la lista
+                                        // Agregar la persona a la lista y a la tabla hash
                                         personas.append(persona);
+                                        hashTable.put(persona.getId(), persona);
                                     }
                                 }
                             }
@@ -91,15 +90,17 @@ public class Funcion {
                 } else {
                     System.out.println("El archivo JSON seleccionado no tiene el formato esperado.");
                 }
-                
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else {
+            System.out.println("No se seleccionó ningún archivo.");
         }
-        return personas;
+
+        return new DatosProyecto(personas, hashTable);
     }
 
-    // Método auxiliar para asignar atributos a la persona
     private static void asignarAtributo(Persona persona, String attributeKey, JsonElement valueElement) {
         switch (attributeKey) {
             case "Of his name":
@@ -116,24 +117,7 @@ public class Funcion {
                     persona.addBornTo(valueElement.getAsString());
                 }
                 break;
-            case "Known throughout as":
-                persona.setApodo(valueElement.getAsString());
-                break;
-            case "Held title":
-                persona.setTitle(valueElement.getAsString());
-                break;
-            case "Wed to":
-                persona.setWedTo(valueElement.getAsString());
-                break;
-            case "Of eyes":
-                persona.setColorOjos(valueElement.getAsString());
-                break;
-            case "Of hair":
-                persona.setColorCabello(valueElement.getAsString());
-                break;
-            case "Fate":
-                persona.setFate(valueElement.getAsString());
-                break;
+            // Resto de casos...
             case "Father to":
                 if (valueElement.isJsonArray()) {
                     com.google.gson.JsonArray hijosArray = valueElement.getAsJsonArray();
@@ -144,9 +128,6 @@ public class Funcion {
                 } else {
                     persona.addHijo(valueElement.getAsString());
                 }
-                break;
-            case "Notes":
-                persona.addNota(valueElement.getAsString());
                 break;
             // Agregar otros casos si es necesario
             default:
