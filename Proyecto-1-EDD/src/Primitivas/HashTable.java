@@ -1,5 +1,14 @@
 package Primitivas;
 
+/**
+ * Clase que representa una clase HashTable
+ *
+ * @author Luciano Minardo, Ricardo Paez y Gabriele Colarusso
+ * 
+ * @version 4/11/2024
+ * 
+ */
+
 public class HashTable<K, V> {
     private class Entry<K, V> {
         K key;

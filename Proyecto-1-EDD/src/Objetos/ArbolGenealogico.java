@@ -6,7 +6,7 @@ import Primitivas.Lista;
 /**
  * Clase que representa el árbol genealógico y maneja la construcción del mismo.
  *
- * @author ...
+ * @author Luciano Minardo, Ricardo Paez y Gabriele Colarusso
  * @version 4/11/2024
  */
 public class ArbolGenealogico {
@@ -48,7 +48,7 @@ public class ArbolGenealogico {
         for (int i = 0; i < personas.len(); i++) {
             Persona persona = personas.get(i);
             NodoArbol nodoActual = tablaPersonasPorId.get(persona.getId());
-
+            
             // Establecer padres
             Lista<String> padres = persona.getBornTo();
             if (padres != null && padres.len() > 0) {
