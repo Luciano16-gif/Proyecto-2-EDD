@@ -93,6 +93,7 @@ public class Lista<T> {
         }
         size--;
     }
+    
 
     // Imprimir la lista (opcional)
     public void printList() {
