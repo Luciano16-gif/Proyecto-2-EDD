@@ -16,24 +16,29 @@ import Primitivas.HashTable;
 public class Proyecto2EDD {
 
     public static void main(String[] args) {
-        // Leer las personas desde el JSON usando la clase Funcion
+        // Leer las personas y relaciones desde el JSON usando la clase Funcion
         DatosProyecto datos = Funcion.leerJsonConFileChooser();
 
-        Lista<Persona> personas = datos.getPersonas();
-        HashTable<String, Persona> hashTable = datos.getHashTable();
+        if (datos != null) {
+            Lista<Persona> personas = datos.getPersonas();
+            HashTable<String, Persona> hashTable = datos.getHashTable();
+            Lista<String> relaciones = datos.getRelaciones(); // Obtiene la lista de relaciones
 
-        if (personas != null && personas.getSize() > 0) {
-            // Crear el árbol genealógico y el grafo
-            ArbolGenealogico arbolGenealogico = new ArbolGenealogico();
-            Grafos grafos = new Grafos();
+            if (relaciones != null && relaciones.getSize() > 0) {
+                // Crear el árbol genealógico y el grafo
+                ArbolGenealogico arbolGenealogico = new ArbolGenealogico();
+                Grafos grafos = new Grafos();
 
-            // Construir el árbol genealógico y agregar los arcos al grafo
-            arbolGenealogico.construirArbol(personas, grafos);
+                // Construir el árbol genealógico y agregar los arcos al grafo usando relaciones
+                arbolGenealogico.construirArbol(relaciones, grafos);
 
-            // Mostrar el grafo
-            grafos.mostrarGrafo();
+                // Mostrar el grafo en la interfaz gráfica
+                grafos.mostrarGrafo();
+            } else {
+                System.out.println("No se pudo cargar el árbol genealógico: lista de relaciones vacía.");
+            }
         } else {
-            System.out.println("No se pudo cargar el árbol genealógico.");
+            System.out.println("No se pudo cargar el árbol genealógico: datos nulos.");
         }
     }
 }

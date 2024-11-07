@@ -56,6 +56,10 @@ public class Persona {
     public String getId() {
         return id;
     }
+    
+    public String getApodo() {
+        return apodo;
+    }
 
     public String getNombre() {
         return nombre;
@@ -80,4 +84,54 @@ public class Persona {
             hijos.append(nombreHijo);
         }
     }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getWedTo() {
+        return wedTo;
+    }
+
+    public void setWedTo(String wedTo) {
+        this.wedTo = wedTo;
+    }
+
+    public String getColorOjos() {
+        return colorOjos;
+    }
+
+    public void setColorOjos(String colorOjos) {
+        this.colorOjos = colorOjos;
+    }
+
+    public String getColorCabello() {
+        return colorCabello;
+    }
+
+    public void setColorCabello(String colorCabello) {
+        this.colorCabello = colorCabello;
+    }
+
+    public String getFate() {
+        return fate;
+    }
+
+    public void setFate(String fate) {
+        this.fate = fate;
+    }
+
+    public Lista<String> getNotas() {
+        return notas;
+    }
+
+    public void setNotas(Lista<String> notas) {
+        this.notas = notas;
+    }
+    
+    
 }
