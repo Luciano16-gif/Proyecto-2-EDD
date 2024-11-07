@@ -17,6 +17,22 @@ public class NodoArbol {
         this.persona = persona;
         this.hijos = new Lista<>();
     }
+    
+    /**
+     * Remueve un hijo de la lista de hijos del nodo actual.
+     *
+     * @param hijo NodoArbol que representa al hijo a remover.
+     */
+    public void removerHijo(NodoArbol hijo) {
+        for(int i = 0; i < hijos.len(); i++) {
+            if(hijos.get(i).equals(hijo)) {
+                hijos.remove(i);
+                System.out.println("Hijo removido: " + hijo.getPersona().getNombre());
+                return;
+            }
+        }
+        System.out.println("Hijo no encontrado para remover: " + hijo.getPersona().getNombre());
+    }
 
     public void agregarHijo(NodoArbol hijo) {
         this.hijos.append(hijo);

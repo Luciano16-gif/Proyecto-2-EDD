@@ -18,6 +18,11 @@ import java.io.FileReader;
  */
 public class Funcion {
 
+    /**
+     * Lee un archivo JSON seleccionado por el usuario y lo procesa en objetos Persona.
+     *
+     * @return DatosProyecto que encapsula la lista de personas y la tabla hash.
+     */
     public static DatosProyecto leerJsonConFileChooser() {
         Lista<Persona> personas = new Lista<>();
         HashTable<String, Persona> hashTable = new HashTable<>(); // Tabla hash para búsqueda rápida
@@ -101,6 +106,13 @@ public class Funcion {
         return new DatosProyecto(personas, hashTable);
     }
 
+    /**
+     * Asigna un atributo específico a una persona basado en la clave del atributo.
+     *
+     * @param persona       Persona a la que se le asignará el atributo.
+     * @param attributeKey  Clave del atributo.
+     * @param valueElement  Valor del atributo.
+     */
     private static void asignarAtributo(Persona persona, String attributeKey, JsonElement valueElement) {
         switch (attributeKey) {
             case "Of his name":
@@ -117,7 +129,21 @@ public class Funcion {
                     persona.addBornTo(valueElement.getAsString());
                 }
                 break;
-            // Resto de casos...
+            case "Known throughout as":
+                persona.setApodo(valueElement.getAsString());
+                break;
+            case "Held title":
+                persona.setTitle(valueElement.getAsString());
+                break;
+            case "Wed to":
+                persona.setWedTo(valueElement.getAsString());
+                break;
+            case "Of eyes":
+                persona.setColorOjos(valueElement.getAsString());
+                break;
+            case "Of hair":
+                persona.setColorCabello(valueElement.getAsString());
+                break;
             case "Father to":
                 if (valueElement.isJsonArray()) {
                     com.google.gson.JsonArray hijosArray = valueElement.getAsJsonArray();
@@ -128,6 +154,12 @@ public class Funcion {
                 } else {
                     persona.addHijo(valueElement.getAsString());
                 }
+                break;
+            case "Notes":
+                persona.addNota(valueElement.getAsString());
+                break;
+            case "Fate":
+                persona.setFate(valueElement.getAsString());
                 break;
             // Agregar otros casos si es necesario
             default:
