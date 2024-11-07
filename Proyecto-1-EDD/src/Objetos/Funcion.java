@@ -147,17 +147,17 @@ private static void asignarAtributo(Persona persona, String attributeKey, JsonEl
                     persona.addBornTo(padreNombre);
                     if (isPadre) {
                         // Agregar la relación de padre primero
-                        relaciones.append(nombreCompleto + " : " + padreNombre);
+                        relaciones.append(padreNombre + " : " + nombreCompleto);
                         isPadre = false; // Después de agregar el padre, agregar la madre si existe
                     } else {
                         // Si ya es el padre, se agrega la madre (si existe)
-                        relaciones.append(nombreCompleto + " : " + padreNombre);
+                        relaciones.append(padreNombre + " : " + nombreCompleto);
                     }
                 }
             } else {
                 String padreNombre = valueElement.getAsString();
                 persona.addBornTo(padreNombre);
-                relaciones.append(nombreCompleto + " : " + padreNombre);
+                relaciones.append(padreNombre + " : " + nombreCompleto);
             }
             break;
         default:
