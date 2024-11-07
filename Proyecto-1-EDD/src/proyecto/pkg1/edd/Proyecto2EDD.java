@@ -3,36 +3,42 @@ package proyecto.pkg1.edd;
 import Objetos.Funcion;
 import Objetos.ArbolGenealogico;
 import Objetos.Grafos;
+import Objetos.DatosProyecto;
 import Objetos.Persona;
 import Primitivas.Lista;
+import Primitivas.HashTable;
 
 /**
  * Clase que representa el main.
  *
- * @author Luciano Minardo, Ricardo Paez y Gabriele Colarusso
- * 
  * @version 4/11/2024
- * 
  */
-
 public class Proyecto2EDD {
 
     public static void main(String[] args) {
-        // Leer las personas desde el JSON usando la clase Funcion
-        Lista<Persona> personas = Funcion.leerJsonConFileChooser();
+        // Leer las personas y relaciones desde el JSON usando la clase Funcion
+        DatosProyecto datos = Funcion.leerJsonConFileChooser();
 
-        if (personas != null && personas.getSize() > 0) {
-            // Crear el árbol genealógico y el grafo
-            ArbolGenealogico arbolGenealogico = new ArbolGenealogico();
-            Grafos grafos = new Grafos();
+        if (datos != null) {
+            Lista<Persona> personas = datos.getPersonas();
+            HashTable<String, Persona> hashTable = datos.getHashTable();
+            Lista<String> relaciones = datos.getRelaciones(); // Obtiene la lista de relaciones
 
-            // Construir el árbol y el grafo
-            arbolGenealogico.construirArbol(personas, grafos);
+            if (relaciones != null && relaciones.getSize() > 0) {
+                // Crear el árbol genealógico y el grafo
+                ArbolGenealogico arbolGenealogico = new ArbolGenealogico();
+                Grafos grafos = new Grafos();
 
-            // Mostrar el grafo
-            grafos.mostrarGrafo();
+                // Construir el árbol genealógico y agregar los arcos al grafo usando relaciones
+                arbolGenealogico.construirArbol(relaciones, grafos);
+
+                // Mostrar el grafo en la interfaz gráfica
+                grafos.mostrarGrafo();
+            } else {
+                System.out.println("No se pudo cargar el árbol genealógico: lista de relaciones vacía.");
+            }
         } else {
-            System.out.println("No se pudo cargar el árbol genealógico.");
+            System.out.println("No se pudo cargar el árbol genealógico: datos nulos.");
         }
     }
 }
