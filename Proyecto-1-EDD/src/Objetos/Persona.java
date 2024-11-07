@@ -2,6 +2,9 @@ package Objetos;
 
 import Primitivas.Lista;
 
+/**
+ * Clase que representa una persona en el árbol genealógico.
+ */
 public class Persona {
     private String nombre;
     private String apodo;
@@ -15,6 +18,11 @@ public class Persona {
     private Lista<String> hijos;
     private Lista<String> notas;
 
+    /**
+     * Constructor de la clase Persona.
+     *
+     * @param nombre Nombre de la persona.
+     */
     public Persona(String nombre) {
         this.nombre = nombre;
         this.apodo = "";
@@ -52,15 +60,6 @@ public class Persona {
 
     public void setOfHisName(String ofHisName) {
         this.ofHisName = ofHisName;
-    }
-
-    public String getId() {
-        // Genera un ID único basado en el nombre y "Of his name"
-        if (ofHisName != null && !ofHisName.isEmpty()) {
-            return nombre + ", " + ofHisName + " of his name";
-        } else {
-            return nombre;
-        }
     }
 
     public String getTitle() {
@@ -125,5 +124,18 @@ public class Persona {
 
     public void addNota(String nota) {
         this.notas.append(nota);
+    }
+
+    /**
+     * Genera un ID único basado en el nombre y "Of his name".
+     *
+     * @return ID único de la persona.
+     */
+    public String getId() {
+        if (ofHisName != null && !ofHisName.isEmpty()) {
+            return nombre + ", " + ofHisName + " of his name";
+        } else {
+            return nombre;
+        }
     }
 }

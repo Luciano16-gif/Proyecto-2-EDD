@@ -75,7 +75,7 @@ public class ArbolGenealogico {
             
             // Verificar si el nodo es un placeholder
             if (primerNombreHijo.equals(primerNombre) && hijo.getPersona().getOfHisName().isEmpty()) {
-                // Resolver el ID completo usando el nombre completo
+                // Resolver el ID completo usando el nombre del hijo
                 String idCompleto = resolverIdPorNombre(nombreHijo);
                 
                 if (idCompleto != null && tablaPersonasPorId.containsKey(idCompleto)) {
@@ -101,6 +101,12 @@ public class ArbolGenealogico {
         }
     }
 
+    /**
+     * Construye el árbol genealógico a partir de una lista de personas y añade las relaciones al grafo.
+     *
+     * @param personas Lista de personas a procesar.
+     * @param grafos   Objeto Grafos para visualizar las conexiones.
+     */
     public void construirArbol(Lista<Persona> personas, Grafos grafos) {
         listaPersonas = personas;
         
@@ -157,10 +163,15 @@ public class ArbolGenealogico {
                             }
                             
                             if (!duplicado) {
-                                nodoPadre.agregarHijo(nodoActual);
-                                grafos.addArco1(idPadre, persona.getId());
-                                // Buscar y eliminar placeholder si existe
-                                eliminarPlaceholder(nodoPadre, persona.getNombre(), grafos);
+                                // Verificar si se crea un ciclo
+                                if (!creaCiclo(nodoActual, nodoPadre)) {
+                                    nodoPadre.agregarHijo(nodoActual);
+                                    grafos.addArco1(idPadre, persona.getId());
+                                    // Buscar y eliminar placeholder si existe
+                                    eliminarPlaceholder(nodoPadre, persona.getNombre(), grafos);
+                                } else {
+                                    System.out.println("Advertencia: Relación padre-hijo entre " + nodoPadre.getPersona().getNombre() + " y " + persona.getNombre() + " crea un ciclo. Relación omitida.");
+                                }
                             }
                         }
                     } else {
@@ -208,10 +219,15 @@ public class ArbolGenealogico {
                             }
 
                             if (!conectado) {
-                                nodoPadre.agregarHijo(nodoHijo);
-                                grafos.addArco1(padre.getId(), idHijo);
-                                // Buscar y eliminar placeholder si existe
-                                eliminarPlaceholder(nodoPadre, nodoHijo.getPersona().getNombre(), grafos);
+                                // Verificar si se crea un ciclo
+                                if (!creaCiclo(nodoHijo, nodoPadre)) {
+                                    nodoPadre.agregarHijo(nodoHijo);
+                                    grafos.addArco1(padre.getId(), idHijo);
+                                    // Buscar y eliminar placeholder si existe
+                                    eliminarPlaceholder(nodoPadre, nodoHijo.getPersona().getNombre(), grafos);
+                                } else {
+                                    System.out.println("Advertencia: Relación padre-hijo entre " + padre.getNombre() + " y " + nombreHijo + " crea un ciclo. Relación omitida.");
+                                }
                             }
                         }
                     } else {
@@ -234,6 +250,96 @@ public class ArbolGenealogico {
                 }
             }
         }
+
+        // Opcional: Eliminar placeholders redundantes si es necesario
+        eliminarPlaceholdersRedundantes(grafos);
+    }
+
+    /**
+     * Elimina placeholders redundantes que ya tienen un nodo completo correspondiente.
+     *
+     * @param grafos Objeto Grafos para actualizar las conexiones.
+     */
+    private void eliminarPlaceholdersRedundantes(Grafos grafos) {
+        Lista<String> ids = tablaPersonasPorId.keys();
+        for (int i = 0; i < ids.len(); i++) {
+            String id = ids.get(i);
+            if (id.startsWith("[Placeholder]_")) {
+                String nombre = id.substring("[Placeholder]_".length());
+                String idCompleto = resolverIdPorNombre(nombre);
+                if (idCompleto != null && tablaPersonasPorId.containsKey(idCompleto)) {
+                    // Eliminar el nodo placeholder
+                    NodoArbol nodoPlaceholder = tablaPersonasPorId.get(id);
+                    Lista<NodoArbol> hijosPlaceholder = nodoPlaceholder.getHijos();
+
+                    for (int j = 0; j < hijosPlaceholder.len(); j++) {
+                        NodoArbol hijo = hijosPlaceholder.get(j);
+                        NodoArbol nodoCompleto = tablaPersonasPorId.get(idCompleto);
+                        nodoCompleto.agregarHijo(hijo);
+                        grafos.addArco1(idCompleto, hijo.getPersona().getId());
+                    }
+
+                    grafos.removerPersona(id);
+                    tablaPersonasPorId.remove(id);
+                    nombreAId.remove(nombre);
+
+                    System.out.println("Placeholder redundante eliminado: " + nombre);
+                }
+            }
+        }
+    }
+
+    /**
+     * Verifica si establecer una relación padre-hijo crearía un ciclo.
+     *
+     * @param nodoHijo Nodo del hijo.
+     * @param nodoPadre Nodo del padre.
+     * @return true si se crea un ciclo, false en caso contrario.
+     */
+    private boolean creaCiclo(NodoArbol nodoHijo, NodoArbol nodoPadre) {
+        // Realiza una búsqueda en profundidad desde el padre para ver si encuentra al hijo
+        return buscarEnAncestros(nodoPadre, nodoHijo);
+    }
+
+    /**
+     * Busca recursivamente si un nodo está en los ancestros de otro nodo.
+     *
+     * @param actual Nodo actual en la búsqueda.
+     * @param objetivo Nodo que se busca en los ancestros.
+     * @return true si el objetivo se encuentra en los ancestros, false en caso contrario.
+     */
+    private boolean buscarEnAncestros(NodoArbol actual, NodoArbol objetivo) {
+        if (actual == null) {
+            return false;
+        }
+        if (actual.equals(objetivo)) {
+            return true;
+        }
+        Lista<NodoArbol> padres = obtenerPadres(actual);
+        for (int i = 0; i < padres.len(); i++) {
+            if (buscarEnAncestros(padres.get(i), objetivo)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Obtiene una lista de padres de un nodo.
+     * 
+     * @param nodo Nodo del cual se obtienen los padres.
+     * @return Lista de nodos padres.
+     */
+    private Lista<NodoArbol> obtenerPadres(NodoArbol nodo) {
+        Lista<NodoArbol> padres = new Lista<>();
+        Lista<String> todasLasClaves = tablaPersonasPorId.keys();
+        for (int i = 0; i < todasLasClaves.len(); i++) {
+            NodoArbol posiblePadre = tablaPersonasPorId.get(todasLasClaves.get(i));
+            if (posiblePadre != null && posiblePadre.getHijos().contains(nodo)) {
+                padres.append(posiblePadre);
+            }
+        }
+        return padres;
     }
 
     /**
@@ -263,10 +369,22 @@ public class ArbolGenealogico {
         return nombreAId.get(nombre);
     }
 
+    /**
+     * Busca un nodo en el árbol por su ID.
+     *
+     * @param id Identificador único de la persona.
+     * @return NodoArbol correspondiente si se encuentra, null en caso contrario.
+     */
     public NodoArbol buscarPorId(String id) {
         return tablaPersonasPorId.get(id);
     }
 
+    /**
+     * Busca un nodo en el árbol por su nombre o apodo.
+     *
+     * @param nombre Nombre completo o apodo de la persona.
+     * @return NodoArbol correspondiente si se encuentra, null en caso contrario.
+     */
     public NodoArbol buscarPorNombre(String nombre) {
         String id = nombreAId.get(nombre);
         if (id != null) {
@@ -274,4 +392,5 @@ public class ArbolGenealogico {
         }
         return null;
     }
+    
 }
