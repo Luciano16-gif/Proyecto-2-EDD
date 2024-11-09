@@ -17,6 +17,9 @@ public class Proyecto2EDD {
 
     public static void main(String[] args) {
         // Leer las personas desde el JSON usando la clase Funcion
+        String person1 = "Michael Raymond";
+        String person2 = "Michael Raymond Baratheon";
+        System.out.println(person2.startsWith(person1));
         DatosProyecto datos = Funcion.leerJsonConFileChooser();
 
         Lista<Persona> personas = datos.getPersonas();

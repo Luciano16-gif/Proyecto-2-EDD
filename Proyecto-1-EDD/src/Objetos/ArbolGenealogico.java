@@ -25,11 +25,30 @@ public class ArbolGenealogico {
      * @param nombreCompleto Nombre completo (ej: "Ormund Baratheon")
      * @return Primer nombre (ej: "Ormund")
      */
-    private String extraerPrimerNombre(String nombreCompleto) {
+    public String extraerPrimerNombre(String nombreCompleto) {
         if (nombreCompleto == null || nombreCompleto.isEmpty()) {
             return "";
         }
-        return nombreCompleto.split(" ")[0];
+    
+        // Split the full name into parts
+        String[] parts = nombreCompleto.split(" ");
+    
+        // If only one word, return it
+        if (parts.length <= 1) {
+            return nombreCompleto;
+        }
+
+        // Build everything except the last part
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < parts.length - 1; i++) {
+            result.append(parts[i]);
+            // Add space if it's not the last part
+            if (i < parts.length - 2) {
+                result.append(" ");
+            }
+        }
+        //System.out.println(result.toString());    
+        return result.toString();
     }
 
     /**
@@ -47,9 +66,11 @@ public class ArbolGenealogico {
             // Evitar sobrescribir si ya está mapeado
             if (!nombreAId.containsKey(nombreCorto)) {
                 nombreAId.put(nombreCorto, persona.getId());
+                //System.out.println(nombreAId.get(nombreCorto));
             } else {
                 // Si el alias ya está mapeado a otro ID, no mapear y emitir una advertencia
                 String idExistente = nombreAId.get(nombreCorto);
+                System.out.println(nombreAId.get(idExistente));
                 if (!idExistente.equals(persona.getId())) {
                     System.out.println("Advertencia: Alias \"" + nombreCorto + "\" ya está mapeado a otro ID. Alias omitido para: " + persona.getNombre());
                 }
