@@ -125,6 +125,6 @@ public class HashTable<K, V> {
     public int size() {
         return size;
     }
-
-    // Otros métodos según sea necesario...
+    
+    
 }

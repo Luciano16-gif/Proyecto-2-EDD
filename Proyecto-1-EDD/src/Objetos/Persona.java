@@ -132,10 +132,10 @@ public class Persona {
      * @return ID único de la persona.
      */
     public String getId() {
+        StringBuilder idBuilder = new StringBuilder(nombre);
         if (ofHisName != null && !ofHisName.isEmpty()) {
-            return nombre + ", " + ofHisName + " of his name";
-        } else {
-            return nombre;
+            idBuilder.append(", ").append(ofHisName).append(" of his name");
         }
+        return idBuilder.toString();
     }
 }

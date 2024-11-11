@@ -1,6 +1,7 @@
 package Objetos;
 
 import Primitivas.Lista;
+import Primitivas.Nodo;
 
 /**
  * Esta clase representa un nodo en el árbol genealógico.
@@ -41,8 +42,15 @@ public class NodoArbol {
     public Lista<NodoArbol> getHijos() {
         return hijos;
     }
+    
+    public void printSon() {
+        for (int i = 0; i < hijos.len(); i++) {
+            System.out.println(hijos.get(i).getPersona().getNombre());
+        }
+    }
 
     public Persona getPersona() {
         return persona;
     }
+    
 }
