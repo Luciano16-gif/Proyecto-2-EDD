@@ -126,5 +126,19 @@ public class HashTable<K, V> {
         return size;
     }
     
-    
+    /**
+     * Método para obtener todas las claves de la tabla.
+     * @return Lista de todas las claves.
+     */
+    public Lista<K> getKeys() {
+        Lista<K> allKeys = new Lista<>();
+        for(int i = 0; i < buckets.length; i++) {
+            Lista<Entry<K, V>> bucket = buckets[i];
+            for(int j = 0; j < bucket.len(); j++) {
+                allKeys.append(bucket.get(j).key);
+            }
+        }
+        return allKeys;
+    }
+
 }

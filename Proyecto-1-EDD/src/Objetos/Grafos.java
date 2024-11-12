@@ -4,6 +4,7 @@ import Primitivas.Lista;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.Edge;
+import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.view.Viewer;
 
@@ -16,8 +17,7 @@ public class Grafos {
     private Graph graph;
 
     public Grafos() {
-        this.graph = new SingleGraph("Grafo de Personas");
-        // Configuración de estilos básicos
+        this.graph = new MultiGraph("Árbol Genealógico");
         graph.setAttribute("ui.stylesheet",
             "node {" +
             "   text-alignment: above;" +
@@ -27,6 +27,7 @@ public class Grafos {
             "   arrow-shape: arrow;" +
             "   size: 2px;" +
             "}");
+
     }
 
     /**
@@ -62,11 +63,10 @@ public class Grafos {
             // Genera un ID único para el arco usando los IDs de los nodos
             String edgeId = idPadre + "-" + idHijo;
 
-    public void addArco1(String idPadre, String idHijo) {
-        if (graph.getNode(idPadre) != null && graph.getNode(idHijo) != null) {
-            String edgeId = idPadre + "-" + idHijo;
+            // Verifica si el arco ya existe antes de agregarlo
             if (graph.getEdge(edgeId) == null) {
                 graph.addEdge(edgeId, idPadre, idHijo, true); // true para crear un arco dirigido
+
                 // Establecer el estilo del arco (opcional)
                 graph.getEdge(edgeId).setAttribute("ui.style", "fill-color: red;");
             }
@@ -119,15 +119,19 @@ public class Grafos {
 
         return connectedEdges;
     }
-
-    /**
-     * Muestra el grafo utilizando GraphStream.
-     */
-    public void mostrarGrafo() {
+    
+    public void mostrarArbol() {
         System.setProperty("org.graphstream.ui", "swing");
-
-        // Mostrar el grafo
+        /*
         Viewer viewer = graph.display();
         viewer.setCloseFramePolicy(Viewer.CloseFramePolicy.CLOSE_VIEWER);
+        viewer.getDefaultView().enableMouseOptions();
+        */
+        Clicks visualizador = new Clicks(graph);
+        
+    }
+
+    public Graph getGrafo() {
+        return graph;
     }
 }
