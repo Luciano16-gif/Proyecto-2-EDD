@@ -28,6 +28,51 @@ public class Lista<T> {
         this.cabeza = null;
         this.size = 0;
     }
+    
+    // Crear el iterador manual
+    public class ListaIterator {
+        private Nodo<T> actual;
+
+        public ListaIterator() {
+            this.actual = cabeza; // Comienza desde la cabeza
+        }
+
+        public boolean hasNext() {
+            return actual != null;
+        }
+
+        public T next() {
+            if (!hasNext()) {
+                throw new IllegalStateException("No hay más elementos.");
+            }
+            T dato = actual.dato;
+            actual = actual.siguiente;
+            return dato;
+        }
+    }
+
+    // Método para devolver el iterador
+    public ListaIterator iterator() {
+        return new ListaIterator();
+    }
+
+    public Lista<String> getKeys() {
+        Lista<String> keys = new Lista<>();
+        Nodo<T> actual = cabeza;
+        while (actual != null) {
+            keys.append((String) actual.dato);  // Suponiendo que los datos en la lista son de tipo String
+            actual = actual.siguiente;
+        }
+        return keys;
+    }
+    
+    /**
+     * Verifica si la lista está vacía.
+     * @return true si la lista está vacía, false de lo contrario.
+     */
+    public boolean isEmpty() {
+        return size == 0;
+    }
 
     // Añadir un elemento al final de la lista
     public void append(T dato) {
@@ -104,4 +149,19 @@ public class Lista<T> {
         }
         System.out.println("null");
     }
+    
+    @Override
+public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("[");
+    for (int i = 0; i < this.getSize(); i++) {
+        sb.append(this.get(i));
+        if (i < this.getSize() - 1) {
+            sb.append(", ");
+        }
+    }
+    sb.append("]");
+    return sb.toString();
+}
+
 }

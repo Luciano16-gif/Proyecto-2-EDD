@@ -4,6 +4,7 @@ import Primitivas.Lista;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.Edge;
+import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.view.Viewer;
 
@@ -15,12 +16,8 @@ import org.graphstream.ui.view.Viewer;
 public class Grafos {
     private Graph graph;
 
-    /**
-     * Constructor de la clase Grafos.
-     */
     public Grafos() {
-        this.graph = new SingleGraph("Grafo de Personas");
-        // Configuración de estilos básicos
+        this.graph = new MultiGraph("Árbol Genealógico");
         graph.setAttribute("ui.stylesheet",
             "node {" +
             "   text-alignment: above;" +
@@ -30,6 +27,7 @@ public class Grafos {
             "   arrow-shape: arrow;" +
             "   size: 2px;" +
             "}");
+
     }
 
     /**
@@ -121,15 +119,19 @@ public class Grafos {
 
         return connectedEdges;
     }
-
-    /**
-     * Muestra el grafo utilizando GraphStream.
-     */
-    public void mostrarGrafo() {
+    
+    public void mostrarArbol() {
         System.setProperty("org.graphstream.ui", "swing");
-
-        // Mostrar el grafo
+        /*
         Viewer viewer = graph.display();
         viewer.setCloseFramePolicy(Viewer.CloseFramePolicy.CLOSE_VIEWER);
+        viewer.getDefaultView().enableMouseOptions();
+        */
+        Clicks visualizador = new Clicks(graph);
+        
+    }
+
+    public Graph getGrafo() {
+        return graph;
     }
 }

@@ -12,14 +12,16 @@ import java.io.File;
 import java.io.FileReader;
 
 /**
- * Clase que contiene funciones útiles para el proyecto, incluyendo la lectura del archivo JSON.
+ * Clase que contiene funciones útiles para el proyecto, incluyendo la lectura
+ * del archivo JSON.
  *
  * @version 4/11/2024
  */
 public class Funcion {
 
     /**
-     * Lee un archivo JSON seleccionado por el usuario y lo procesa en objetos Persona.
+     * Lee un archivo JSON seleccionado por el usuario y lo procesa en objetos
+     * Persona.
      *
      * @return DatosProyecto que encapsula la lista de personas y la tabla hash.
      */
@@ -107,11 +109,12 @@ public class Funcion {
     }
 
     /**
-     * Asigna un atributo específico a una persona basado en la clave del atributo.
+     * Asigna un atributo específico a una persona basado en la clave del
+     * atributo.
      *
-     * @param persona       Persona a la que se le asignará el atributo.
-     * @param attributeKey  Clave del atributo.
-     * @param valueElement  Valor del atributo.
+     * @param persona Persona a la que se le asignará el atributo.
+     * @param attributeKey Clave del atributo.
+     * @param valueElement Valor del atributo.
      */
     private static void asignarAtributo(Persona persona, String attributeKey, JsonElement valueElement) {
         switch (attributeKey) {

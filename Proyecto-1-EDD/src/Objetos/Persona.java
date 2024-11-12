@@ -1,6 +1,7 @@
 package Objetos;
 
 import Primitivas.Lista;
+import Primitivas.Lista.ListaIterator;
 
 /**
  * Clase que representa una persona en el árbol genealógico.
@@ -106,17 +107,44 @@ public class Persona {
         return bornTo;
     }
 
-    public void addBornTo(String padre) {
-        this.bornTo.append(padre);
+    public void addBornTo(String nombrePadre) {
+        if (!bornTo.contains(nombrePadre)) {
+            bornTo.append(nombrePadre);
+        }
     }
+
+
+    public void addHijo(String nombreHijo) {
+        if (!hijos.contains(nombreHijo)) {
+            hijos.append(nombreHijo);
+        }
+    }
+    
+    public void addBornTo2(String padre) {
+    // Comprobar si todos los atributos (excepto el nombre) están vacíos o nulos
+    if ((apodo == null || apodo.isEmpty()) &&
+        (ofHisName == null || ofHisName.isEmpty()) &&
+        (title == null || title.isEmpty()) &&
+        (wedTo == null || wedTo.isEmpty()) &&
+        (colorOjos == null || colorOjos.isEmpty()) &&
+        (colorCabello == null || colorCabello.isEmpty()) &&
+        (fate == null || fate.isEmpty()) &&
+        (notas == null || notas.isEmpty()) &&
+        (hijos == null || hijos.isEmpty())) {
+        
+        // Si todos los demás atributos están vacíos o nulos, agregar el padre a bornTo
+        if (bornTo == null) {
+            bornTo = new Lista<>();
+        }
+        bornTo.append(padre);
+    }
+    }   
+
 
     public Lista<String> getHijos() {
         return hijos;
     }
 
-    public void addHijo(String hijo) {
-        this.hijos.append(hijo);
-    }
 
     public Lista<String> getNotas() {
         return notas;
@@ -138,4 +166,79 @@ public class Persona {
             return nombre;
         }
     }
+    
+    @Override
+public String toString() {
+    // Inicia la representación de la persona
+    StringBuilder sb = new StringBuilder();
+
+    // Agregar "Nombre"
+    sb.append("Nombre: '").append(nombre).append("'\n");
+
+    // Agregar "Of his name" si existe
+    if (ofHisName != null && !ofHisName.isEmpty()) {
+        sb.append("Of His Name: '").append(ofHisName).append("'\n");
+    }
+
+    // Agregar "Apodo" si existe
+    if (apodo != null && !apodo.isEmpty()) {
+        sb.append("Apodo: '").append(apodo).append("'\n");
+    }
+
+    // Agregar "Título" si existe
+    if (title != null && !title.isEmpty()) {
+        sb.append("Título: '").append(title).append("'\n");
+    }
+
+    // Agregar "Casado con" si existe
+    if (wedTo != null && !wedTo.isEmpty()) {
+        sb.append("Casado con: '").append(wedTo).append("'\n");
+    }
+
+    // Agregar "Color de ojos" si existe
+    if (colorOjos != null && !colorOjos.isEmpty()) {
+        sb.append("Color de ojos: '").append(colorOjos).append("'\n");
+    }
+
+    // Agregar "Color de cabello" si existe
+    if (colorCabello != null && !colorCabello.isEmpty()) {
+        sb.append("Color de cabello: '").append(colorCabello).append("'\n");
+    }
+
+    // Agregar "Destino" si existe
+    if (fate != null && !fate.isEmpty()) {
+        sb.append("Destino: '").append(fate).append("'\n");
+    }
+
+    // Agregar "Notas" si existe
+    if (notas != null && !notas.isEmpty()) {
+        sb.append("Notas: '").append(notas).append("'\n");
+    }
+
+    // Siempre mostrar los padres (bornTo), aunque esté vacío
+    if (bornTo != null && !bornTo.isEmpty()) {
+        sb.append("Nacido de:\n");
+
+        // Usar el iterador de Lista
+        ListaIterator iterator = bornTo.iterator();
+        while (iterator.hasNext()) {
+            String padre = (String) iterator.next();
+            sb.append("  - ").append(padre).append("\n");
+        }
+    }
+
+    // Agregar "Hijos" si existen
+    if (hijos != null && !hijos.isEmpty()) {
+        sb.append("Hijos:\n");
+
+        // Usar el iterador de Lista para hijos
+        ListaIterator iterator = hijos.iterator();
+        while (iterator.hasNext()) {
+            String hijo = (String) iterator.next();
+            sb.append("  - ").append(hijo).append("\n");
+        }
+    }
+
+    return sb.toString();  // Devolver la cadena final
+}
 }

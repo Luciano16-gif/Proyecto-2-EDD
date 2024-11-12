@@ -12,10 +12,33 @@ import Primitivas.Lista;
 public class NodoArbol {
     private Persona persona;
     private Lista<NodoArbol> hijos;
+    private Lista<NodoArbol> padres; // Nuevo atributo para almacenar los padres
 
     public NodoArbol(Persona persona) {
         this.persona = persona;
         this.hijos = new Lista<>();
+        this.padres = new Lista<>(); // Inicializamos la lista de padres
+    }
+
+    public void agregarHijo(NodoArbol hijo) {
+        this.hijos.append(hijo);
+        hijo.agregarPadre(this); // También agregamos este nodo como padre del hijo
+    }
+
+    public void agregarPadre(NodoArbol padre) {
+        this.padres.append(padre);
+    }
+
+    public Lista<NodoArbol> getHijos() {
+        return hijos;
+    }
+
+    public Lista<NodoArbol> getPadres() {
+        return padres;
+    }
+
+    public Persona getPersona() {
+        return persona;
     }
     
     /**
@@ -33,16 +56,11 @@ public class NodoArbol {
         }
         System.out.println("Hijo no encontrado para remover: " + hijo.getPersona().getNombre());
     }
-
-    public void agregarHijo(NodoArbol hijo) {
-        this.hijos.append(hijo);
+    
+    public void printSon() {
+        for (int i = 0; i < hijos.len(); i++) {
+            System.out.println(hijos.get(i).getPersona().getNombre());
+        }
     }
 
-    public Lista<NodoArbol> getHijos() {
-        return hijos;
-    }
-
-    public Persona getPersona() {
-        return persona;
-    }
 }
