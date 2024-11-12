@@ -134,4 +134,19 @@ public class Grafos {
     public Graph getGrafo() {
         return graph;
     }
+    
+    /**
+ * Obtiene una lista con los IDs de todos los nodos en el grafo.
+ *
+ * @return Lista de IDs de los nodos.
+ */
+public Lista<String> getIdsNodos() {
+    Lista<String> idsNodos = new Lista<>();
+    for (Node node : graph) {  // Itera sobre todos los nodos en el grafo
+        idsNodos.append(node.getId());  // Añade el ID de cada nodo a la lista
+    }
+    return idsNodos;
+}
+
+    
 }
