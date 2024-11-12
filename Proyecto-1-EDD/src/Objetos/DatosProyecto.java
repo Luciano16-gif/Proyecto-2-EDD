@@ -27,8 +27,4 @@ public class DatosProyecto {
     public HashTable<String, Persona> getHashTable() {
         return hashTable;
     }
-
-    public Lista<String> getRelaciones() { // Método para obtener relaciones
-        return relaciones;
-    }
 }

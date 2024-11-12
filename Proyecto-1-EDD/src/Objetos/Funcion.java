@@ -1,8 +1,5 @@
 package Objetos;
 
-import Objetos.DatosProyecto;
-import Objetos.JsonArray;
-import Objetos.Persona;
 import Primitivas.HashTable;
 import Primitivas.Lista;
 import com.google.gson.Gson;
@@ -14,71 +11,73 @@ import java.io.FileReader;
 
 public class Funcion {
 
+    /**
+     * Lee un archivo JSON seleccionado por el usuario y lo procesa en objetos Persona.
+     *
+     * @return DatosProyecto que encapsula la lista de personas y la tabla hash.
+     */
     public static DatosProyecto leerJsonConFileChooser() {
-    Lista<Persona> personas = new Lista<>();
-    HashTable<String, Persona> hashTable = new HashTable<>();
-    Lista<String> relaciones = new Lista<>(); // Lista para guardar relaciones de nombre-completo:padre/hijo
+        Lista<Persona> personas = new Lista<>();
+        HashTable<String, Persona> hashTable = new HashTable<>(); // Tabla hash para búsqueda rápida
 
-    JFileChooser fileChooser = new JFileChooser();
-    fileChooser.setDialogTitle("Seleccione el archivo JSON");
-    int userSelection = fileChooser.showOpenDialog(null);
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Seleccione el archivo JSON");
+        int userSelection = fileChooser.showOpenDialog(null);
 
-    if (userSelection == JFileChooser.APPROVE_OPTION) {
-        File fileToOpen = fileChooser.getSelectedFile();
-        try (FileReader reader = new FileReader(fileToOpen)) {
-            Gson gson = new Gson();
-            JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToOpen = fileChooser.getSelectedFile();
+            try (FileReader reader = new FileReader(fileToOpen)) {
+                Gson gson = new Gson();
+                JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
 
-            if (jsonElement.isJsonObject()) {
-                JsonObject jsonObject = jsonElement.getAsJsonObject();
+                if (jsonElement.isJsonObject()) {
+                    JsonObject jsonObject = jsonElement.getAsJsonObject();
 
-                for (String key : jsonObject.keySet()) {
-                    JsonElement groupElement = jsonObject.get(key);
+                    // Procesar cada entrada principal en el JSON como un grupo de personas
+                    for (String key : jsonObject.keySet()) {
+                        JsonElement groupElement = jsonObject.get(key);
 
-                    if (groupElement.isJsonArray()) {
-                        com.google.gson.JsonArray groupArray = groupElement.getAsJsonArray();
+                        if (groupElement.isJsonArray()) {
+                            com.google.gson.JsonArray groupArray = groupElement.getAsJsonArray();
 
-                        for (int i = 0; i < groupArray.size(); i++) {
-                            JsonElement personElement = groupArray.get(i);
+                            // Iterar sobre cada persona en el array
+                            for (int i = 0; i < groupArray.size(); i++) {
+                                JsonElement personElement = groupArray.get(i);
 
-                            if (personElement.isJsonObject()) {
-                                JsonObject personObject = personElement.getAsJsonObject();
+                                if (personElement.isJsonObject()) {
+                                    JsonObject personObject = personElement.getAsJsonObject();
 
-                                for (String nombrePersona : personObject.keySet()) {
-                                    JsonElement atributosElement = personObject.get(nombrePersona);
-                                    Persona persona = new Persona(nombrePersona);
+                                    // Cada personObject tiene una clave (nombre de la persona)
+                                    for (String nombrePersona : personObject.keySet()) {
+                                        JsonElement atributosElement = personObject.get(nombrePersona);
 
-                                    String nombreCompleto = nombrePersona; // Inicializa con el nombre original
-                                    boolean tieneAlias = false; // Para saber si ya se asignó un alias
+                                        // Crear un objeto Persona
+                                        Persona persona = new Persona(nombrePersona);
 
-                                    // Procesamos los atributos
-                                    if (atributosElement.isJsonArray()) {
-                                        com.google.gson.JsonArray atributosArray = atributosElement.getAsJsonArray();
-                                        for (int j = 0; j < atributosArray.size(); j++) {
-                                            JsonElement atributoElement = atributosArray.get(j);
+                                        // Procesar los atributos de cada persona
+                                        if (atributosElement.isJsonArray()) {
+                                            com.google.gson.JsonArray atributosArray = atributosElement.getAsJsonArray();
 
-                                            if (atributoElement.isJsonObject()) {
-                                                JsonObject atributoObj = atributoElement.getAsJsonObject();
+                                            for (int j = 0; j < atributosArray.size(); j++) {
+                                                JsonElement atributoElement = atributosArray.get(j);
 
-                                                for (String attributeKey : atributoObj.keySet()) {
-                                                    JsonElement valueElement = atributoObj.get(attributeKey);
+                                                if (atributoElement.isJsonObject()) {
+                                                    JsonObject atributoObj = atributoElement.getAsJsonObject();
 
-                                                    // Llamada a la función que maneja la asignación de atributos y relaciones
-                                                    asignarAtributo(persona, attributeKey, valueElement, relaciones, nombreCompleto, nombrePersona);
+                                                    // Iterar sobre cada clave de atributo y asignar a la persona
+                                                    for (String attributeKey : atributoObj.keySet()) {
+                                                        JsonElement valueElement = atributoObj.get(attributeKey);
 
-                                                    // Si se encuentra el alias "Known throughout as", se actualiza el nombre completo
-                                                    if (attributeKey.equals("Known throughout as") && !tieneAlias) {
-                                                        nombreCompleto = valueElement.getAsString();  // Actualiza el nombre completo con el alias
-                                                        tieneAlias = true; // Marca que ya se ha asignado el alias
-                                                    }
-                                                    
-                                                    // Ahora, si encontramos "Of his name" solo agregamos el sufijo si no tiene alias
-                                                    if (attributeKey.equals("Of his name") && !tieneAlias) {
-                                                        nombreCompleto += ", " + valueElement.getAsString() + " of his name"; // Agrega "of his name"
+                                                        // Procesar los atributos
+                                                        asignarAtributo(persona, attributeKey, valueElement);
                                                     }
                                                 }
                                             }
                                         }
+
+                                        // Agregar la persona a la lista y a la tabla hash
+                                        personas.append(persona);
+                                        hashTable.put(persona.getId(), persona);
                                     }
 
                                     // Ahora que nombreCompleto ha sido actualizado, puedes agregar las relaciones
@@ -89,42 +88,35 @@ public class Funcion {
                         }
                     }
                 }
-            } else {
-                System.out.println("El archivo JSON seleccionado no tiene el formato esperado.");
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+            System.out.println("No se seleccionó ningún archivo.");
         }
-    } else {
-        System.out.println("No se seleccionó ningún archivo.");
+
+        return new DatosProyecto(personas, hashTable);
     }
 
-    // Imprimir las relaciones
-    for (int i = 0; i < relaciones.getSize(); i++) {
-        System.out.println(relaciones.get(i));
-    }
-
-    return new DatosProyecto(personas, hashTable, relaciones);
-}
-
-private static void asignarAtributo(Persona persona, String attributeKey, JsonElement valueElement, Lista<String> relaciones, String nombreCompleto, String nombrePersona) {
-    // Usamos un arreglo manual para almacenar las relaciones agregadas, evitamos duplicados.
-    Lista<String> relacionesAgregadas = new Lista<String>();  // Suponiendo que Lista tiene el método `append`
-    
-    switch (attributeKey) {
-        case "Of his name":
-            persona.setOfHisName(valueElement.getAsString());
-            break;
-        case "Father to":
-            // Verificar y agregar hijos, evitando duplicados
-            if (valueElement.isJsonArray()) {
-                com.google.gson.JsonArray hijosArray = valueElement.getAsJsonArray();
-                for (JsonElement hijo : hijosArray) {
-                    String hijoNombre = hijo.getAsString() + " " + nombrePersona.split(" ")[1];
-                    persona.addHijo(hijoNombre);
-                    String relacion = nombreCompleto + " : " + hijoNombre;
-                    if (!relaciones.contains(relacion)) {
-                        relaciones.append(relacion);  // Guardamos la relación
+    /**
+     * Asigna un atributo específico a una persona basado en la clave del atributo.
+     *
+     * @param persona       Persona a la que se le asignará el atributo.
+     * @param attributeKey  Clave del atributo.
+     * @param valueElement  Valor del atributo.
+     */
+    private static void asignarAtributo(Persona persona, String attributeKey, JsonElement valueElement) {
+        switch (attributeKey) {
+            case "Of his name":
+                persona.setOfHisName(valueElement.getAsString());
+                break;
+            case "Born to":
+                if (valueElement.isJsonArray()) {
+                    com.google.gson.JsonArray bornToArray = valueElement.getAsJsonArray();
+                    for (int j = 0; j < bornToArray.size(); j++) {
+                        String padre = bornToArray.get(j).getAsString();
+                        persona.addBornTo(padre);
                     }
                 }
             } else {
