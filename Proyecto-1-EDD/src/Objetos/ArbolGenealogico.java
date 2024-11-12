@@ -276,10 +276,6 @@ public class ArbolGenealogico {
 
         // Opcional: Eliminar placeholders redundantes si es necesario
         eliminarPlaceholdersRedundantes(grafos);
-        for (int i = 0; i < nombreAId.size(); i++) {
-            System.out.println(nombreAId.getKeys());
-            
-        }
     }
 
     /**
@@ -453,7 +449,6 @@ public void construirTablaNombreModificado() {
 
     // Primer intento: Buscar en nombreAId por nombre exacto
     String id = nombreAId.get(nombre);  // Intenta obtener el id por el nombre exacto
-        System.out.println(id);
 
     // Si no se encontró en nombreAId, intenta usar el nombre como id directo para buscar en nombreAIdModificado
     if (id == null) {
@@ -528,6 +523,7 @@ public void construirTablaNombreModificado() {
             for (int j = 0; j < nodoPadre.getHijos().len(); j++) {
                 NodoArbol hijoExistente = nodoPadre.getHijos().get(j);
                 if (hijoExistente.getPersona().getId().equals(nodoPersona.getPersona().getId())) {
+                    grafosOriginal.addArco1(nodoPadre.getPersona().getId(), nodoPersona.getPersona().getId());
                     duplicado = true;
                     break;
                 }
@@ -553,6 +549,7 @@ public void construirTablaNombreModificado() {
             for (int j = 0; j < nodoPersona.getHijos().len(); j++) {
                 NodoArbol hijoExistente = nodoPersona.getHijos().get(j);
                 if (hijoExistente.getPersona().getId().equals(nodoHijo.getPersona().getId())) {
+                    grafosOriginal.addArco1(nodoPersona.getPersona().getId(), nodoHijo.getPersona().getId());
                     conectado = true;
                     break;
                 }
@@ -565,10 +562,9 @@ public void construirTablaNombreModificado() {
             }
         }
     }
-
-    // Mostrar el nuevo grafo con el árbol genealógico de la persona seleccionada
-    grafosOriginal.mostrarArbol();
 }
+
+
 
     public void mostrarDatosPersona(String id) {
     if (tablaPersonasPorId.containsKey(id)) {
