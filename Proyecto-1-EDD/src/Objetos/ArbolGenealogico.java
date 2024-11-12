@@ -565,7 +565,22 @@ public void construirTablaNombreModificado() {
 }
 
 
+    // Método recursivo para mostrar descendientes
+    public void mostrarDescendientes(NodoArbol nodo, int nivel) {
+        if (nodo.getHijos().len() == 0) {
+            return; // No hay más descendientes
+        }
 
+        String indentacion = " ".repeat(nivel * 2); // Indentación para mostrar la jerarquía
+        for (int j = 0; j < nodo.getHijos().len(); j++) {
+            NodoArbol hijo = nodo.getHijos().get(j);
+            System.out.println(indentacion + "- " + hijo.getPersona().getNombre());
+        
+        // Llamada recursiva para los hijos del hijo
+        mostrarDescendientes(hijo, nivel + 1);
+        }
+    }
+    
     public void mostrarDatosPersona(String id) {
     if (tablaPersonasPorId.containsKey(id)) {
         NodoArbol nodo = tablaPersonasPorId.get(id);
@@ -585,6 +600,9 @@ public void construirTablaNombreModificado() {
     } else {
         System.out.println("Persona no encontrada en el árbol genealógico.");
     }
-}
+    }
+    
+    
+    
 
 }
