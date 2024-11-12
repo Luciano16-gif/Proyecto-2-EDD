@@ -1,5 +1,6 @@
 package Primitivas;
 
+import Objetos.NodoArbol;
 /**
  * Clase que representa la clase lista.
  *
@@ -11,6 +12,7 @@ package Primitivas;
 
 
 public class Lista<T> {
+
     private class Nodo<T> {
         T dato;
         Nodo<T> siguiente;
@@ -32,10 +34,10 @@ public class Lista<T> {
     // Añadir un elemento al final de la lista
     public void append(T dato) {
         Nodo<T> nuevoNodo = new Nodo<>(dato);
-        if (cabeza == null) {
+        if (getCabeza() == null) {
             cabeza = nuevoNodo;
         } else {
-            Nodo<T> actual = cabeza;
+            Nodo<T> actual = getCabeza();
             while (actual.siguiente != null) {
                 actual = actual.siguiente;
             }
@@ -58,7 +60,7 @@ public class Lista<T> {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Índice fuera de rango");
         }
-        Nodo<T> actual = cabeza;
+        Nodo<T> actual = getCabeza();
         for (int i = 0; i < index; i++) {
             actual = actual.siguiente;
         }
@@ -67,7 +69,7 @@ public class Lista<T> {
 
     // Verificar si un elemento está en la lista
     public boolean contains(T dato) {
-        Nodo<T> actual = cabeza;
+        Nodo<T> actual = getCabeza();
         while (actual != null) {
             if (actual.dato.equals(dato)) {
                 return true;
@@ -83,9 +85,9 @@ public class Lista<T> {
             throw new IndexOutOfBoundsException("Índice fuera de rango");
         }
         if (index == 0) {
-            cabeza = cabeza.siguiente;
+            cabeza = getCabeza().siguiente;
         } else {
-            Nodo<T> actual = cabeza;
+            Nodo<T> actual = getCabeza();
             for (int i = 0; i < index - 1; i++) {
                 actual = actual.siguiente;
             }
@@ -93,14 +95,27 @@ public class Lista<T> {
         }
         size--;
     }
+    
 
     // Imprimir la lista (opcional)
     public void printList() {
-        Nodo<T> actual = cabeza;
+        Nodo<T> actual = getCabeza();
         while (actual != null) {
             System.out.print(actual.dato + " -> ");
             actual = actual.siguiente;
         }
         System.out.println("null");
     }
+    
+    /**
+     * @return the cabeza
+     */
+    public Nodo<T> getCabeza() {
+        return cabeza;
+    }
+    
+    public boolean isEmpty() {
+        return cabeza == null;
+    }
+    
 }

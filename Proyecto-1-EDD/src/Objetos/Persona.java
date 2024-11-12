@@ -4,14 +4,12 @@ import Primitivas.Lista;
 
 /**
  * Clase que representa una persona en el árbol genealógico.
- *
- * @version 4/11/2024
+
  */
 public class Persona {
-    private String id; // Identificador único
-    private String nombre; // Nombre canónico
-    private String ofHisName;
+    private String nombre;
     private String apodo;
+    private String ofHisName;
     private String title;
     private String wedTo;
     private String colorOjos;
@@ -20,38 +18,34 @@ public class Persona {
     private Lista<String> bornTo; // Lista de nombres de los padres
     private Lista<String> hijos; // Lista de nombres de los hijos
     private Lista<String> notas; // Lista de notas
-
+  
+  
     public Persona(String nombre) {
         this.nombre = nombre;
         this.apodo = "";
         this.ofHisName = "";
+        this.title = "";
+        this.wedTo = "";
+        this.colorOjos = "";
+        this.colorCabello = "";
+        this.fate = "";
         this.bornTo = new Lista<>();
         this.hijos = new Lista<>();
         this.notas = new Lista<>();
-        this.id = generarIdUnico();
     }
 
-    // Método para generar un ID único basado en el nombre y ofHisName
-    private String generarIdUnico() {
-        String baseId = nombre;
-        if (!ofHisName.isEmpty()) {
-            baseId += ", " + ofHisName + " of his name";
-        }
-        return baseId;
+    // Getters y Setters
+    public String getNombre() {
+        return nombre;
     }
 
-    // Getters y setters modificados para regenerar el ID cuando cambian los atributos relevantes
-
-    public void setOfHisName(String ofHisName) {
-        this.ofHisName = ofHisName;
-        this.id = generarIdUnico();
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    public String getOfHisName() {
-        return ofHisName;
+    public String getApodo() {
+        return apodo;
     }
-
-    // Resto de getters y setters...
 
     public String getId() {
         return id;
@@ -129,8 +123,21 @@ public class Persona {
         return notas;
     }
 
-    public void setNotas(Lista<String> notas) {
-        this.notas = notas;
+    public void addNota(String nota) {
+        this.notas.append(nota);
+    }
+
+    /**
+     * Genera un ID único basado en el nombre y "Of his name".
+     *
+     * @return ID único de la persona.
+     */
+    public String getId() {
+        StringBuilder idBuilder = new StringBuilder(nombre);
+        if (ofHisName != null && !ofHisName.isEmpty()) {
+            idBuilder.append(", ").append(ofHisName).append(" of his name");
+        }
+        return idBuilder.toString();
     }
     
     

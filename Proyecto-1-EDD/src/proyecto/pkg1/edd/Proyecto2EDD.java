@@ -16,6 +16,7 @@ import Primitivas.HashTable;
 public class Proyecto2EDD {
 
     public static void main(String[] args) {
+\\
         // Leer las personas y relaciones desde el JSON usando la clase Funcion
         DatosProyecto datos = Funcion.leerJsonConFileChooser();
 

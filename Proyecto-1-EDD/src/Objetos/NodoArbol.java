@@ -1,6 +1,7 @@
 package Objetos;
 
 import Primitivas.Lista;
+import Primitivas.Nodo;
 
 /**
  * Esta clase representa un nodo en el árbol genealógico.
@@ -17,6 +18,22 @@ public class NodoArbol {
         this.persona = persona;
         this.hijos = new Lista<>();
     }
+    
+    /**
+     * Remueve un hijo de la lista de hijos del nodo actual.
+     *
+     * @param hijo NodoArbol que representa al hijo a remover.
+     */
+    public void removerHijo(NodoArbol hijo) {
+        for(int i = 0; i < hijos.len(); i++) {
+            if(hijos.get(i).equals(hijo)) {
+                hijos.remove(i);
+                System.out.println("Hijo removido: " + hijo.getPersona().getNombre());
+                return;
+            }
+        }
+        System.out.println("Hijo no encontrado para remover: " + hijo.getPersona().getNombre());
+    }
 
     public void agregarHijo(NodoArbol hijo) {
         this.hijos.append(hijo);
@@ -25,8 +42,15 @@ public class NodoArbol {
     public Lista<NodoArbol> getHijos() {
         return hijos;
     }
+    
+    public void printSon() {
+        for (int i = 0; i < hijos.len(); i++) {
+            System.out.println(hijos.get(i).getPersona().getNombre());
+        }
+    }
 
     public Persona getPersona() {
         return persona;
     }
+    
 }
