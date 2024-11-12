@@ -119,42 +119,41 @@ public class Funcion {
                         persona.addBornTo(padre);
                     }
                 }
-                break;
-            case "Known throughout as":
-                persona.setApodo(valueElement.getAsString());
-                break;
-            case "Held title":
-                persona.setTitle(valueElement.getAsString());
-                break;
-            case "Wed to":
-                persona.setWedTo(valueElement.getAsString());
-                break;
-            case "Of eyes":
-                persona.setColorOjos(valueElement.getAsString());
-                break;
-            case "Of hair":
-                persona.setColorCabello(valueElement.getAsString());
-                break;
-            case "Father to":
-                if (valueElement.isJsonArray()) {
-                    com.google.gson.JsonArray hijosArray = valueElement.getAsJsonArray();
-                    for (int k = 0; k < hijosArray.size(); k++) {
-                        String hijoNombre = hijosArray.get(k).getAsString();
-                        persona.addHijo(hijoNombre);
+            } else {
+                String hijoNombre = valueElement.getAsString() + " " + nombrePersona.split(" ")[1];
+                persona.addHijo(hijoNombre);
+                String relacion = nombreCompleto + " : " + hijoNombre;
+                if (!relaciones.contains(relacion)) {
+                    relaciones.append(relacion);  // Guardamos la relación
+                }
+            }
+            break;
+        case "Born to":
+            // Agregar las relaciones con los padres usando el nombre completo actualizado
+            if (valueElement.isJsonArray()) {
+                com.google.gson.JsonArray bornToArray = valueElement.getAsJsonArray();
+                // Primero el padre, luego la madre (si existe)
+                boolean isPadre = true; // Flag para asegurar que el padre se agregue primero
+                for (JsonElement padre : bornToArray) {
+                    String padreNombre = padre.getAsString();
+                    persona.addBornTo(padreNombre);
+                    if (isPadre) {
+                        // Agregar la relación de padre primero
+                        relaciones.append(padreNombre + " : " + nombreCompleto);
+                        isPadre = false; // Después de agregar el padre, agregar la madre si existe
+                    } else {
+                        // Si ya es el padre, se agrega la madre (si existe)
+                        relaciones.append(padreNombre + " : " + nombreCompleto);
                     }
                 }
-                break;
-            case "Notes":
-                persona.addNota(valueElement.getAsString());
-                break;
-            case "Fate":
-                persona.setFate(valueElement.getAsString());
-                break;
-            // Agregar otros casos si es necesario
-            default:
-                // Manejar otros atributos
-                break;
-        }
+            } else {
+                String padreNombre = valueElement.getAsString();
+                persona.addBornTo(padreNombre);
+                relaciones.append(padreNombre + " : " + nombreCompleto);
+            }
+            break;
+        default:
+            break;
     }
 }
 }
