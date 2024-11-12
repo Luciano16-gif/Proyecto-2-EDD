@@ -4,6 +4,7 @@ import Primitivas.Lista;
 
 /**
  * Clase que representa una persona en el árbol genealógico.
+
  */
 public class Persona {
     private String nombre;
@@ -14,15 +15,11 @@ public class Persona {
     private String colorOjos;
     private String colorCabello;
     private String fate;
-    private Lista<String> bornTo;
-    private Lista<String> hijos;
-    private Lista<String> notas;
-
-    /**
-     * Constructor de la clase Persona.
-     *
-     * @param nombre Nombre de la persona.
-     */
+    private Lista<String> bornTo; // Lista de nombres de los padres
+    private Lista<String> hijos; // Lista de nombres de los hijos
+    private Lista<String> notas; // Lista de notas
+  
+  
     public Persona(String nombre) {
         this.nombre = nombre;
         this.apodo = "";
@@ -50,16 +47,36 @@ public class Persona {
         return apodo;
     }
 
-    public void setApodo(String apodo) {
-        this.apodo = apodo;
+    public String getId() {
+        return id;
+    }
+    
+    public String getApodo() {
+        return apodo;
     }
 
-    public String getOfHisName() {
-        return ofHisName;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setOfHisName(String ofHisName) {
-        this.ofHisName = ofHisName;
+    public Lista<String> getBornTo() {
+        return bornTo;
+    }
+
+    public void addBornTo(String nombrePadre) {
+        if (!bornTo.contains(nombrePadre)) {
+            bornTo.append(nombrePadre);
+        }
+    }
+
+    public Lista<String> getHijos() {
+        return hijos;
+    }
+
+    public void addHijo(String nombreHijo) {
+        if (!hijos.contains(nombreHijo)) {
+            hijos.append(nombreHijo);
+        }
     }
 
     public String getTitle() {
@@ -102,22 +119,6 @@ public class Persona {
         this.fate = fate;
     }
 
-    public Lista<String> getBornTo() {
-        return bornTo;
-    }
-
-    public void addBornTo(String padre) {
-        this.bornTo.append(padre);
-    }
-
-    public Lista<String> getHijos() {
-        return hijos;
-    }
-
-    public void addHijo(String hijo) {
-        this.hijos.append(hijo);
-    }
-
     public Lista<String> getNotas() {
         return notas;
     }
@@ -138,4 +139,6 @@ public class Persona {
         }
         return idBuilder.toString();
     }
+    
+    
 }

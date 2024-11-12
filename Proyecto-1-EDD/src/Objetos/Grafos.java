@@ -15,9 +15,6 @@ import org.graphstream.ui.view.Viewer;
 public class Grafos {
     private Graph graph;
 
-    /**
-     * Constructor de la clase Grafos.
-     */
     public Grafos() {
         this.graph = new SingleGraph("Grafo de Personas");
         // Configuración de estilos básicos
@@ -65,10 +62,11 @@ public class Grafos {
             // Genera un ID único para el arco usando los IDs de los nodos
             String edgeId = idPadre + "-" + idHijo;
 
-            // Verifica si el arco ya existe antes de agregarlo
+    public void addArco1(String idPadre, String idHijo) {
+        if (graph.getNode(idPadre) != null && graph.getNode(idHijo) != null) {
+            String edgeId = idPadre + "-" + idHijo;
             if (graph.getEdge(edgeId) == null) {
                 graph.addEdge(edgeId, idPadre, idHijo, true); // true para crear un arco dirigido
-
                 // Establecer el estilo del arco (opcional)
                 graph.getEdge(edgeId).setAttribute("ui.style", "fill-color: red;");
             }

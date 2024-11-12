@@ -2,20 +2,13 @@ package Objetos;
 
 import Primitivas.HashTable;
 import Primitivas.Lista;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import javax.swing.JFileChooser;
 import java.io.File;
 import java.io.FileReader;
 
-/**
- * Clase que contiene funciones útiles para el proyecto, incluyendo la lectura del archivo JSON.
- *
- * @version 4/11/2024
- */
 public class Funcion {
 
     /**
@@ -86,14 +79,14 @@ public class Funcion {
                                         personas.append(persona);
                                         hashTable.put(persona.getId(), persona);
                                     }
+
+                                    // Ahora que nombreCompleto ha sido actualizado, puedes agregar las relaciones
+                                    personas.append(persona);
+                                    hashTable.put(persona.getId(), persona);
                                 }
                             }
-                        } else {
-                            System.out.println("La entrada '" + key + "' no es un array de personas.");
                         }
                     }
-                } else {
-                    System.out.println("El archivo JSON seleccionado no tiene el formato esperado.");
                 }
 
             } catch (Exception e) {
@@ -125,8 +118,6 @@ public class Funcion {
                         String padre = bornToArray.get(j).getAsString();
                         persona.addBornTo(padre);
                     }
-                } else {
-                    persona.addBornTo(valueElement.getAsString());
                 }
                 break;
             case "Known throughout as":
@@ -151,8 +142,6 @@ public class Funcion {
                         String hijoNombre = hijosArray.get(k).getAsString();
                         persona.addHijo(hijoNombre);
                     }
-                } else {
-                    persona.addHijo(valueElement.getAsString());
                 }
                 break;
             case "Notes":
@@ -167,4 +156,5 @@ public class Funcion {
                 break;
         }
     }
+}
 }
