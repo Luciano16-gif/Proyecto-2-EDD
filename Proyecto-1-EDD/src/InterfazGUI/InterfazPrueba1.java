@@ -138,44 +138,19 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
     Lista<NodoArbol> nodos = arbolGenealogico.buscarPorNombre(nombreBusqueda);
 
     if (nodos.getSize() > 0) {
-    System.out.println("Personas encontradas:");
-    for (int i = 0; i < nodos.getSize(); i++) {
-        NodoArbol nodo = nodos.get(i);
-        Persona persona = nodo.getPersona();
-        System.out.println(persona.toString());
+        System.out.println("Personas encontradas:");
+        for (int i = 0; i < nodos.getSize(); i++) {
+            NodoArbol nodo = nodos.get(i);
+            Persona persona = nodo.getPersona();
+            System.out.println(persona.toString());
 
-        // Mostrar los padres
-        System.out.println("Padres de " + persona.getNombre() + ":");
-        for (int j = 0; j < nodo.getPadres().len(); j++) {
-            NodoArbol padre = nodo.getPadres().get(j);
-            System.out.println(" - " + padre.getPersona().getNombre());
+            // Mostrar todos los descendientes de esta persona
+            System.out.println("Descendientes de " + persona.getNombre() + ":");
+            arbolGenealogico.mostrarDescendientes(nodo, 1); // Nivel inicial es 1 para los hijos
         }
-
-        // Mostrar los hijos
-        System.out.println("Hijos de " + persona.getNombre() + ":");
-        for (int j = 0; j < nodo.getHijos().len(); j++) {
-            NodoArbol hijo = nodo.getHijos().get(j);
-            System.out.println(" - " + hijo.getPersona().getNombre());
-
-            // Buscar hijos del hijo en nombreAId
-            String hijoId = nombreAId.get(hijo.getPersona().getNombre());
-            if (hijoId != null) {
-                NodoArbol nodoHijo = tablaPersonasPorId.get(hijoId);
-
-                // Si el nodoHijo existe y tiene hijos, mostrar los nietos
-                if (nodoHijo != null && nodoHijo.getHijos().len() > 0) {
-                    System.out.println("   Nietos de " + persona.getNombre() + " a través de " + hijo.getPersona().getNombre() + ":");
-                    for (int k = 0; k < nodoHijo.getHijos().len(); k++) {
-                        NodoArbol nieto = nodoHijo.getHijos().get(k);
-                        System.out.println("   - " + nieto.getPersona().getNombre());
-                    }
-                }
-            }
-        }
+    } else {
+        System.out.println("No se encontró ninguna persona con el nombre: " + nombreBusqueda);
     }
-} else {
-    System.out.println("No se encontró ninguna persona con el nombre: " + nombreBusqueda);
-}
     }//GEN-LAST:event_BotonBuscarPersonaActionPerformed
 
     private void BotonGenerarSuArbolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonGenerarSuArbolActionPerformed
