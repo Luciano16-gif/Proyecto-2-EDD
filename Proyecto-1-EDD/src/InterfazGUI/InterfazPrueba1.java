@@ -143,14 +143,32 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
             NodoArbol nodo = nodos.get(i);
             Persona persona = nodo.getPersona();
             System.out.println(persona.toString());
+            
+            // Crear una lista de listas para almacenar descendientes por nivel
+            Lista<Lista<NodoArbol>> descendientesPorNivel = new Lista<>();
+            arbolGenealogico.mostrarDescendientes(nodo, 1, descendientesPorNivel); // Nivel inicial es 1 para los hijos
 
-            // Mostrar todos los descendientes de esta persona
-            System.out.println("Descendientes de " + persona.getNombre() + ":");
-            arbolGenealogico.mostrarDescendientes(nodo, 1); // Nivel inicial es 1 para los hijos
+            // Imprimir el nombre del padre y sus descendientes, excluyendo los nodos sin descendientes
+        for (int nivel = 0; nivel < descendientesPorNivel.getSize(); nivel++) {
+            Lista<NodoArbol> nivelDescendientes = descendientesPorNivel.get(nivel);
+    
+            // Mostrar el ID del padre de los descendientes, solo si hay descendientes en este nivel
+            if (nivel > 0 && descendientesPorNivel.get(nivel - 1).getSize() > 0 && nivelDescendientes.getSize() > 0) {
+                NodoArbol padre = descendientesPorNivel.get(nivel - 1).get(0);
+            }
+
+            // Listar los IDs de los hijos de este nivel
+            for (int j = 0; j < nivelDescendientes.getSize(); j++) {
+                NodoArbol descendiente = nivelDescendientes.get(j);
+                Persona descendientePersona = descendiente.getPersona();
+        
+                // Almacenar el descendiente en tablaPersonasPorId para acceso rápido
+                tablaPersonasPorId.put(descendientePersona.getId(), descendiente);
+            }
         }
-    } else {
-        System.out.println("No se encontró ninguna persona con el nombre: " + nombreBusqueda);
+        }
     }
+
     }//GEN-LAST:event_BotonBuscarPersonaActionPerformed
 
     private void BotonGenerarSuArbolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonGenerarSuArbolActionPerformed
