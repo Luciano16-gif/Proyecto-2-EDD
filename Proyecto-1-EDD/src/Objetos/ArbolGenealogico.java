@@ -611,24 +611,51 @@ public class ArbolGenealogico {
     }
     }
 
-    public void mostrarDatosPersona(String id) {
+    public String mostrarDatosPersona(String id) {
+    StringBuilder datos = new StringBuilder();  // Usamos StringBuilder para construir la cadena de forma eficiente
+    
     if (tablaPersonasPorId.containsKey(id)) {
         NodoArbol nodo = tablaPersonasPorId.get(id);
         Persona persona = nodo.getPersona();
 
-        // Muestra los datos de la persona
-        System.out.println("Nombre: " + persona.getNombre());
-        System.out.println("ID: " + persona.getId());
-        System.out.println("Apodo: " + persona.getApodo());
-        System.out.println("Alias: " + persona.getOfHisName());
-        System.out.println("Color de ojos: " + persona.getColorOjos());
-        System.out.println("Color de cabello: " + persona.getColorCabello());
-        System.out.println("Destino: " + persona.getFate());
-        System.out.println("Padres: " + persona.getBornTo());
-        System.out.println("Hijos: " + persona.getHijos());
-        System.out.println("Notas: " + persona.getNotas());
+        // Construir la cadena de texto con la información de la persona
+        datos.append("Nombre: ").append(persona.getNombre()).append("\n");
+        datos.append("ID: ").append(persona.getId()).append("\n");
+        datos.append("Apodo: ").append(persona.getApodo()).append("\n");
+        datos.append("Alias: ").append(persona.getOfHisName()).append("\n");
+        datos.append("Color de ojos: ").append(persona.getColorOjos()).append("\n");
+        datos.append("Color de cabello: ").append(persona.getColorCabello()).append("\n");
+        datos.append("Destino: ").append(persona.getFate()).append("\n");
+        datos.append("Padres: ").append(persona.getBornTo()).append("\n");
+
+        // Mostrar hijos (trabajando directamente con la clase Lista sin usar java.util)
+        if (persona.getHijos() != null && persona.getHijos().getSize() > 0) {
+            datos.append("Hijos: \n");
+            // Iteramos usando el método getSize() y get(i) de tu clase Lista
+            for (int i = 0; i < persona.getHijos().getSize(); i++) {
+                String hijoId = persona.getHijos().get(i);  // Obtener el ID del hijo
+                if (tablaPersonasPorId.containsKey(hijoId)) {
+                    NodoArbol hijoNodo = tablaPersonasPorId.get(hijoId);
+                    datos.append("- ").append(hijoNodo.getPersona().getNombre()).append("\n");
+                }
+            }
+        } else {
+            datos.append("Hijos: Ninguno\n");
+        }
+
+        // Mostrar notas
+        if (persona.getNotas() != null && !persona.getNotas().isEmpty()) {
+            datos.append("Notas: ").append(persona.getNotas()).append("\n");
+        } else {
+            datos.append("Notas: Ninguna\n");
+        }
+
     } else {
-        System.out.println("Persona no encontrada en el árbol genealógico.");
+        datos.append("Persona no encontrada en el árbol genealógico.\n");
     }
-    }
+    
+    return datos.toString();  // Devolver la cadena construida
+}
+
+
 }

@@ -14,6 +14,7 @@ import org.graphstream.ui.view.ViewerListener;
  */
 public class Clicks implements ViewerListener {
     protected boolean loop = true;
+    private ArbolGenealogico arbolGenealogico;
 
     public Clicks(Graph grafo) {
         Graph graph = grafo;
@@ -49,7 +50,7 @@ public class Clicks implements ViewerListener {
 
     @Override
     public void buttonPushed(String id) {
-        System.out.println("Button pushed on node " + id);
+        System.out.println(arbolGenealogico.mostrarDatosPersona(id));
     }
 
     @Override
