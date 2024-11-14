@@ -610,7 +610,19 @@ public class ArbolGenealogico {
         }
     }
     }
-
+    
+    public Lista<Persona> buscarPorTitulo(String titulo) {
+    Lista<Persona> resultado = new Lista<>();
+    
+    for (int i = 0; i < listaPersonas.getSize(); i++) {
+        Persona persona = listaPersonas.get(i);
+        if (persona.getTitle() != null && persona.getTitle().equalsIgnoreCase(titulo)) {
+               resultado.append(persona);
+        }
+    }
+    return resultado;
+    }
+    
     public void mostrarDatosPersona(String id) {
     if (tablaPersonasPorId.containsKey(id)) {
         NodoArbol nodo = tablaPersonasPorId.get(id);
