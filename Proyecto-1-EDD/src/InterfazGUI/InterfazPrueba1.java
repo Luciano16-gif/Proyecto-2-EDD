@@ -119,70 +119,70 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void BotonCargarJsonYGrafoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonCargarJsonYGrafoActionPerformed
-    DatosProyecto datos = Funcion.leerJsonConFileChooser();
-    Lista<Persona> personas = datos.getPersonas();
-    
-    if (personas != null && personas.getSize() > 0) {
-        grafo.mostrarArbol();
-        
-        // Construir el árbol genealógico y agregar los arcos al grafo
-        arbolGenealogico.construirArbol(personas, grafo);
+        DatosProyecto datos = Funcion.leerJsonConFileChooser();
+        Lista<Persona> personas = datos.getPersonas();
 
-        // Construir la tabla de nombres modificados
-        arbolGenealogico.construirTablaNombreModificado();
-    }
+        if (personas != null && personas.getSize() > 0) {
+            grafo.mostrarArbol();
+
+            // Construir el árbol genealógico y agregar los arcos al grafo
+            arbolGenealogico.construirArbol(personas, grafo);
+
+            // Construir la tabla de nombres modificados
+            arbolGenealogico.construirTablaNombreModificado();
+        }
     }//GEN-LAST:event_BotonCargarJsonYGrafoActionPerformed
 
     private void BotonBuscarPersonaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonBuscarPersonaActionPerformed
-    String nombreBusqueda = TextoNombre.getText(); 
-    Lista<NodoArbol> nodos = arbolGenealogico.buscarPorNombre(nombreBusqueda);
+        String nombreBusqueda = TextoNombre.getText(); 
+        Lista<NodoArbol> nodos = arbolGenealogico.buscarPorNombre(nombreBusqueda);
 
-    if (nodos.getSize() > 0) {
-        System.out.println("Personas encontradas:");
-        for (int i = 0; i < nodos.getSize(); i++) {
-            NodoArbol nodo = nodos.get(i);
-            Persona persona = nodo.getPersona();
-            System.out.println(persona.toString());
-            
-            // Crear una lista de listas para almacenar descendientes por nivel
-            Lista<Lista<NodoArbol>> descendientesPorNivel = new Lista<>();
-            arbolGenealogico.mostrarDescendientes(nodo, 1, descendientesPorNivel); // Nivel inicial es 1 para los hijos
+        if (nodos.getSize() > 0) {
+            System.out.println("Personas encontradas:");
+            for (int i = 0; i < nodos.getSize(); i++) {
+                NodoArbol nodo = nodos.get(i);
+                Persona persona = nodo.getPersona();
+                System.out.println(persona.toString());
 
-            // Imprimir el nombre del padre y sus descendientes, excluyendo los nodos sin descendientes
-        for (int nivel = 0; nivel < descendientesPorNivel.getSize(); nivel++) {
-            Lista<NodoArbol> nivelDescendientes = descendientesPorNivel.get(nivel);
-    
-            // Mostrar el ID del padre de los descendientes, solo si hay descendientes en este nivel
-            if (nivel > 0 && descendientesPorNivel.get(nivel - 1).getSize() > 0 && nivelDescendientes.getSize() > 0) {
-                NodoArbol padre = descendientesPorNivel.get(nivel - 1).get(0);
-            }
+                // Crear una lista de listas para almacenar descendientes por nivel
+                Lista<Lista<NodoArbol>> descendientesPorNivel = new Lista<>();
+                arbolGenealogico.mostrarDescendientes(nodo, 1, descendientesPorNivel); // Nivel inicial es 1 para los hijos
 
-            // Listar los IDs de los hijos de este nivel
-            for (int j = 0; j < nivelDescendientes.getSize(); j++) {
-                NodoArbol descendiente = nivelDescendientes.get(j);
-                Persona descendientePersona = descendiente.getPersona();
-        
-                // Almacenar el descendiente en tablaPersonasPorId para acceso rápido
-                tablaPersonasPorId.put(descendientePersona.getId(), descendiente);
+                // Imprimir el nombre del padre y sus descendientes, excluyendo los nodos sin descendientes
+                for (int nivel = 0; nivel < descendientesPorNivel.getSize(); nivel++) {
+                    Lista<NodoArbol> nivelDescendientes = descendientesPorNivel.get(nivel);
+
+                    // Mostrar el ID del padre de los descendientes, solo si hay descendientes en este nivel
+                    if (nivel > 0 && descendientesPorNivel.get(nivel - 1).getSize() > 0 && nivelDescendientes.getSize() > 0) {
+                        NodoArbol padre = descendientesPorNivel.get(nivel - 1).get(0);
+                    }
+
+                    // Listar los IDs de los hijos de este nivel
+                    for (int j = 0; j < nivelDescendientes.getSize(); j++) {
+                        NodoArbol descendiente = nivelDescendientes.get(j);
+                        Persona descendientePersona = descendiente.getPersona();
+
+                        // Almacenar el descendiente en tablaPersonasPorId para acceso rápido
+                        tablaPersonasPorId.put(descendientePersona.getId(), descendiente);
+                    }
+                }
             }
         }
-        }
-    }
 
     }//GEN-LAST:event_BotonBuscarPersonaActionPerformed
 
     private void BotonGenerarSuArbolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonGenerarSuArbolActionPerformed
-    String nombrePersona = TextoNombre.getText(); 
-    if (nombrePersona == null || nombrePersona.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Por favor ingresa un nombre válido.");
-        return;
-    }
-    
-    Grafos nuevoGrafo = new Grafos();
-    nuevoGrafo.mostrarArbol();
+        String nombrePersona = TextoNombre.getText(); 
+        if (nombrePersona == null || nombrePersona.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Por favor ingresa un nombre válido.");
+            return;
+        }
 
-    // Llamar al método para mostrar el árbol genealógico de esa persona
-    arbolGenealogico.mostrarArbolGenealogicoPorNombre(nombrePersona, nuevoGrafo);
+        Grafos nuevoGrafo = new Grafos();
+        nuevoGrafo.mostrarArbol();
+
+        // Llamar al método para mostrar el árbol genealógico de esa persona
+        arbolGenealogico.mostrarArbolGenealogicoPorNombre(nombrePersona, nuevoGrafo);
     }//GEN-LAST:event_BotonGenerarSuArbolActionPerformed
 
     /**
