@@ -50,7 +50,7 @@ public class Clicks implements ViewerListener {
 
     @Override
     public void buttonPushed(String id) {
-        System.out.println(arbolGenealogico.mostrarDatosPersona(id));
+        System.out.println(id);   
     }
 
     @Override

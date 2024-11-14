@@ -58,6 +58,7 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         textoResultados = new javax.swing.JTextArea();
         BotonnListaIntegrantes = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -77,7 +78,7 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
             }
         });
 
-        BotonGenerarSuArbol.setText("Generar su arbol");
+        BotonGenerarSuArbol.setText("Generar arbol descendientes");
         BotonGenerarSuArbol.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BotonGenerarSuArbolActionPerformed(evt);
@@ -102,6 +103,13 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setText("Generar arbol antepasados");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -110,19 +118,24 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
                 .addGap(34, 34, 34)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(BotonBuscarPersona)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(BotonGenerarSuArbol))
-                    .addComponent(TextoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 419, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(BotonCargarJsonYGrafo)
-                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(textoTitulo)
                             .addComponent(botonBuscarTitulo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(BotonnListaIntegrantes, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE))
                         .addGap(26, 26, 26)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 569, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(68, 68, 68))))
+                        .addGap(68, 68, 68))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(TextoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 419, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(BotonCargarJsonYGrafo)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(BotonBuscarPersona)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jButton1)
+                                    .addComponent(BotonGenerarSuArbol))))
+                        .addGap(0, 0, Short.MAX_VALUE))))
             .addGroup(layout.createSequentialGroup()
                 .addGap(246, 246, 246)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -141,19 +154,21 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BotonBuscarPersona)
                     .addComponent(BotonGenerarSuArbol))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(62, 62, 62)
+                        .addGap(33, 33, 33)
                         .addComponent(textoTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(botonBuscarTitulo)
                         .addGap(95, 95, 95)
                         .addComponent(BotonnListaIntegrantes))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(25, 25, 25)))
-                .addContainerGap(173, Short.MAX_VALUE))
+                .addContainerGap(411, Short.MAX_VALUE))
         );
 
         pack();
@@ -254,6 +269,30 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
         
     }//GEN-LAST:event_BotonnListaIntegrantesActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    String nombreBusqueda = TextoNombre.getText(); 
+    Lista<NodoArbol> nodos = arbolGenealogico.buscarPorNombre(nombreBusqueda);
+
+    if (nodos.getSize() > 0) {
+        for (int i = 0; i < nodos.getSize(); i++) {
+            NodoArbol nodo = nodos.get(i);
+            Persona persona = nodo.getPersona();
+            
+            // Crear un grafo temporal para mostrar los antepasados
+            Grafos grafosAntepasados = new Grafos();
+            grafosAntepasados.mostrarArbol();
+            
+            
+            // Llamar a la función para mostrar antepasados por nombre
+            arbolGenealogico.mostrarAntepasadosPorNombre(persona.getNombre(), grafosAntepasados);
+
+            // En este punto, los antepasados están añadidos en grafosAntepasados y el grafo está mostrado
+        }
+    } else {
+        System.out.println("No se encontraron antepasados para la persona con el nombre proporcionado.");
+    }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -296,6 +335,7 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
     private javax.swing.JButton BotonnListaIntegrantes;
     private javax.swing.JTextField TextoNombre;
     private javax.swing.JButton botonBuscarTitulo;
+    private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea textoResultados;
