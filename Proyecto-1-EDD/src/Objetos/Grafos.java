@@ -5,7 +5,6 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.view.Viewer;
 
 /**
@@ -20,15 +19,25 @@ public class Grafos {
         this.graph = new MultiGraph("Árbol Genealógico");
         graph.setAttribute("ui.stylesheet",
             "node {" +
-            "   text-alignment: above;" +
+            "   size: 30px;" +
+            "   shape: circle;" +
+            "   fill-color: yellow;" +
+            "   stroke-mode: plain;" +
+            "   stroke-color: black;" +
+            "   stroke-width: 1px;" +
+            "   text-alignment: at-right;" +
+            "   text-offset: 5px, 0px;" +
             "   text-size: 14;" +
             "}" +
             "edge {" +
-            "   arrow-shape: arrow;" +
+            "   shape: line;" +
             "   size: 2px;" +
+            "   fill-color: black;" +
+            "   arrow-size: 8px, 6px;" +
             "}");
-
     }
+    
+    
 
     /**
      * Añade una persona como nodo en el grafo si no existe ya.
@@ -124,9 +133,7 @@ public class Grafos {
      */
     public void mostrarArbol() {
         System.setProperty("org.graphstream.ui", "swing");
-        Viewer viewer = graph.display();
-        viewer.setCloseFramePolicy(Viewer.CloseFramePolicy.EXIT);
-        viewer.getDefaultView().enableMouseOptions();
+        Clicks visualizador = new Clicks(graph);
     }
 
     /**

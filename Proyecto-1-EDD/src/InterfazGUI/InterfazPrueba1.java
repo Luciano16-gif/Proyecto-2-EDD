@@ -242,27 +242,27 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
     }//GEN-LAST:event_BotonGenerarSuArbolActionPerformed
 
     private void botonBuscarTituloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBuscarTituloActionPerformed
-    String tituloBusqueda = textoTitulo.getText().trim();
+        String tituloBusqueda = textoTitulo.getText().trim();
 
-    if (tituloBusqueda.isEmpty()) {
-    JOptionPane.showMessageDialog(this, "Por favor, ingresa un título válido.");
-    return;
-    }
+        if (tituloBusqueda.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Por favor, ingresa un título válido.");
+        return;
+        }
 
-    Lista<Persona> resultados = arbolGenealogico.buscarPorTitulo(tituloBusqueda); // Llamada al método
+        Lista<Persona> resultados = arbolGenealogico.buscarPorTitulo(tituloBusqueda); // Llamada al método
 
-    if (resultados.getSize() == 0) {
-    JOptionPane.showMessageDialog(this, "No se encontraron personas con ese título.");
-    return;
-    }
+        if (resultados.getSize() == 0) {
+        JOptionPane.showMessageDialog(this, "No se encontraron personas con ese título.");
+        return;
+        }
 
-    // Limpiar el JTextArea antes de agregar nuevos resultados
-    textoResultados.setText("Personas encontradas con el título '" + tituloBusqueda + "':\n");
+        // Limpiar el JTextArea antes de agregar nuevos resultados
+        textoResultados.setText("Personas encontradas con el título '" + tituloBusqueda + "':\n");
 
-    for (int i = 0; i < resultados.getSize(); i++) {
-    Persona persona = resultados.get(i);
-    textoResultados.append(persona.toString() + "\n");  // Agregar cada resultado al JTextArea
-    }
+        for (int i = 0; i < resultados.getSize(); i++) {
+        Persona persona = resultados.get(i);
+        textoResultados.append(persona.toString() + "\n");  // Agregar cada resultado al JTextArea
+        }
     }//GEN-LAST:event_botonBuscarTituloActionPerformed
 
     private void BotonnListaIntegrantesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonnListaIntegrantesActionPerformed
@@ -270,27 +270,27 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
     }//GEN-LAST:event_BotonnListaIntegrantesActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-    String nombreBusqueda = TextoNombre.getText(); 
-    Lista<NodoArbol> nodos = arbolGenealogico.buscarPorNombre(nombreBusqueda);
+        String nombreBusqueda = TextoNombre.getText(); 
+        Lista<NodoArbol> nodos = arbolGenealogico.buscarPorNombre(nombreBusqueda);
 
-    if (nodos.getSize() > 0) {
-        for (int i = 0; i < nodos.getSize(); i++) {
-            NodoArbol nodo = nodos.get(i);
-            Persona persona = nodo.getPersona();
-            
-            // Crear un grafo temporal para mostrar los antepasados
-            Grafos grafosAntepasados = new Grafos();
-            grafosAntepasados.mostrarArbol();
-            
-            
-            // Llamar a la función para mostrar antepasados por nombre
-            arbolGenealogico.mostrarAntepasadosPorNombre(persona.getNombre(), grafosAntepasados);
+        if (nodos.getSize() > 0) {
+            for (int i = 0; i < nodos.getSize(); i++) {
+                NodoArbol nodo = nodos.get(i);
+                Persona persona = nodo.getPersona();
 
-            // En este punto, los antepasados están añadidos en grafosAntepasados y el grafo está mostrado
+                // Crear un grafo temporal para mostrar los antepasados
+                Grafos grafosAntepasados = new Grafos();
+                grafosAntepasados.mostrarArbol();
+
+
+                // Llamar a la función para mostrar antepasados por nombre
+                arbolGenealogico.mostrarAntepasadosPorNombre(persona.getNombre(), grafosAntepasados);
+
+                // En este punto, los antepasados están añadidos en grafosAntepasados y el grafo está mostrado
+            }
+        } else {
+            System.out.println("No se encontraron antepasados para la persona con el nombre proporcionado.");
         }
-    } else {
-        System.out.println("No se encontraron antepasados para la persona con el nombre proporcionado.");
-    }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
