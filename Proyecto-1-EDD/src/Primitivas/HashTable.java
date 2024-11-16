@@ -140,5 +140,24 @@ public class HashTable<K, V> {
         }
         return allKeys;
     }
+    
+    /**
+     * Método para obtener todos los valores de la tabla.
+     *
+     * @return Lista de todos los valores.
+     */
+    public Lista<V> values() {
+        Lista<V> allValues = new Lista<>();
+        for (int i = 0; i < buckets.length; i++) {
+            Lista<Entry<K, V>> bucket = buckets[i];
+            Lista<Entry<K, V>>.ListaIterator iterator = bucket.iterator();
+            while (iterator.hasNext()) {
+                Entry<K, V> entry = iterator.next();
+                allValues.append(entry.value);
+            }
+        }
+        return allValues;
+    }
+
 
 }
