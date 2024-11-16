@@ -2,17 +2,26 @@ package Objetos;
 
 import Primitivas.HashTable;
 import Primitivas.Lista;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
 import javax.swing.JFileChooser;
 import java.io.File;
 import java.io.FileReader;
 
+/**
+ * Clase que contiene funciones útiles para el proyecto, incluyendo la lectura
+ * del archivo JSON.
+ *
+ * @version 4/11/2024
+ */
 public class Funcion {
 
     /**
-     * Lee un archivo JSON seleccionado por el usuario y lo procesa en objetos Persona.
+     * Lee un archivo JSON seleccionado por el usuario y lo procesa en objetos
+     * Persona.
      *
      * @return DatosProyecto que encapsula la lista de personas y la tabla hash.
      */
@@ -79,14 +88,14 @@ public class Funcion {
                                         personas.append(persona);
                                         hashTable.put(persona.getId(), persona);
                                     }
-
-                                    // Ahora que nombreCompleto ha sido actualizado, puedes agregar las relaciones
-                                    personas.append(persona);
-                                    hashTable.put(persona.getId(), persona);
                                 }
                             }
+                        } else {
+                            System.out.println("La entrada '" + key + "' no es un array de personas.");
                         }
                     }
+                } else {
+                    System.out.println("El archivo JSON seleccionado no tiene el formato esperado.");
                 }
 
             } catch (Exception e) {
@@ -100,11 +109,12 @@ public class Funcion {
     }
 
     /**
-     * Asigna un atributo específico a una persona basado en la clave del atributo.
+     * Asigna un atributo específico a una persona basado en la clave del
+     * atributo.
      *
-     * @param persona       Persona a la que se le asignará el atributo.
-     * @param attributeKey  Clave del atributo.
-     * @param valueElement  Valor del atributo.
+     * @param persona Persona a la que se le asignará el atributo.
+     * @param attributeKey Clave del atributo.
+     * @param valueElement Valor del atributo.
      */
     private static void asignarAtributo(Persona persona, String attributeKey, JsonElement valueElement) {
         switch (attributeKey) {
@@ -118,42 +128,46 @@ public class Funcion {
                         String padre = bornToArray.get(j).getAsString();
                         persona.addBornTo(padre);
                     }
+                } else {
+                    persona.addBornTo(valueElement.getAsString());
                 }
-            } else {
-                String hijoNombre = valueElement.getAsString() + " " + nombrePersona.split(" ")[1];
-                persona.addHijo(hijoNombre);
-                String relacion = nombreCompleto + " : " + hijoNombre;
-                if (!relaciones.contains(relacion)) {
-                    relaciones.append(relacion);  // Guardamos la relación
-                }
-            }
-            break;
-        case "Born to":
-            // Agregar las relaciones con los padres usando el nombre completo actualizado
-            if (valueElement.isJsonArray()) {
-                com.google.gson.JsonArray bornToArray = valueElement.getAsJsonArray();
-                // Primero el padre, luego la madre (si existe)
-                boolean isPadre = true; // Flag para asegurar que el padre se agregue primero
-                for (JsonElement padre : bornToArray) {
-                    String padreNombre = padre.getAsString();
-                    persona.addBornTo(padreNombre);
-                    if (isPadre) {
-                        // Agregar la relación de padre primero
-                        relaciones.append(padreNombre + " : " + nombreCompleto);
-                        isPadre = false; // Después de agregar el padre, agregar la madre si existe
-                    } else {
-                        // Si ya es el padre, se agrega la madre (si existe)
-                        relaciones.append(padreNombre + " : " + nombreCompleto);
+                break;
+            case "Known throughout as":
+                persona.setApodo(valueElement.getAsString());
+                break;
+            case "Held title":
+                persona.setTitle(valueElement.getAsString());
+                break;
+            case "Wed to":
+                persona.setWedTo(valueElement.getAsString());
+                break;
+            case "Of eyes":
+                persona.setColorOjos(valueElement.getAsString());
+                break;
+            case "Of hair":
+                persona.setColorCabello(valueElement.getAsString());
+                break;
+            case "Father to":
+                if (valueElement.isJsonArray()) {
+                    com.google.gson.JsonArray hijosArray = valueElement.getAsJsonArray();
+                    for (int k = 0; k < hijosArray.size(); k++) {
+                        String hijoNombre = hijosArray.get(k).getAsString();
+                        persona.addHijo(hijoNombre);
                     }
+                } else {
+                    persona.addHijo(valueElement.getAsString());
                 }
-            } else {
-                String padreNombre = valueElement.getAsString();
-                persona.addBornTo(padreNombre);
-                relaciones.append(padreNombre + " : " + nombreCompleto);
-            }
-            break;
-        default:
-            break;
+                break;
+            case "Notes":
+                persona.addNota(valueElement.getAsString());
+                break;
+            case "Fate":
+                persona.setFate(valueElement.getAsString());
+                break;
+            // Agregar otros casos si es necesario
+            default:
+                // Manejar otros atributos
+                break;
+        }
     }
-}
 }

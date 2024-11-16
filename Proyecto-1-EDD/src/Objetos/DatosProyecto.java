@@ -12,12 +12,10 @@ import Primitivas.Lista;
 public class DatosProyecto {
     private Lista<Persona> personas;
     private HashTable<String, Persona> hashTable;
-    private Lista<String> relaciones; // Nueva lista para las relaciones
 
-    public DatosProyecto(Lista<Persona> personas, HashTable<String, Persona> hashTable, Lista<String> relaciones) {
+    public DatosProyecto(Lista<Persona> personas, HashTable<String, Persona> hashTable) {
         this.personas = personas;
         this.hashTable = hashTable;
-        this.relaciones = relaciones;
     }
 
     public Lista<Persona> getPersonas() {
