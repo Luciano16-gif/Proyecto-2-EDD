@@ -28,6 +28,12 @@ public class NodoArbol {
     public void agregarPadre(NodoArbol padre) {
         this.padres.append(padre);
     }
+        
+    
+    public void removerPadre(NodoArbol padre) {
+        padres.remove(padre);
+    }
+
 
     public Lista<NodoArbol> getHijos() {
         return hijos;

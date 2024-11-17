@@ -2,6 +2,7 @@ package Objetos;
 
 import Primitivas.HashTable;
 import Primitivas.Lista;
+import Primitivas.Lista.ListaIterator;
 
 /**
  * Clase que representa el árbol genealógico y maneja la construcción del mismo.
@@ -58,24 +59,32 @@ public class ArbolGenealogico {
      * Por ejemplo, mapea "Ormund" a "Ormund Baratheon, First of his name" si "Ormund" no está mapeado a otro ID.
      */
     private void mapearAliasesUnicos() {
+        HashTable<String, String> nombreCortoAId = new HashTable<>();
+
         for (int i = 0; i < listaPersonas.len(); i++) {
             Persona persona = listaPersonas.get(i);
             String nombreCompleto = persona.getNombre();
 
-            // Extraer el nombre corto (primer nombre)
-            String nombreCorto = extraerPrimerNombre(nombreCompleto);
+            // Extraer el nombre sin apellido
+            String nombreSinApellido = extraerPrimerNombre(nombreCompleto);
 
             // Evitar sobrescribir si ya está mapeado
-            if (!nombreAId.containsKey(nombreCorto)) {
-                nombreAId.put(nombreCorto, persona.getId());
-                //System.out.println(nombreAId.get(nombreCorto));
+            if (!nombreCortoAId.containsKey(nombreSinApellido)) {
+                nombreCortoAId.put(nombreSinApellido, persona.getId());
             } else {
-                // Si el alias ya está mapeado a otro ID, no mapear y emitir una advertencia
-                String idExistente = nombreAId.get(nombreCorto);
-                System.out.println(nombreAId.get(idExistente));
-                if (!idExistente.equals(persona.getId())) {
-                    System.out.println("Advertencia: Alias \"" + nombreCorto + "\" ya está mapeado a otro ID. Alias omitido para: " + persona.getNombre());
-                }
+                // Si el nombre sin apellido ya está mapeado a otro ID, marcar como no único
+                nombreCortoAId.put(nombreSinApellido, null); // null indica no único
+            }
+        }
+
+        // Agregar los nombres sin apellido únicos a nombreAId
+        Lista<String> nombresCortos = nombreCortoAId.keys();
+        for (int i = 0; i < nombresCortos.len(); i++) {
+            String nombreCorto = nombresCortos.get(i);
+            String id = nombreCortoAId.get(nombreCorto);
+            if (id != null) {
+                // Es único, agregar a nombreAId
+                nombreAId.put(nombreCorto, id);
             }
         }
     }
@@ -123,194 +132,250 @@ public class ArbolGenealogico {
             }
         }
     }
+    
+    /**
+    * Método para resolver el ID de una persona dado su nombre y un contexto opcional (por ejemplo, el padre).
+    *
+    * @param nombre Nombre de la persona a buscar.
+    * @param contexto Persona que actúa como contexto (puede ser null).
+    * @return ID único de la persona si se encuentra, null en caso contrario.
+    */
+    private String resolverIdPorNombreConContexto(String nombre, Persona contexto) {
+        String id = null;
+
+        // Intentar encontrar un match exacto en nombreAId
+        if (nombreAId.containsKey(nombre)) {
+            id = nombreAId.get(nombre);
+        } else {
+            // Intentar encontrar una persona cuyo nombre contenga el nombre dado y coincida con el contexto
+            Lista<String> posiblesIds = nombreAId.values();
+            for (int i = 0; i < posiblesIds.len(); i++) {
+                String posibleId = posiblesIds.get(i);
+                NodoArbol posibleNodo = tablaPersonasPorId.get(posibleId);
+                if (posibleNodo != null) {
+                    Persona posiblePersona = posibleNodo.getPersona();
+                    if (posiblePersona.getNombre().contains(nombre)) {
+                        // Verificar si el contexto (padre) está en la lista bornTo de la posible persona
+                        Lista<String> bornTo = posiblePersona.getBornTo();
+                        for (int j = 0; j < bornTo.len(); j++) {
+                            String nombrePadreBornTo = bornTo.get(j);
+
+                            if (nombrePadreBornTo.equals(contexto.getId()) ||
+                                nombrePadreBornTo.equals(contexto.getNombre()) ||
+                                (contexto.getApodo() != null && !contexto.getApodo().isEmpty() &&
+                                 nombrePadreBornTo.equals(contexto.getApodo()))) {
+                                id = posibleId;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return id;
+    }
+    
+    
+
+
 
     /**
-     * Construye el árbol genealógico a partir de una lista de personas y añade las relaciones al grafo.
-     *
-     * @param personas Lista de personas a procesar.
-     * @param grafos   Objeto Grafos para visualizar las conexiones.
-     */
+    * Construye el árbol genealógico a partir de una lista de personas y añade las relaciones al grafo.
+    *
+    * @param personas Lista de personas a procesar.
+    * @param grafos   Objeto Grafos para visualizar las conexiones.
+    */
     public void construirArbol(Lista<Persona> personas, Grafos grafos) {
         listaPersonas = personas;
-        
-        // Primer pase: Crear nodos para todas las personas en el JSON
+
+        // Crear NodoArbol para cada persona y mapear nombres a IDs
         for (int i = 0; i < personas.len(); i++) {
             Persona persona = personas.get(i);
             NodoArbol nodo = new NodoArbol(persona);
             tablaPersonasPorId.put(persona.getId(), nodo);
 
-            // Mapear el nombre completo al ID
+            // Mapear nombre y apodo a ID
             nombreAId.put(persona.getNombre(), persona.getId());
-
-            // Si tiene apodo, mapear el apodo al ID solo si es único
-            if (!persona.getApodo().isEmpty()) {
-                if (!nombreAId.containsKey(persona.getApodo())) {
-                    nombreAId.put(persona.getApodo(), persona.getId());
-                } else {
-                    // Si el apodo ya está mapeado a otro ID, omitir el mapeo y emitir una advertencia
-                    System.out.println("Advertencia: Alias \"" + persona.getApodo() + "\" ya está mapeado a otro ID. Alias omitido para: " + persona.getNombre());
-                }
+            if (persona.getApodo() != null && !persona.getApodo().isEmpty()) {
+                nombreAId.put(persona.getApodo(), persona.getId());
             }
 
-            grafos.addPersona(persona); // Añadir persona al grafo
+            // **Añadir la persona al grafo**
+            grafos.addPersona(persona);
         }
-
-        // Segundo pase: Mapear alias únicos antes de establecer relaciones
+        
+        // Mapear nombres sin apellido únicos a IDs
         mapearAliasesUnicos();
 
-        // Tercer pase: Establecer relaciones "Born to"
+        // Resolver referencias a hijos y padres
         for (int i = 0; i < personas.len(); i++) {
-            Persona persona = personas.get(i);
-            NodoArbol nodoActual = tablaPersonasPorId.get(persona.getId());
+            Persona padrePersona = personas.get(i);
+            NodoArbol nodoPadre = tablaPersonasPorId.get(padrePersona.getId());
 
-            Lista<String> padres = persona.getBornTo();
-            if (padres != null && padres.len() > 0) {
-                for (int j = 0; j < padres.len(); j++) {
-                    String nombrePadre = padres.get(j);
-                    String idPadre = resolverIdPorNombre(nombrePadre);
+            // Procesar hijos
+            ListaIterator hijosIterator = padrePersona.getHijos().iterator();
+            while (hijosIterator.hasNext()) {
+                String nombreHijo = (String) hijosIterator.next();
+                
+                String idHijo = resolverIdPorNombreConContexto(nombreHijo, padrePersona);
 
-                    if (idPadre != null && tablaPersonasPorId.containsKey(idPadre)) {
-                        NodoArbol nodoPadre = tablaPersonasPorId.get(idPadre);
-                        if (nodoPadre != null) {
-                            boolean duplicado = false;
-                            for (int k = 0; k < nodoPadre.getHijos().len(); k++) {
-                                NodoArbol hijoExistente = nodoPadre.getHijos().get(k);
-                                if (hijoExistente.getPersona().getNombre().equals(persona.getNombre()) &&
-                                    hijoExistente.getPersona().getOfHisName().equals(persona.getOfHisName())) {
-                                    duplicado = true;
-                                    grafos.removerPersona(persona.getId());
-                                    System.out.println("Duplicado encontrado y eliminado: " + persona.getNombre() +
-                                                       (persona.getOfHisName().isEmpty() ? "" : ", " + persona.getOfHisName()));
-                                    break;
-                                }
-                            }
-                            
-                            if (!duplicado) {
-                                // Verificar si se crea un ciclo
-                                if (!creaCiclo(nodoActual, nodoPadre)) {
-                                    nodoPadre.agregarHijo(nodoActual);
-                                    grafos.addArco1(idPadre, persona.getId());
-                                    // Buscar y eliminar placeholder si existe
-                                    eliminarPlaceholder(nodoPadre, persona.getNombre(), grafos);
-                                } else {
-                                    System.out.println("Advertencia: Relación padre-hijo entre " + nodoPadre.getPersona().getNombre() + " y " + persona.getNombre() + " crea un ciclo. Relación omitida.");
-                                }
-                            }
-                        }
-                    } else {
-                        // Crear placeholder para padre ausente
-                        Persona padrePlaceholder = new Persona(nombrePadre);
-                        padrePlaceholder.setOfHisName("");
-                        String idPlaceholder = padrePlaceholder.getId();
-
-                        if (!tablaPersonasPorId.containsKey(idPlaceholder)) {
-                            NodoArbol nodoPadrePlaceholder = new NodoArbol(padrePlaceholder);
-                            tablaPersonasPorId.put(padrePlaceholder.getId(), nodoPadrePlaceholder);
-                            nombreAId.put(padrePlaceholder.getNombre(), padrePlaceholder.getId());
-                            grafos.addPersona(padrePlaceholder);
-                        }
-
-                        NodoArbol nodoPadrePlaceholderExistente = tablaPersonasPorId.get(idPlaceholder);
-                        nodoPadrePlaceholderExistente.agregarHijo(nodoActual);
-                        grafos.addArco1(idPlaceholder, persona.getId());
-                    }
+                NodoArbol nodoHijo;
+                if (idHijo != null && tablaPersonasPorId.containsKey(idHijo)) {
+                    nodoHijo = tablaPersonasPorId.get(idHijo);
+                } else {
+                    // Crear placeholder con un ID único
+                    String placeholderId = "[Placeholder]_" + nombreHijo + "_hijo_de_" + padrePersona.getId();
+                    Persona hijoPlaceholder = new Persona(nombreHijo);
+                    hijoPlaceholder.setId(placeholderId); // Asegurarse de que el ID es único
+                    nodoHijo = new NodoArbol(hijoPlaceholder);
+                    tablaPersonasPorId.put(placeholderId, nodoHijo);
+                    nombreAId.put(placeholderId, placeholderId);
+                    grafos.addPersona(hijoPlaceholder);
                 }
+
+                // Agregar hijo al nodo padre si no está ya conectado
+                if (!nodoPadre.getHijos().contains(nodoHijo)) {
+                    nodoPadre.agregarHijo(nodoHijo);
+                    nodoHijo.agregarPadre(nodoPadre);
+                    grafos.addArco1(padrePersona.getId(), nodoHijo.getPersona().getId());
+                }
+
+                // Agregar objeto Persona del hijo al padrePersona
+                padrePersona.addFatherTo(nodoHijo.getPersona());
             }
-        }
 
-        // Cuarto pase: Establecer relaciones "Father to"
-        for (int i = 0; i < personas.len(); i++) {
-            Persona padre = personas.get(i);
-            NodoArbol nodoPadre = tablaPersonasPorId.get(padre.getId());
-            
-            Lista<String> hijos = padre.getHijos();
-            if (hijos != null && hijos.len() > 0) {
-                for (int j = 0; j < hijos.len(); j++) {
-                    String nombreHijo = hijos.get(j);
-                    String idHijo = resolverIdPorNombre(nombreHijo);
+            // Procesar bornTo (padres)
+            ListaIterator padresIterator = padrePersona.getBornTo().iterator();
+            while (padresIterator.hasNext()) {
+                String nombrePadre = (String) padresIterator.next();
+                String idPadre = resolverIdPorNombre(nombrePadre);
 
-                    if (idHijo != null && tablaPersonasPorId.containsKey(idHijo)) {
-                        NodoArbol nodoHijo = tablaPersonasPorId.get(idHijo);
-                        if (nodoHijo != null) {
-                            boolean conectado = false;
-                            for (int k = 0; k < nodoPadre.getHijos().len(); k++) {
-                                NodoArbol hijoExistente = nodoPadre.getHijos().get(k);
-                                if (hijoExistente.getPersona().getId().equals(idHijo)) {
-                                    conectado = true;
-                                    break;
-                                }
-                            }
+                NodoArbol nodoPadreReal;
+                if (idPadre != null && tablaPersonasPorId.containsKey(idPadre)) {
+                    nodoPadreReal = tablaPersonasPorId.get(idPadre);
+                } else {
+                    // Crear placeholder si el padre no existe
+                    Persona padrePlaceholder = new Persona(nombrePadre);
+                    nodoPadreReal = new NodoArbol(padrePlaceholder);
+                    tablaPersonasPorId.put(padrePlaceholder.getId(), nodoPadreReal);
+                    nombreAId.put(padrePlaceholder.getNombre(), padrePlaceholder.getId());
 
-                            if (!conectado) {
-                                // Verificar si se crea un ciclo
-                                if (!creaCiclo(nodoHijo, nodoPadre)) {
-                                    nodoPadre.agregarHijo(nodoHijo);
-                                    grafos.addArco1(padre.getId(), idHijo);
-                                    // Buscar y eliminar placeholder si existe
-                                    eliminarPlaceholder(nodoPadre, nodoHijo.getPersona().getNombre(), grafos);
-                                } else {
-                                    System.out.println("Advertencia: Relación padre-hijo entre " + padre.getNombre() + " y " + nombreHijo + " crea un ciclo. Relación omitida.");
-                                }
-                            }
-                        }
-                    } else {
-                        // Crear placeholder para hijo ausente
-                        Persona hijoPlaceholder = new Persona(nombreHijo);
-                        hijoPlaceholder.setOfHisName("");
-                        String idPlaceholder = hijoPlaceholder.getId();
+                    // Añadir el placeholder al grafo
+                    grafos.addPersona(padrePlaceholder);
+                }
 
-                        if (!tablaPersonasPorId.containsKey(idPlaceholder)) {
-                            NodoArbol nodoHijoPlaceholder = new NodoArbol(hijoPlaceholder);
-                            tablaPersonasPorId.put(hijoPlaceholder.getId(), nodoHijoPlaceholder);
-                            nombreAId.put(hijoPlaceholder.getNombre(), hijoPlaceholder.getId());
-                            grafos.addPersona(hijoPlaceholder);
-                        }
-
-                        NodoArbol nodoHijoPlaceholderExistente = tablaPersonasPorId.get(idPlaceholder);
-                        nodoPadre.agregarHijo(nodoHijoPlaceholderExistente);
-                        grafos.addArco1(padre.getId(), idPlaceholder);
-                    }
+                // Agregar este nodo como hijo del padre real si no está ya conectado
+                if (!nodoPadreReal.getHijos().contains(nodoPadre)) {
+                    nodoPadreReal.agregarHijo(nodoPadre);
+                    nodoPadre.agregarPadre(nodoPadreReal);
+                    grafos.addArco1(nodoPadreReal.getPersona().getId(), padrePersona.getId());
                 }
             }
         }
 
         // Opcional: Eliminar placeholders redundantes si es necesario
         eliminarPlaceholdersRedundantes(grafos);
+
+    }
+    
+    
+    
+    private void actualizarConexiones(NodoArbol nodoPlaceholder, NodoArbol nodoReal, Grafos grafos) {
+        // Actualizar padres
+        Lista<NodoArbol> padres = nodoPlaceholder.getPadres();
+        for (int i = 0; i < padres.len(); i++) {
+            NodoArbol padre = padres.get(i);
+            padre.removerHijo(nodoPlaceholder);
+            padre.agregarHijo(nodoReal);
+            grafos.addArco1(padre.getPersona().getId(), nodoReal.getPersona().getId());
+        }
+
+        // Actualizar hijos
+        Lista<NodoArbol> hijos = nodoPlaceholder.getHijos();
+        for (int i = 0; i < hijos.len(); i++) {
+            NodoArbol hijo = hijos.get(i);
+            nodoReal.agregarHijo(hijo);
+            hijo.removerPadre(nodoPlaceholder);
+            hijo.agregarPadre(nodoReal);
+            grafos.addArco1(nodoReal.getPersona().getId(), hijo.getPersona().getId());
+        }
     }
 
+
     /**
-     * Elimina placeholders redundantes que ya tienen un nodo completo correspondiente.
-     *
-     * @param grafos Objeto Grafos para actualizar las conexiones.
-     */
+    * Elimina placeholders redundantes que ya tienen un nodo completo correspondiente.
+    *
+    * @param grafos Objeto Grafos para actualizar las conexiones.
+    */
     private void eliminarPlaceholdersRedundantes(Grafos grafos) {
+        Lista<String> idsPlaceholders = new Lista<>();
+
+        // Recopilar todos los IDs de placeholders
         Lista<String> ids = tablaPersonasPorId.keys();
         for (int i = 0; i < ids.len(); i++) {
             String id = ids.get(i);
             if (id.startsWith("[Placeholder]_")) {
-                String nombre = id.substring("[Placeholder]_".length());
-                String idCompleto = resolverIdPorNombre(nombre);
-                if (idCompleto != null && tablaPersonasPorId.containsKey(idCompleto)) {
-                    // Eliminar el nodo placeholder
-                    NodoArbol nodoPlaceholder = tablaPersonasPorId.get(id);
-                    Lista<NodoArbol> hijosPlaceholder = nodoPlaceholder.getHijos();
+                idsPlaceholders.append(id);
+            }
+        }
 
-                    for (int j = 0; j < hijosPlaceholder.len(); j++) {
-                        NodoArbol hijo = hijosPlaceholder.get(j);
-                        NodoArbol nodoCompleto = tablaPersonasPorId.get(idCompleto);
-                        nodoCompleto.agregarHijo(hijo);
-                        grafos.addArco1(idCompleto, hijo.getPersona().getId());
-                    }
+        // Para cada placeholder, intentar encontrar una persona real que coincida
+        for (int i = 0; i < idsPlaceholders.len(); i++) {
+            String idPlaceholder = idsPlaceholders.get(i);
+            NodoArbol nodoPlaceholder = tablaPersonasPorId.get(idPlaceholder);
+            Persona personaPlaceholder = nodoPlaceholder.getPersona();
+            String nombrePlaceholder = personaPlaceholder.getNombre();
 
-                    grafos.removerPersona(id);
-                    tablaPersonasPorId.remove(id);
-                    nombreAId.remove(nombre);
+            // Llamar al nuevo método con el nodoPlaceholder
+            String idReal = buscarPersonaPorNombreYContexto(nombrePlaceholder, nodoPlaceholder);
 
-                    System.out.println("Placeholder redundante eliminado: " + nombre);
-                }
+            if (idReal != null) {
+                NodoArbol nodoReal = tablaPersonasPorId.get(idReal);
+
+                // Actualizar las conexiones
+                actualizarConexiones(nodoPlaceholder, nodoReal, grafos);
+
+                // Eliminar el placeholder
+                tablaPersonasPorId.remove(idPlaceholder);
+                nombreAId.remove(idPlaceholder);
+                grafos.removerPersona(idPlaceholder);
+
+                System.out.println("Placeholder eliminado y reemplazado por: " + idReal);
             }
         }
     }
+    
+    private String buscarPersonaPorNombreYContexto(String nombre, NodoArbol nodoPlaceholder) {
+        for (int i = 0; i < listaPersonas.len(); i++) {
+            Persona persona = listaPersonas.get(i);
+            if (persona.getNombre().contains(nombre)) {
+                // Obtener los padres del placeholder
+                Lista<NodoArbol> padresPlaceholder = nodoPlaceholder.getPadres();
+                for (int j = 0; j < padresPlaceholder.len(); j++) {
+                    NodoArbol padrePlaceholder = padresPlaceholder.get(j);
+                    Persona padrePersona = padrePlaceholder.getPersona();
+
+                    // Verificar si el padre del placeholder coincide con alguno de los bornTo de la persona
+                    Lista<String> bornTo = persona.getBornTo();
+                    for (int k = 0; k < bornTo.len(); k++) {
+                        String nombrePadreBornTo = bornTo.get(k);
+
+                        // Comparar IDs, nombres y apodos
+                        if (nombrePadreBornTo.equals(padrePersona.getId()) ||
+                            nombrePadreBornTo.equals(padrePersona.getNombre()) ||
+                            (padrePersona.getApodo() != null && !padrePersona.getApodo().isEmpty() &&
+                             nombrePadreBornTo.equals(padrePersona.getApodo()))) {
+                            return persona.getId();
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+
 
     /**
      * Verifica si establecer una relación padre-hijo crearía un ciclo.
@@ -399,41 +464,41 @@ public class ArbolGenealogico {
      * @return NodoArbol correspondiente si se encuentra, null en caso contrario.
      */
     public NodoArbol buscarPorId(String id) {
-        return tablaPersonasPorId.get(id);
-    }
-    
-    // Método para construir la HashTable secundaria
-    public void construirTablaNombreModificado() {
-    nombreAIdModificado = new HashTable<String, String>();
+            return tablaPersonasPorId.get(id);
+        }
 
-    // Recorrer todas las claves de nombreAId para construir las entradas modificadas
-    Lista<String> claves = nombreAId.getKeys();
-    for (int i = 0; i < claves.getSize(); i++) {
-        String nombreKey = claves.get(i);
-        String id = nombreAId.get(nombreKey);
+        // Método para construir la HashTable secundaria
+        public void construirTablaNombreModificado() {
+        nombreAIdModificado = new HashTable<String, String>();
 
-        // Obtener la persona correspondiente en tablaPersonasPorId
-        NodoArbol nodo = tablaPersonasPorId.get(id);
-        if (nodo != null) {
-            Persona persona = nodo.getPersona();
+        // Recorrer todas las claves de nombreAId para construir las entradas modificadas
+        Lista<String> claves = nombreAId.getKeys();
+        for (int i = 0; i < claves.getSize(); i++) {
+            String nombreKey = claves.get(i);
+            String id = nombreAId.get(nombreKey);
 
-            // Construir nombre con "Of his name" si está presente
-            String nombreConOfHisName = nombreKey;
-            if (persona.getOfHisName() != null && !persona.getOfHisName().isEmpty()) {
-                nombreConOfHisName += ", " + persona.getOfHisName() + " of his name";
-            }
+            // Obtener la persona correspondiente en tablaPersonasPorId
+            NodoArbol nodo = tablaPersonasPorId.get(id);
+            if (nodo != null) {
+                Persona persona = nodo.getPersona();
 
-            // Añadir ambos nombres a la hashtable modificada
-            nombreAIdModificado.put(nombreConOfHisName, id);
-            System.out.println("Añadido a nombreAIdModificado: " + nombreConOfHisName + " -> " + id);
+                // Construir nombre con "Of his name" si está presente
+                String nombreConOfHisName = nombreKey;
+                if (persona.getOfHisName() != null && !persona.getOfHisName().isEmpty()) {
+                    nombreConOfHisName += ", " + persona.getOfHisName() + " of his name";
+                }
 
-            // Si tiene un alias "Known throughout as", añadirlo también
-            if (persona.getApodo() != null && !persona.getApodo().isEmpty()) {
-                nombreAIdModificado.put(persona.getApodo(), id);
-                System.out.println("Añadido a nombreAIdModificado (apodo): " + persona.getApodo() + " -> " + id);
+                // Añadir ambos nombres a la hashtable modificada
+                nombreAIdModificado.put(nombreConOfHisName, id);
+                System.out.println("Añadido a nombreAIdModificado: " + nombreConOfHisName + " -> " + id);
+
+                // Si tiene un alias "Known throughout as", añadirlo también
+                if (persona.getApodo() != null && !persona.getApodo().isEmpty()) {
+                    nombreAIdModificado.put(persona.getApodo(), id);
+                    System.out.println("Añadido a nombreAIdModificado (apodo): " + persona.getApodo() + " -> " + id);
+                }
             }
         }
-    }
     }
 
 
@@ -445,229 +510,228 @@ public class ArbolGenealogico {
      * @return NodoArbol correspondiente si se encuentra, null en caso contrario.
      */
     public Lista<NodoArbol> buscarPorNombre(String nombre) {
-    Lista<NodoArbol> resultados = new Lista<>();
+        Lista<NodoArbol> resultados = new Lista<>();
 
-    // Buscar ID en nombreAId o nombreAIdModificado
-    String id = nombreAId.get(nombre);
-    if (id == null) {
-        Lista<String> clavesModificadas = nombreAIdModificado.getKeys();
-        for (int i = 0; i < clavesModificadas.getSize(); i++) {
-            String claveModificada = clavesModificadas.get(i);
-            if (claveModificada.equalsIgnoreCase(nombre)) {
-                id = nombreAIdModificado.get(claveModificada);
-                break;
-            }
-        }
-    }
-
-    if (id == null) {
-        id = nombre;
-    }
-
-    // Si se encuentra el ID, busca el NodoArbol en tablaPersonasPorId
-    if (tablaPersonasPorId.containsKey(id)) {
-        NodoArbol nodo = tablaPersonasPorId.get(id);
-        if (nodo != null) {
-            resultados.append(nodo);
-
-            // Mostrar padres y asignar en bornTo
-            Lista<NodoArbol> padres = obtenerPadres(nodo);
-            if (padres.getSize() > 0) {
-                for (int i = 0; i < padres.getSize(); i++) {
-                    NodoArbol padre = padres.get(i);
-                    Persona padrePersona = padre.getPersona();
-                    nodo.getPersona().addBornTo2(padrePersona.getNombre() + ", " + padrePersona.getOfHisName());
-                }
-            } 
-
-            // Crear lista para descendientes por nivel
-            Lista<Lista<NodoArbol>> descendientesPorNivel = new Lista<>();
-            mostrarDescendientes(nodo, 0, descendientesPorNivel);
-
-            // Guardar descendientes en tabla para acceso rápido en la gráfica
-            for (int nivel = 0; nivel < descendientesPorNivel.getSize(); nivel++) {
-                Lista<NodoArbol> descendientesNivel = descendientesPorNivel.get(nivel);
-                for (int j = 0; j < descendientesNivel.getSize(); j++) {
-                    NodoArbol descendiente = descendientesNivel.get(j);
-                    // Asignar cada descendiente en hashtable con ID
-                    tablaPersonasPorId.put(descendiente.getPersona().getId(), descendiente);
+        // Buscar ID en nombreAId o nombreAIdModificado
+        String id = nombreAId.get(nombre);
+        if (id == null) {
+            Lista<String> clavesModificadas = nombreAIdModificado.getKeys();
+            for (int i = 0; i < clavesModificadas.getSize(); i++) {
+                String claveModificada = clavesModificadas.get(i);
+                if (claveModificada.equalsIgnoreCase(nombre)) {
+                    id = nombreAIdModificado.get(claveModificada);
+                    break;
                 }
             }
         }
-    } else {
-        System.out.println("No se encontró ninguna persona con el nombre o apodo proporcionado.");
-    }
 
-    return resultados;
+        if (id == null) {
+            id = nombre;
+        }
+
+        // Si se encuentra el ID, busca el NodoArbol en tablaPersonasPorId
+        if (tablaPersonasPorId.containsKey(id)) {
+            NodoArbol nodo = tablaPersonasPorId.get(id);
+            if (nodo != null) {
+                resultados.append(nodo);
+
+                // Mostrar padres y asignar en bornTo
+                Lista<NodoArbol> padres = obtenerPadres(nodo);
+                if (padres.getSize() > 0) {
+                    for (int i = 0; i < padres.getSize(); i++) {
+                        NodoArbol padre = padres.get(i);
+                        Persona padrePersona = padre.getPersona();
+                        nodo.getPersona().addBornTo2(padrePersona.getNombre() + ", " + padrePersona.getOfHisName());
+                    }
+                } 
+
+                // Crear lista para descendientes por nivel
+                Lista<Lista<NodoArbol>> descendientesPorNivel = new Lista<>();
+                mostrarDescendientes(nodo, 0, descendientesPorNivel);
+
+                // Guardar descendientes en tabla para acceso rápido en la gráfica
+                for (int nivel = 0; nivel < descendientesPorNivel.getSize(); nivel++) {
+                    Lista<NodoArbol> descendientesNivel = descendientesPorNivel.get(nivel);
+                    for (int j = 0; j < descendientesNivel.getSize(); j++) {
+                        NodoArbol descendiente = descendientesNivel.get(j);
+                        // Asignar cada descendiente en hashtable con ID
+                        tablaPersonasPorId.put(descendiente.getPersona().getId(), descendiente);
+                    }
+                }
+            }
+        } else {
+            System.out.println("No se encontró ninguna persona con el nombre o apodo proporcionado.");
+        }
+
+        return resultados;
     }
 
     public void mostrarDescendientes(NodoArbol nodo, int nivel, Lista<Lista<NodoArbol>> descendientesPorNivel) {
-    // Asegúrate de que hay una lista en descendientesPorNivel para el nivel actual
-    while (descendientesPorNivel.getSize() <= nivel) {
-        descendientesPorNivel.append(new Lista<NodoArbol>());
-    }
-
-    // Añadir los hijos del nodo actual a la lista del nivel actual
-    Lista<NodoArbol> hijos = nodo.getHijos();
-    if (hijos.getSize() > 0) {
-        Lista<NodoArbol> nivelDescendientes = descendientesPorNivel.get(nivel);
-        for (int j = 0; j < hijos.getSize(); j++) {
-            NodoArbol hijo = hijos.get(j);
-            nivelDescendientes.append(hijo);
-
-            // Llamada recursiva para cada hijo, incrementando el nivel
-            mostrarDescendientes(hijo, nivel + 1, descendientesPorNivel);
+        // Asegúrate de que hay una lista en descendientesPorNivel para el nivel actual
+        while (descendientesPorNivel.getSize() <= nivel) {
+            descendientesPorNivel.append(new Lista<NodoArbol>());
         }
-    }
+
+        // Añadir los hijos del nodo actual a la lista del nivel actual
+        Lista<NodoArbol> hijos = nodo.getHijos();
+        if (hijos.getSize() > 0) {
+            Lista<NodoArbol> nivelDescendientes = descendientesPorNivel.get(nivel);
+            for (int j = 0; j < hijos.getSize(); j++) {
+                NodoArbol hijo = hijos.get(j);
+                nivelDescendientes.append(hijo);
+
+                // Llamada recursiva para cada hijo, incrementando el nivel
+                mostrarDescendientes(hijo, nivel + 1, descendientesPorNivel);
+            }
+        }
     }
 
     public void mostrarArbolGenealogicoPorNombre(String nombre, Grafos grafosOriginal) {
-    Lista<NodoArbol> nodosEncontrados = buscarPorNombre(nombre);
+        Lista<NodoArbol> nodosEncontrados = buscarPorNombre(nombre);
 
-    if (nodosEncontrados.getSize() == 0) {
-        System.out.println("La persona con el nombre " + nombre + " no fue encontrada.");
-        return;
-    }
+        if (nodosEncontrados.getSize() == 0) {
+            System.out.println("La persona con el nombre " + nombre + " no fue encontrada.");
+            return;
+        }
 
-    // Suponemos que solo se encuentra una persona con el nombre
-    NodoArbol nodoPersona = nodosEncontrados.get(0);  // Tomamos el primer resultado
+        // Suponemos que solo se encuentra una persona con el nombre
+        NodoArbol nodoPersona = nodosEncontrados.get(0);  // Tomamos el primer resultado
 
-    // Primer pase: Crear nodos para la persona y sus relaciones
-    grafosOriginal.addPersona(nodoPersona.getPersona());  // Añadir la persona seleccionada al nuevo grafo
+        // Primer pase: Crear nodos para la persona y sus relaciones
+        grafosOriginal.addPersona(nodoPersona.getPersona());  // Añadir la persona seleccionada al nuevo grafo
 
-    // Segundo pase: Establecer relaciones "Born to"
-    Lista<NodoArbol> padres = obtenerPadres(nodoPersona);  // Obtener los padres
-    if (padres.getSize() > 0) {
-        for (int i = 0; i < padres.getSize(); i++) {
-            NodoArbol nodoPadre = padres.get(i);
-            grafosOriginal.addPersona(nodoPadre.getPersona());  // Añadir el padre al nuevo grafo
+        // Segundo pase: Establecer relaciones "Born to"
+        Lista<NodoArbol> padres = obtenerPadres(nodoPersona);  // Obtener los padres
+        if (padres.getSize() > 0) {
+            for (int i = 0; i < padres.getSize(); i++) {
+                NodoArbol nodoPadre = padres.get(i);
+                grafosOriginal.addPersona(nodoPadre.getPersona());  // Añadir el padre al nuevo grafo
 
-            // Añadir relación padre-hijo (Born to) si no existe
-            boolean duplicado = false;
-            for (int j = 0; j < nodoPadre.getHijos().len(); j++) {
-                NodoArbol hijoExistente = nodoPadre.getHijos().get(j);
-                if (hijoExistente.getPersona().getId().equals(nodoPersona.getPersona().getId())) {
-                    grafosOriginal.addArco1(nodoPadre.getPersona().getId(), nodoPersona.getPersona().getId());
-                    duplicado = true;
-                    break;
+                // Añadir relación padre-hijo (Born to) si no existe
+                boolean duplicado = false;
+                for (int j = 0; j < nodoPadre.getHijos().len(); j++) {
+                    NodoArbol hijoExistente = nodoPadre.getHijos().get(j);
+                    if (hijoExistente.getPersona().getId().equals(nodoPersona.getPersona().getId())) {
+                        grafosOriginal.addArco1(nodoPadre.getPersona().getId(), nodoPersona.getPersona().getId());
+                        duplicado = true;
+                        break;
+                    }
+                }
+
+                // Si no es un duplicado, añadir la relación y el arco
+                if (!duplicado) {
+                    nodoPadre.agregarHijo(nodoPersona);
+                    grafosOriginal.addArco1(nodoPadre.getPersona().getId(), nodoPersona.getPersona().getId()); // Se asume distancia 1
                 }
             }
-
-            // Si no es un duplicado, añadir la relación y el arco
-            if (!duplicado) {
-                nodoPadre.agregarHijo(nodoPersona);
-                grafosOriginal.addArco1(nodoPadre.getPersona().getId(), nodoPersona.getPersona().getId()); // Se asume distancia 1
-            }
         }
-    }
 
-    // Tercer pase: Establecer relaciones "Father to" (hijos)
-    Lista<NodoArbol> hijos = nodoPersona.getHijos();  // Obtener los hijos de la persona
-    if (hijos.getSize() > 0) {
-        for (int i = 0; i < hijos.getSize(); i++) {
-            NodoArbol nodoHijo = hijos.get(i);
-            grafosOriginal.addPersona(nodoHijo.getPersona());  // Añadir el hijo al nuevo grafo
+        // Tercer pase: Establecer relaciones "Father to" (hijos)
+        Lista<NodoArbol> hijos = nodoPersona.getHijos();  // Obtener los hijos de la persona
+        if (hijos.getSize() > 0) {
+            for (int i = 0; i < hijos.getSize(); i++) {
+                NodoArbol nodoHijo = hijos.get(i);
+                grafosOriginal.addPersona(nodoHijo.getPersona());  // Añadir el hijo al nuevo grafo
 
-            // Añadir relación hijo-padre (Father to) si no existe
-            boolean conectado = false;
-            for (int j = 0; j < nodoPersona.getHijos().len(); j++) {
-                NodoArbol hijoExistente = nodoPersona.getHijos().get(j);
-                if (hijoExistente.getPersona().getId().equals(nodoHijo.getPersona().getId())) {
-                    grafosOriginal.addArco1(nodoPersona.getPersona().getId(), nodoHijo.getPersona().getId());
-                    conectado = true;
-                    break;
+                // Añadir relación hijo-padre (Father to) si no existe
+                boolean conectado = false;
+                for (int j = 0; j < nodoPersona.getHijos().len(); j++) {
+                    NodoArbol hijoExistente = nodoPersona.getHijos().get(j);
+                    if (hijoExistente.getPersona().getId().equals(nodoHijo.getPersona().getId())) {
+                        grafosOriginal.addArco1(nodoPersona.getPersona().getId(), nodoHijo.getPersona().getId());
+                        conectado = true;
+                        break;
+                    }
                 }
-            }
 
-            // Si no está conectado, añadir la relación y el arco
-            if (!conectado) {
-                nodoPersona.agregarHijo(nodoHijo);
-                grafosOriginal.addArco1(nodoPersona.getPersona().getId(), nodoHijo.getPersona().getId()); // Se asume distancia 1
-            }
+                // Si no está conectado, añadir la relación y el arco
+                if (!conectado) {
+                    nodoPersona.agregarHijo(nodoHijo);
+                    grafosOriginal.addArco1(nodoPersona.getPersona().getId(), nodoHijo.getPersona().getId()); // Se asume distancia 1
+                }
 
-            // Cuarto pase: Recursión para añadir los descendientes de los hijos
-            agregarDescendientesRecursivos(nodoHijo, grafosOriginal); // Llamada recursiva para agregar los descendientes
+                // Cuarto pase: Recursión para añadir los descendientes de los hijos
+                agregarDescendientesRecursivos(nodoHijo, grafosOriginal); // Llamada recursiva para agregar los descendientes
+            }
         }
-    }
     }
 
     // Método recursivo para agregar los descendientes de una persona (hijos, nietos, bisnietos, etc.)
     private void agregarDescendientesRecursivos(NodoArbol nodoPadre, Grafos grafosOriginal) {
-    Lista<NodoArbol> hijos = nodoPadre.getHijos();  // Obtener los hijos del nodo
+        Lista<NodoArbol> hijos = nodoPadre.getHijos();  // Obtener los hijos del nodo
 
-    if (hijos.getSize() > 0) {
-        for (int i = 0; i < hijos.getSize(); i++) {
-            NodoArbol nodoHijo = hijos.get(i);
-            grafosOriginal.addPersona(nodoHijo.getPersona());  // Añadir al grafo
+        if (hijos.getSize() > 0) {
+            for (int i = 0; i < hijos.getSize(); i++) {
+                NodoArbol nodoHijo = hijos.get(i);
+                grafosOriginal.addPersona(nodoHijo.getPersona());  // Añadir al grafo
 
-            // Añadir relación hijo-padre
-            grafosOriginal.addArco1(nodoPadre.getPersona().getId(), nodoHijo.getPersona().getId());
+                // Añadir relación hijo-padre
+                grafosOriginal.addArco1(nodoPadre.getPersona().getId(), nodoHijo.getPersona().getId());
 
-            // Llamada recursiva para agregar los descendientes del hijo
-            agregarDescendientesRecursivos(nodoHijo, grafosOriginal);
+                // Llamada recursiva para agregar los descendientes del hijo
+                agregarDescendientesRecursivos(nodoHijo, grafosOriginal);
+            }
         }
-    }
     }
     
     public Lista<Persona> buscarPorTitulo(String titulo) {
-    Lista<Persona> resultado = new Lista<>();
-    
-    for (int i = 0; i < listaPersonas.getSize(); i++) {
-        Persona persona = listaPersonas.get(i);
-        if (persona.getTitle() != null && persona.getTitle().equalsIgnoreCase(titulo)) {
-               resultado.append(persona);
+        Lista<Persona> resultado = new Lista<>();
+
+        for (int i = 0; i < listaPersonas.getSize(); i++) {
+            Persona persona = listaPersonas.get(i);
+            if (persona.getTitle() != null && persona.getTitle().equalsIgnoreCase(titulo)) {
+                   resultado.append(persona);
+            }
         }
-    }
-    return resultado;
+        return resultado;
     }
     
     
     public void mostrarAntepasadosPorNombre(String nombre, Grafos grafosOriginal) {
-    Lista<NodoArbol> nodosEncontrados = buscarPorNombre(nombre);
+        Lista<NodoArbol> nodosEncontrados = buscarPorNombre(nombre);
 
-    if (nodosEncontrados.getSize() == 0) {
-        System.out.println("La persona con el nombre " + nombre + " no fue encontrada.");
-        return;
+        if (nodosEncontrados.getSize() == 0) {
+            System.out.println("La persona con el nombre " + nombre + " no fue encontrada.");
+            return;
+        }
+
+        // Suponemos que solo se encuentra una persona con el nombre
+        NodoArbol nodoPersona = nodosEncontrados.get(0);  // Tomamos el primer resultado
+
+        // Añadir el nodo de la persona al grafo
+        grafosOriginal.addPersona(nodoPersona.getPersona());
+
+        // Crear lista para almacenar los antepasados por niveles
+        Lista<Lista<NodoArbol>> antepasadosPorNivel = new Lista<>();
+
+        // Llamada al método recursivo para agregar antepasados al grafo
+        agregarAntepasadosRecursivos(nodoPersona, 0, antepasadosPorNivel, grafosOriginal);
     }
 
-    // Suponemos que solo se encuentra una persona con el nombre
-    NodoArbol nodoPersona = nodosEncontrados.get(0);  // Tomamos el primer resultado
+    // Método recursivo para obtener y agregar los antepasados al grafo
+    private void agregarAntepasadosRecursivos(NodoArbol nodo, int nivel, Lista<Lista<NodoArbol>> antepasadosPorNivel, Grafos grafosOriginal) {
+        while (antepasadosPorNivel.getSize() <= nivel) {
+            antepasadosPorNivel.append(new Lista<NodoArbol>());
+        }
 
-    // Añadir el nodo de la persona al grafo
-    grafosOriginal.addPersona(nodoPersona.getPersona());
+        // Obtener los padres del nodo actual
+        Lista<NodoArbol> padres = obtenerPadres(nodo);
+        if (padres.getSize() > 0) {
+            Lista<NodoArbol> nivelAntepasados = antepasadosPorNivel.get(nivel);
 
-    // Crear lista para almacenar los antepasados por niveles
-    Lista<Lista<NodoArbol>> antepasadosPorNivel = new Lista<>();
+            for (int i = 0; i < padres.getSize(); i++) {
+                NodoArbol nodoPadre = padres.get(i);
+                nivelAntepasados.append(nodoPadre);
 
-    // Llamada al método recursivo para agregar antepasados al grafo
-    agregarAntepasadosRecursivos(nodoPersona, 0, antepasadosPorNivel, grafosOriginal);
-}
+                // Añadir el nodo padre al grafo
+                grafosOriginal.addPersona(nodoPadre.getPersona());
 
-// Método recursivo para obtener y agregar los antepasados al grafo
-private void agregarAntepasadosRecursivos(NodoArbol nodo, int nivel, Lista<Lista<NodoArbol>> antepasadosPorNivel, Grafos grafosOriginal) {
-    // Asegúrate de que hay una lista en antepasadosPorNivel para el nivel actual
-    while (antepasadosPorNivel.getSize() <= nivel) {
-        antepasadosPorNivel.append(new Lista<NodoArbol>());
-    }
+                // Añadir relación padre-hijo (arco hacia el antepasado)
+                grafosOriginal.addArco1(nodoPadre.getPersona().getId(), nodo.getPersona().getId());
 
-    // Obtener los padres del nodo actual
-    Lista<NodoArbol> padres = obtenerPadres(nodo);
-    if (padres.getSize() > 0) {
-        Lista<NodoArbol> nivelAntepasados = antepasadosPorNivel.get(nivel);
-        
-        for (int i = 0; i < padres.getSize(); i++) {
-            NodoArbol nodoPadre = padres.get(i);
-            nivelAntepasados.append(nodoPadre);
-
-            // Añadir el nodo padre al grafo
-            grafosOriginal.addPersona(nodoPadre.getPersona());
-
-            // Añadir relación padre-hijo (arco hacia el antepasado)
-            grafosOriginal.addArco1(nodoPadre.getPersona().getId(), nodo.getPersona().getId());
-
-            // Llamada recursiva para continuar con los antepasados del padre
-            agregarAntepasadosRecursivos(nodoPadre, nivel + 1, antepasadosPorNivel, grafosOriginal);
+                // Llamada recursiva para continuar con los antepasados del padre
+                agregarAntepasadosRecursivos(nodoPadre, nivel + 1, antepasadosPorNivel, grafosOriginal);
+            }
         }
     }
-}
 }

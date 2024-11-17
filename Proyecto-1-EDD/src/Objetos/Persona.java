@@ -7,6 +7,7 @@ import Primitivas.Lista.ListaIterator;
  * Clase que representa una persona en el árbol genealógico.
  */
 public class Persona {
+    private String id;
     private String nombre;
     private String apodo;
     private String ofHisName;
@@ -18,6 +19,7 @@ public class Persona {
     private Lista<String> bornTo;
     private Lista<String> hijos;
     private Lista<String> notas;
+     private Lista<Persona> fatherTo;
 
     /**
      * Constructor de la clase Persona.
@@ -36,11 +38,27 @@ public class Persona {
         this.bornTo = new Lista<>();
         this.hijos = new Lista<>();
         this.notas = new Lista<>();
+        this.fatherTo = new Lista<>();
     }
 
     // Getters y Setters
     public String getNombre() {
         return nombre;
+    }
+    
+    public String getId() {
+        if (id != null && !id.isEmpty()) {
+            return id;
+        } else if (ofHisName != null && !ofHisName.isEmpty()) {
+            return nombre + ", " + ofHisName + " of his name";
+        } else {
+            return nombre;
+        }
+    }
+
+    // Setter para el campo 'id'
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void setNombre(String nombre) {
@@ -106,6 +124,16 @@ public class Persona {
     public Lista<String> getBornTo() {
         return bornTo;
     }
+    
+    public Lista<Persona> getFatherTo() {
+        return fatherTo;
+    }
+    
+    public void addFatherTo(Persona hijo) {
+        if (!fatherTo.contains(hijo)) {
+            fatherTo.append(hijo);
+        }
+    }
 
     public void addBornTo(String nombrePadre) {
         if (!bornTo.contains(nombrePadre)) {
@@ -153,92 +181,79 @@ public class Persona {
     public void addNota(String nota) {
         this.notas.append(nota);
     }
-
-    /**
-     * Genera un ID único basado en el nombre y "Of his name".
-     *
-     * @return ID único de la persona.
-     */
-    public String getId() {
-        if (ofHisName != null && !ofHisName.isEmpty()) {
-            return nombre + ", " + ofHisName + " of his name";
-        } else {
-            return nombre;
-        }
-    }
     
     @Override
-public String toString() {
-    // Inicia la representación de la persona
-    StringBuilder sb = new StringBuilder();
+    public String toString() {
+        // Inicia la representación de la persona
+        StringBuilder sb = new StringBuilder();
 
-    // Agregar "Nombre"
-    sb.append("Nombre: '").append(nombre).append("'\n");
+        // Agregar "Nombre"
+        sb.append("Nombre: '").append(nombre).append("'\n");
 
-    // Agregar "Of his name" si existe
-    if (ofHisName != null && !ofHisName.isEmpty()) {
-        sb.append("Of His Name: '").append(ofHisName).append("'\n");
-    }
-
-    // Agregar "Apodo" si existe
-    if (apodo != null && !apodo.isEmpty()) {
-        sb.append("Apodo: '").append(apodo).append("'\n");
-    }
-
-    // Agregar "Título" si existe
-    if (title != null && !title.isEmpty()) {
-        sb.append("Título: '").append(title).append("'\n");
-    }
-
-    // Agregar "Casado con" si existe
-    if (wedTo != null && !wedTo.isEmpty()) {
-        sb.append("Casado con: '").append(wedTo).append("'\n");
-    }
-
-    // Agregar "Color de ojos" si existe
-    if (colorOjos != null && !colorOjos.isEmpty()) {
-        sb.append("Color de ojos: '").append(colorOjos).append("'\n");
-    }
-
-    // Agregar "Color de cabello" si existe
-    if (colorCabello != null && !colorCabello.isEmpty()) {
-        sb.append("Color de cabello: '").append(colorCabello).append("'\n");
-    }
-
-    // Agregar "Destino" si existe
-    if (fate != null && !fate.isEmpty()) {
-        sb.append("Destino: '").append(fate).append("'\n");
-    }
-
-    // Agregar "Notas" si existe
-    if (notas != null && !notas.isEmpty()) {
-        sb.append("Notas: '").append(notas).append("'\n");
-    }
-
-    // Siempre mostrar los padres (bornTo), aunque esté vacío
-    if (bornTo != null && !bornTo.isEmpty()) {
-        sb.append("Nacido de:\n");
-
-        // Usar el iterador de Lista
-        ListaIterator iterator = bornTo.iterator();
-        while (iterator.hasNext()) {
-            String padre = (String) iterator.next();
-            sb.append("  - ").append(padre).append("\n");
+        // Agregar "Of his name" si existe
+        if (ofHisName != null && !ofHisName.isEmpty()) {
+            sb.append("Of His Name: '").append(ofHisName).append("'\n");
         }
-    }
 
-    // Agregar "Hijos" si existen
-    if (hijos != null && !hijos.isEmpty()) {
-        sb.append("Hijos:\n");
-
-        // Usar el iterador de Lista para hijos
-        ListaIterator iterator = hijos.iterator();
-        while (iterator.hasNext()) {
-            String hijo = (String) iterator.next();
-            sb.append("  - ").append(hijo).append("\n");
+        // Agregar "Apodo" si existe
+        if (apodo != null && !apodo.isEmpty()) {
+            sb.append("Apodo: '").append(apodo).append("'\n");
         }
-    }
 
-    return sb.toString();  // Devolver la cadena final
-}
+        // Agregar "Título" si existe
+        if (title != null && !title.isEmpty()) {
+            sb.append("Título: '").append(title).append("'\n");
+        }
+
+        // Agregar "Casado con" si existe
+        if (wedTo != null && !wedTo.isEmpty()) {
+            sb.append("Casado con: '").append(wedTo).append("'\n");
+        }
+
+        // Agregar "Color de ojos" si existe
+        if (colorOjos != null && !colorOjos.isEmpty()) {
+            sb.append("Color de ojos: '").append(colorOjos).append("'\n");
+        }
+
+        // Agregar "Color de cabello" si existe
+        if (colorCabello != null && !colorCabello.isEmpty()) {
+            sb.append("Color de cabello: '").append(colorCabello).append("'\n");
+        }
+
+        // Agregar "Destino" si existe
+        if (fate != null && !fate.isEmpty()) {
+            sb.append("Destino: '").append(fate).append("'\n");
+        }
+
+        // Agregar "Notas" si existe
+        if (notas != null && !notas.isEmpty()) {
+            sb.append("Notas: '").append(notas).append("'\n");
+        }
+
+        // Siempre mostrar los padres (bornTo), aunque esté vacío
+        if (bornTo != null && !bornTo.isEmpty()) {
+            sb.append("Nacido de:\n");
+
+            // Usar el iterador de Lista
+            ListaIterator iterator = bornTo.iterator();
+            while (iterator.hasNext()) {
+                String padre = (String) iterator.next();
+                sb.append("  - ").append(padre).append("\n");
+            }
+        }
+
+        // Agregar "Hijos" si existen
+        if (hijos != null && !hijos.isEmpty()) {
+            sb.append("Hijos:\n");
+
+            // Usar el iterador de Lista para hijos
+            ListaIterator iterator = hijos.iterator();
+            while (iterator.hasNext()) {
+                String hijo = (String) iterator.next();
+                sb.append("  - ").append(hijo).append("\n");
+            }
+        }
+
+        return sb.toString();  // Devolver la cadena final
+    }
 }
