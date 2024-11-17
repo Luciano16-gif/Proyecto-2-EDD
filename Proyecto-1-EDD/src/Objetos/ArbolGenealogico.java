@@ -686,6 +686,17 @@ public class ArbolGenealogico {
         return resultado;
     }
     
+    public Lista<Persona> NombreEspecifico(String nombre){
+        Lista<Persona> resultado = new Lista<>();
+        for (int i = 0; i < listaPersonas.getSize(); i++) {
+        Persona persona = listaPersonas.get(i);
+        // Verifica que el nombre no sea nulo y compara ignorando mayúsculas/minúsculas
+        if (persona.getNombre() != null && persona.getNombre().equalsIgnoreCase(nombre)) {
+            resultado.append(persona);
+        }
+    }
+    return resultado;
+    }
     
     public void mostrarAntepasadosPorNombre(String nombre, Grafos grafosOriginal) {
         Lista<NodoArbol> nodosEncontrados = buscarPorNombre(nombre);
