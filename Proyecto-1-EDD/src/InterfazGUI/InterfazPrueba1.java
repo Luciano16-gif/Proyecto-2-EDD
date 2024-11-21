@@ -52,7 +52,12 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        ListadeNobilariosTitulo = new javax.swing.JList<>();
         BotonCargarJsonYGrafo = new javax.swing.JButton();
+        BotonBuscarNombre = new javax.swing.JButton();
+        BotonBuscarGeneracion = new javax.swing.JButton();
+        BotonVerAscendencia = new javax.swing.JButton();
         TextoNombre = new javax.swing.JTextField();
         BotonBuscarPersona = new javax.swing.JButton();
         BotonGenerarSuArbol = new javax.swing.JButton();
@@ -62,17 +67,43 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
         textoResultados = new javax.swing.JTextArea();
         BotonListaIntegrantes = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        ListadeNobilariosTitulo = new javax.swing.JList<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        ListadeNobilariosTitulo.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                ListadeNobilariosTituloValueChanged(evt);
+            }
+        });
+        jScrollPane2.setViewportView(ListadeNobilariosTitulo);
+
         BotonCargarJsonYGrafo.setText("Json Cargar y hacer grafo");
         BotonCargarJsonYGrafo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BotonCargarJsonYGrafoActionPerformed(evt);
+            }
+        });
+
+        BotonBuscarNombre.setText("Buscar Nombre");
+        BotonBuscarNombre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BotonBuscarNombreActionPerformed(evt);
+            }
+        });
+
+        BotonBuscarGeneracion.setText("Buscar Generacion");
+        BotonBuscarGeneracion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BotonBuscarGeneracionActionPerformed(evt);
+            }
+        });
+
+        BotonVerAscendencia.setText("Ver Ascendencia");
+        BotonVerAscendencia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BotonVerAscendenciaActionPerformed(evt);
             }
         });
 
@@ -97,11 +128,17 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
             }
         });
 
+        textoTitulo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textoTituloActionPerformed(evt);
+            }
+        });
+
         textoResultados.setColumns(20);
         textoResultados.setRows(5);
         jScrollPane1.setViewportView(textoResultados);
 
-        BotonListaIntegrantes.setText("Lista de Integrantes");
+        BotonListaIntegrantes.setText("Ver Descendencia");
         BotonListaIntegrantes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BotonListaIntegrantesActionPerformed(evt);
@@ -115,61 +152,57 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
             }
         });
 
-        ListadeNobilariosTitulo.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                ListadeNobilariosTituloValueChanged(evt);
-            }
-        });
-        jScrollPane2.setViewportView(ListadeNobilariosTitulo);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(34, 34, 34)
+                .addGap(294, 294, 294)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(textoTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(botonBuscarTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(BotonBuscarNombre)
+                                .addGap(18, 18, 18)
+                                .addComponent(BotonBuscarGeneracion))
+                            .addComponent(BotonCargarJsonYGrafo)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(BotonBuscarPersona)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(BotonGenerarSuArbol))
+                            .addComponent(TextoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 333, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(134, 134, 134)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(420, 723, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(botonBuscarTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(BotonCargarJsonYGrafo)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(BotonBuscarPersona)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(BotonGenerarSuArbol))
-                                .addComponent(TextoNombre)))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(textoTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGap(260, 260, 260)
-                                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGap(47, 47, 47)
-                                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(BotonListaIntegrantes, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 314, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 501, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(BotonListaIntegrantes)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(BotonVerAscendencia))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 314, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(32, 32, 32)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 501, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(BotonCargarJsonYGrafo)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(47, 47, 47)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(BotonCargarJsonYGrafo)
                 .addGap(44, 44, 44)
                 .addComponent(TextoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -181,73 +214,174 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
                 .addGap(83, 83, 83)
                 .addComponent(textoTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(botonBuscarTitulo)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(botonBuscarTitulo)
+                    .addComponent(BotonBuscarNombre)
+                    .addComponent(BotonBuscarGeneracion))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(BotonListaIntegrantes)
-                .addContainerGap(298, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(BotonListaIntegrantes)
+                    .addComponent(BotonVerAscendencia))
+                .addContainerGap(269, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void ListadeNobilariosTituloValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_ListadeNobilariosTituloValueChanged
+        if (!evt.getValueIsAdjusting()) { // Evita manejar eventos múltiples al cambiar selección
+            int indiceSeleccionado = ListadeNobilariosTitulo.getSelectedIndex();
+            if (indiceSeleccionado != -1) {
+                Persona personaSeleccionada = resultados.get(indiceSeleccionado);
+                // Mostrar detalles en un JTextArea o ventana emergente
+                textoResultados.setText("Detalles de la persona seleccionada:\n" + personaSeleccionada.toString());
+            }
+        }
+    }//GEN-LAST:event_ListadeNobilariosTituloValueChanged
 
     private void BotonCargarJsonYGrafoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonCargarJsonYGrafoActionPerformed
         DatosProyecto datos = Funcion.leerJsonConFileChooser();
         Lista<Persona> personas = datos.getPersonas();
 
         if (personas != null && personas.getSize() > 0) {
-            grafo.mostrarArbol();
+            Grafos nuevoGrafo = new Grafos();
+            nuevoGrafo.mostrarArbol();
 
             // Construir el árbol genealógico y agregar los arcos al grafo
-            arbolGenealogico.construirArbol(personas, grafo);
+            arbolGenealogico.construirArbol(personas, nuevoGrafo);
 
             // Construir la tabla de nombres modificados
             arbolGenealogico.construirTablaNombreModificado();
         }
     }//GEN-LAST:event_BotonCargarJsonYGrafoActionPerformed
 
+    private void BotonBuscarNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonBuscarNombreActionPerformed
+        String nombreBusqueda = textoTitulo.getText().trim();
+        if (nombreBusqueda.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Por favor, ingresa un nombre o mote válido.");
+            return;
+        }
+        resultados = arbolGenealogico.buscarPorNombreParcial(nombreBusqueda);
+        if (resultados.getSize() == 0) {
+            JOptionPane.showMessageDialog(this, "No se encontraron personas con ese nombre o mote.");
+            return;
+        }
+        // Crear un modelo para el JList
+        DefaultListModel<String> modeloLista = new DefaultListModel<>();
+        for (int i = 0; i < resultados.getSize(); i++) {
+            Persona persona = resultados.get(i);
+            modeloLista.addElement(persona.getNombre()); // Mostrar solo el nombre
+        }
+        // Asignar el modelo al JList
+        ListadeNobilariosTitulo.setModel(modeloLista);
+        JOptionPane.showMessageDialog(this, "Selecciona un registro para ver más detalles.");
+    }//GEN-LAST:event_BotonBuscarNombreActionPerformed
+
+    private void BotonBuscarGeneracionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonBuscarGeneracionActionPerformed
+        try {
+            int numeroGeneracion = Integer.parseInt(textoTitulo.getText().trim());
+
+            if (numeroGeneracion < 0) {
+                JOptionPane.showMessageDialog(this, "El número de generación debe ser mayor o igual a 0.");
+                return;
+            }
+
+            // Obtener la altura del árbol
+            int alturaArbol = arbolGenealogico.obtenerAltura();
+
+            if (numeroGeneracion >= alturaArbol) {
+                JOptionPane.showMessageDialog(this, "El número de generación supera la altura del árbol genealógico (" + (alturaArbol-1) + ").");
+                return;
+            }
+
+            // Obtener los resultados de la generación solicitada
+            resultados = arbolGenealogico.obtenerPersonasGeneracion(numeroGeneracion);
+
+            if (resultados.getSize() == 0) {
+                JOptionPane.showMessageDialog(this, "No se encontraron personas en la generación solicitada.");
+                return;
+            }
+
+            // Crear un modelo para el JList
+            DefaultListModel<String> modeloLista = new DefaultListModel<>();
+            for (int i = 0; i < resultados.getSize(); i++) {
+                Persona persona = resultados.get(i);
+                modeloLista.addElement(persona.getNombre()); // Mostrar solo el nombre
+            }
+
+            // Asignar el modelo al JList
+            ListadeNobilariosTitulo.setModel(modeloLista);
+            JOptionPane.showMessageDialog(this, "Selecciona un registro para ver más detalles.");
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Por favor, ingresa un número válido para la generación.");
+        }
+    }//GEN-LAST:event_BotonBuscarGeneracionActionPerformed
+
+    private void BotonVerAscendenciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonVerAscendenciaActionPerformed
+        String nombreBusqueda = textoTitulo.getText().trim();
+
+        if (nombreBusqueda.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Por favor, ingresa un nombre válido.");
+            return;
+        }
+
+        Lista<Persona> resultados = arbolGenealogico.buscarPorNombreParcial(nombreBusqueda);
+
+        if (resultados.getSize() == 0) {
+            JOptionPane.showMessageDialog(this, "No se encontró ninguna persona con el nombre: " + nombreBusqueda);
+            return;
+        }
+
+        Persona personaSeleccionada = resultados.get(0);
+
+        String descendencia = arbolGenealogico.obtenerAscendenciaOrdenada(personaSeleccionada.getNombre());
+
+        textoResultados.setText(descendencia);
+    }//GEN-LAST:event_BotonVerAscendenciaActionPerformed
+
     private void BotonBuscarPersonaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonBuscarPersonaActionPerformed
-    String nombreBusqueda = TextoNombre.getText(); 
-    Lista<NodoArbol> nodos = arbolGenealogico.buscarPorNombre(nombreBusqueda);
+        String nombreBusqueda = TextoNombre.getText();
+        Lista<NodoArbol> nodos = arbolGenealogico.buscarPorNombre(nombreBusqueda);
 
-    if (nodos.getSize() > 0) {
-        System.out.println("Personas encontradas:");
-        for (int i = 0; i < nodos.getSize(); i++) {
-            NodoArbol nodo = nodos.get(i);
-            Persona persona = nodo.getPersona();
-            System.out.println(persona.toString());
-            
-            // Crear una lista de listas para almacenar descendientes por nivel
-            Lista<Lista<NodoArbol>> descendientesPorNivel = new Lista<>();
-            arbolGenealogico.mostrarDescendientes(nodo, 1, descendientesPorNivel); // Nivel inicial es 1 para los hijos
+        if (nodos.getSize() > 0) {
+            System.out.println("Personas encontradas:");
+            for (int i = 0; i < nodos.getSize(); i++) {
+                NodoArbol nodo = nodos.get(i);
+                Persona persona = nodo.getPersona();
+                System.out.println(persona.toString());
 
-            // Imprimir el nombre del padre y sus descendientes, excluyendo los nodos sin descendientes
-        for (int nivel = 0; nivel < descendientesPorNivel.getSize(); nivel++) {
-            Lista<NodoArbol> nivelDescendientes = descendientesPorNivel.get(nivel);
-    
-            // Mostrar el ID del padre de los descendientes, solo si hay descendientes en este nivel
-            if (nivel > 0 && descendientesPorNivel.get(nivel - 1).getSize() > 0 && nivelDescendientes.getSize() > 0) {
-                NodoArbol padre = descendientesPorNivel.get(nivel - 1).get(0);
-            }
+                // Crear una lista de listas para almacenar descendientes por nivel
+                Lista<Lista<NodoArbol>> descendientesPorNivel = new Lista<>();
+                arbolGenealogico.mostrarDescendientes(nodo, 1, descendientesPorNivel); // Nivel inicial es 1 para los hijos
 
-            // Listar los IDs de los hijos de este nivel
-            for (int j = 0; j < nivelDescendientes.getSize(); j++) {
-                NodoArbol descendiente = nivelDescendientes.get(j);
-                Persona descendientePersona = descendiente.getPersona();
-        
-                // Almacenar el descendiente en tablaPersonasPorId para acceso rápido
-                tablaPersonasPorId.put(descendientePersona.getId(), descendiente);
+                // Imprimir el nombre del padre y sus descendientes, excluyendo los nodos sin descendientes
+                for (int nivel = 0; nivel < descendientesPorNivel.getSize(); nivel++) {
+                    Lista<NodoArbol> nivelDescendientes = descendientesPorNivel.get(nivel);
+
+                    // Mostrar el ID del padre de los descendientes, solo si hay descendientes en este nivel
+                    if (nivel > 0 && descendientesPorNivel.get(nivel - 1).getSize() > 0 && nivelDescendientes.getSize() > 0) {
+                        NodoArbol padre = descendientesPorNivel.get(nivel - 1).get(0);
+                    }
+
+                    // Listar los IDs de los hijos de este nivel
+                    for (int j = 0; j < nivelDescendientes.getSize(); j++) {
+                        NodoArbol descendiente = nivelDescendientes.get(j);
+                        Persona descendientePersona = descendiente.getPersona();
+
+                        // Almacenar el descendiente en tablaPersonasPorId para acceso rápido
+                        tablaPersonasPorId.put(descendientePersona.getId(), descendiente);
+                    }
+                }
             }
         }
-        }
-    }
     }//GEN-LAST:event_BotonBuscarPersonaActionPerformed
 
     private void BotonGenerarSuArbolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonGenerarSuArbolActionPerformed
-        String nombrePersona = TextoNombre.getText(); 
+        String nombrePersona = TextoNombre.getText();
         if (nombrePersona == null || nombrePersona.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Por favor ingresa un nombre válido.");
             return;
@@ -282,44 +416,45 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, "Selecciona un registro para ver más detalles.");
     }//GEN-LAST:event_botonBuscarTituloActionPerformed
 
+    private void textoTituloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textoTituloActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_textoTituloActionPerformed
+
     private void BotonListaIntegrantesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonListaIntegrantesActionPerformed
-       //Agregar el codigo de Lista Integrantes de una generacion
+        String nombreBusqueda = textoTitulo.getText().trim();
+
+        if (nombreBusqueda.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Por favor, ingresa un nombre válido.");
+            return;
+        }
+
+        Lista<Persona> resultados = arbolGenealogico.buscarPorNombreParcial(nombreBusqueda);
+
+        if (resultados.getSize() == 0) {
+            JOptionPane.showMessageDialog(this, "No se encontró ninguna persona con el nombre: " + nombreBusqueda);
+            return;
+        }
+
+        Persona personaSeleccionada = resultados.get(0);
+
+        String descendencia = arbolGenealogico.obtenerDescendenciaOrdenada(personaSeleccionada.getNombre());
+
+        textoResultados.setText(descendencia);
     }//GEN-LAST:event_BotonListaIntegrantesActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        String nombreBusqueda = TextoNombre.getText(); 
-        Lista<NodoArbol> nodos = arbolGenealogico.buscarPorNombre(nombreBusqueda);
-
-        if (nodos.getSize() > 0) {
-            for (int i = 0; i < nodos.getSize(); i++) {
-                NodoArbol nodo = nodos.get(i);
-                Persona persona = nodo.getPersona();
-
-                // Crear un grafo temporal para mostrar los antepasados
-                Grafos grafosAntepasados = new Grafos();
-                grafosAntepasados.mostrarArbol();
-
-
-                // Llamar a la función para mostrar antepasados por nombre
-                arbolGenealogico.mostrarAntepasadosPorNombre(persona.getNombre(), grafosAntepasados);
-
-                // En este punto, los antepasados están añadidos en grafosAntepasados y el grafo está mostrado
-            }
-        } else {
-            System.out.println("No se encontraron antepasados para la persona con el nombre proporcionado.");
+        String nombrePersona = TextoNombre.getText();
+        if (nombrePersona == null || nombrePersona.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Por favor ingresa un nombre válido.");
+            return;
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void ListadeNobilariosTituloValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_ListadeNobilariosTituloValueChanged
-        if (!evt.getValueIsAdjusting()) { // Evita manejar eventos múltiples al cambiar selección
-            int indiceSeleccionado = ListadeNobilariosTitulo.getSelectedIndex();
-            if (indiceSeleccionado != -1) {
-                Persona personaSeleccionada = resultados.get(indiceSeleccionado);
-            // Mostrar detalles en un JTextArea o ventana emergente
-                textoResultados.setText("Detalles de la persona seleccionada:\n" + personaSeleccionada.toString());
-            }
-        }   
-    }//GEN-LAST:event_ListadeNobilariosTituloValueChanged
+        Grafos nuevoGrafo = new Grafos();
+        nuevoGrafo.mostrarArbol();
+
+        // Llamar al método para mostrar el árbol genealógico de esa persona
+        arbolGenealogico.mostrarAntepasados(nombrePersona, nuevoGrafo);
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -357,10 +492,13 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BotonBuscarGeneracion;
+    private javax.swing.JButton BotonBuscarNombre;
     private javax.swing.JButton BotonBuscarPersona;
     private javax.swing.JButton BotonCargarJsonYGrafo;
     private javax.swing.JButton BotonGenerarSuArbol;
     private javax.swing.JButton BotonListaIntegrantes;
+    private javax.swing.JButton BotonVerAscendencia;
     private javax.swing.JList<String> ListadeNobilariosTitulo;
     private javax.swing.JTextField TextoNombre;
     private javax.swing.JButton botonBuscarTitulo;
