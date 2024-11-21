@@ -510,61 +510,64 @@ public class ArbolGenealogico {
      * @return NodoArbol correspondiente si se encuentra, null en caso contrario.
      */
     public Lista<NodoArbol> buscarPorNombre(String nombre) {
-        Lista<NodoArbol> resultados = new Lista<>();
+    Lista<NodoArbol> resultados = new Lista<>();
 
-        // Buscar ID en nombreAId o nombreAIdModificado
-        String id = nombreAId.get(nombre);
-        if (id == null) {
-            Lista<String> clavesModificadas = nombreAIdModificado.getKeys();
-            for (int i = 0; i < clavesModificadas.getSize(); i++) {
-                String claveModificada = clavesModificadas.get(i);
-                if (claveModificada.equalsIgnoreCase(nombre)) {
-                    id = nombreAIdModificado.get(claveModificada);
-                    break;
-                }
+    // Primero, busca en nombreAId (por nombre exacto)
+    String id = nombreAId.get(nombre);
+
+    // Si no se encuentra, busca en nombreAIdModificado (por apodo o alias)
+    if (id == null) {
+        // Buscar en nombreAIdModificado para alias y apodos
+        Lista<String> clavesModificadas = nombreAIdModificado.getKeys();
+        for (int i = 0; i < clavesModificadas.getSize(); i++) {
+            String claveModificada = clavesModificadas.get(i);
+            if (claveModificada.equalsIgnoreCase(nombre)) {
+                id = nombreAIdModificado.get(claveModificada);
+                break;
             }
         }
-
-        if (id == null) {
-            id = nombre;
-        }
-
-        // Si se encuentra el ID, busca el NodoArbol en tablaPersonasPorId
-        if (tablaPersonasPorId.containsKey(id)) {
-            NodoArbol nodo = tablaPersonasPorId.get(id);
-            if (nodo != null) {
-                resultados.append(nodo);
-
-                // Mostrar padres y asignar en bornTo
-                Lista<NodoArbol> padres = obtenerPadres(nodo);
-                if (padres.getSize() > 0) {
-                    for (int i = 0; i < padres.getSize(); i++) {
-                        NodoArbol padre = padres.get(i);
-                        Persona padrePersona = padre.getPersona();
-                        nodo.getPersona().addBornTo2(padrePersona.getNombre() + ", " + padrePersona.getOfHisName());
-                    }
-                } 
-
-                // Crear lista para descendientes por nivel
-                Lista<Lista<NodoArbol>> descendientesPorNivel = new Lista<>();
-                mostrarDescendientes(nodo, 0, descendientesPorNivel);
-
-                // Guardar descendientes en tabla para acceso rápido en la gráfica
-                for (int nivel = 0; nivel < descendientesPorNivel.getSize(); nivel++) {
-                    Lista<NodoArbol> descendientesNivel = descendientesPorNivel.get(nivel);
-                    for (int j = 0; j < descendientesNivel.getSize(); j++) {
-                        NodoArbol descendiente = descendientesNivel.get(j);
-                        // Asignar cada descendiente en hashtable con ID
-                        tablaPersonasPorId.put(descendiente.getPersona().getId(), descendiente);
-                    }
-                }
-            }
-        } else {
-            System.out.println("No se encontró ninguna persona con el nombre o apodo proporcionado.");
-        }
-
-        return resultados;
     }
+
+    // Si no se encuentra, tratar de resolver el ID directamente (en caso de un nombre único no registrado)
+    if (id == null) {
+        id = nombre;  // Puede ser un ID por defecto, en caso de no encontrar
+    }
+
+    // Si se encuentra el ID, buscamos el NodoArbol
+    if (id != null && tablaPersonasPorId.containsKey(id)) {
+        NodoArbol nodo = tablaPersonasPorId.get(id);
+        if (nodo != null) {
+            resultados.append(nodo);
+
+            // Mostrar padres y asignar en bornTo
+            Lista<NodoArbol> padres = obtenerPadres(nodo);
+            if (padres.getSize() > 0) {
+                for (int i = 0; i < padres.getSize(); i++) {
+                    NodoArbol padre = padres.get(i);
+                    Persona padrePersona = padre.getPersona();
+                    nodo.getPersona().addBornTo2(padrePersona.getNombre() + ", " + padrePersona.getOfHisName());
+                }
+            }
+
+            // Crear lista para descendientes por nivel
+            Lista<Lista<NodoArbol>> descendientesPorNivel = new Lista<>();
+            mostrarDescendientes(nodo, 0, descendientesPorNivel); // Nivel inicial es 0 para los hijos
+
+            // Guardar descendientes en tabla para acceso rápido en la gráfica
+            for (int nivel = 0; nivel < descendientesPorNivel.getSize(); nivel++) {
+                Lista<NodoArbol> descendientesNivel = descendientesPorNivel.get(nivel);
+                for (int j = 0; j < descendientesNivel.getSize(); j++) {
+                    NodoArbol descendiente = descendientesNivel.get(j);
+                    tablaPersonasPorId.put(descendiente.getPersona().getId(), descendiente);
+                }
+            }
+        }
+    } else {
+        System.out.println("No se encontró ninguna persona con el nombre o apodo proporcionado.");
+    }
+
+    return resultados;
+}
 
     public void mostrarDescendientes(NodoArbol nodo, int nivel, Lista<Lista<NodoArbol>> descendientesPorNivel) {
         // Asegúrate de que hay una lista en descendientesPorNivel para el nivel actual
@@ -674,10 +677,62 @@ public class ArbolGenealogico {
         }
     }
     
+    public String obtenerDescendenciaOrdenada(String nombrePersona) {
+    // Buscar a la persona en el árbol genealógico
+    Lista<NodoArbol> nodosEncontrados = buscarPorNombre(nombrePersona);
+
+    if (nodosEncontrados.getSize() == 0) {
+        return "La persona con el nombre '" + nombrePersona + "' no fue encontrada.";
+    }
+
+    NodoArbol nodoInicial = nodosEncontrados.get(0); // Tomar el primer resultado
+    Lista<Lista<NodoArbol>> descendientesPorNivel = new Lista<>();
+
+    // Llenar la lista de descendientes por nivel
+    mostrarDescendientes(nodoInicial, 0, descendientesPorNivel);
+
+    // Eliminar duplicados de cada nivel
+    for (int i = 0; i < descendientesPorNivel.getSize(); i++) {
+        Lista<NodoArbol> nivelActual = descendientesPorNivel.get(i);
+        Lista<NodoArbol> nivelSinDuplicados = new Lista<>();
+
+        for (int j = 0; j < nivelActual.getSize(); j++) {
+            NodoArbol nodo = nivelActual.get(j);
+            if (!nivelSinDuplicados.contains(nodo)) {
+                nivelSinDuplicados.append(nodo);
+            }
+        }
+
+        descendientesPorNivel.set(i, nivelSinDuplicados); // Actualizar con los nodos únicos
+    }
+
+    // Eliminar el último nivel si existe
+    if (descendientesPorNivel.getSize() > 0) {
+        descendientesPorNivel.remove(descendientesPorNivel.getSize() - 1);
+    }
+
+    // Construir el String con la descendencia ordenada
+    StringBuilder descendenciaOrdenada = new StringBuilder();
+    for (int nivel = 0; nivel < descendientesPorNivel.getSize(); nivel++) {
+        Lista<NodoArbol> nivelActual = descendientesPorNivel.get(nivel);
+
+        descendenciaOrdenada.append("Nivel ").append(nivel + 1).append(":\n");
+        for (int j = 0; j < nivelActual.getSize(); j++) {
+            NodoArbol nodo = nivelActual.get(j);
+            descendenciaOrdenada.append("- ").append(nodo.getPersona().getNombre()).append("\n");
+        }
+    }
+
+    return descendenciaOrdenada.toString();
+}
+
+
+    
     public Lista<Persona> buscarPorTitulo(String titulo) {
         Lista<Persona> resultado = new Lista<>();
 
         for (int i = 0; i < listaPersonas.getSize(); i++) {
+            System.out.println(listaPersonas.get(i));
             Persona persona = listaPersonas.get(i);
             if (persona.getTitle() != null && persona.getTitle().equalsIgnoreCase(titulo)) {
                    resultado.append(persona);
@@ -698,51 +753,313 @@ public class ArbolGenealogico {
     return resultado;
     }
     
-    public void mostrarAntepasadosPorNombre(String nombre, Grafos grafosOriginal) {
-        Lista<NodoArbol> nodosEncontrados = buscarPorNombre(nombre);
+    public void mostrarAntepasados(String nombre, Grafos grafosOriginal) {
+    // Buscar los nodos correspondientes al nombre
+    Lista<NodoArbol> nodosEncontrados = buscarPorNombre(nombre);
 
-        if (nodosEncontrados.getSize() == 0) {
-            System.out.println("La persona con el nombre " + nombre + " no fue encontrada.");
-            return;
-        }
-
-        // Suponemos que solo se encuentra una persona con el nombre
-        NodoArbol nodoPersona = nodosEncontrados.get(0);  // Tomamos el primer resultado
-
-        // Añadir el nodo de la persona al grafo
-        grafosOriginal.addPersona(nodoPersona.getPersona());
-
-        // Crear lista para almacenar los antepasados por niveles
-        Lista<Lista<NodoArbol>> antepasadosPorNivel = new Lista<>();
-
-        // Llamada al método recursivo para agregar antepasados al grafo
-        agregarAntepasadosRecursivos(nodoPersona, 0, antepasadosPorNivel, grafosOriginal);
+    if (nodosEncontrados.getSize() == 0) {
+        System.out.println("La persona con el nombre " + nombre + " no fue encontrada.");
+        return;
     }
 
-    // Método recursivo para obtener y agregar los antepasados al grafo
-    private void agregarAntepasadosRecursivos(NodoArbol nodo, int nivel, Lista<Lista<NodoArbol>> antepasadosPorNivel, Grafos grafosOriginal) {
-        while (antepasadosPorNivel.getSize() <= nivel) {
-            antepasadosPorNivel.append(new Lista<NodoArbol>());
+    // Suponemos que solo se encuentra una persona con el nombre
+    NodoArbol nodoPersona = nodosEncontrados.get(0);  // Tomamos el primer resultado
+
+    // Primer pase: Crear nodos para la persona y sus relaciones
+    grafosOriginal.addPersona(nodoPersona.getPersona());  // Añadir la persona seleccionada al nuevo grafo
+
+    // Segundo pase: Establecer relaciones "Born to" (padres)
+    Lista<NodoArbol> padres = obtenerPadres(nodoPersona);  // Obtener los padres
+    if (padres.getSize() > 0) {
+        for (int i = 0; i < padres.getSize(); i++) {
+            NodoArbol nodoPadre = padres.get(i);
+            grafosOriginal.addPersona(nodoPadre.getPersona());  // Añadir el padre al nuevo grafo
+
+            // Añadir relación padre-hijo (Born to) si no existe
+            boolean duplicado = false;
+            for (int j = 0; j < nodoPadre.getHijos().len(); j++) {
+                NodoArbol hijoExistente = nodoPadre.getHijos().get(j);
+                if (hijoExistente.getPersona().getId().equals(nodoPersona.getPersona().getId())) {
+                    grafosOriginal.addArco1(nodoPadre.getPersona().getId(), nodoPersona.getPersona().getId());
+                    duplicado = true;
+                    break;
+                }
+            }
+
+            // Si no es un duplicado, añadir la relación y el arco
+            if (!duplicado) {
+                nodoPadre.agregarHijo(nodoPersona);
+                grafosOriginal.addArco1(nodoPadre.getPersona().getId(), nodoPersona.getPersona().getId()); // Se asume distancia 1
+            }
+
+            // Recursión para añadir los antepasados del padre
+            agregarAntepasadosRecursivos(nodoPadre, grafosOriginal); // Llamada recursiva para agregar los antepasados
         }
+    }
+}
 
-        // Obtener los padres del nodo actual
-        Lista<NodoArbol> padres = obtenerPadres(nodo);
-        if (padres.getSize() > 0) {
-            Lista<NodoArbol> nivelAntepasados = antepasadosPorNivel.get(nivel);
+private void agregarAntepasadosRecursivos(NodoArbol nodoHijo, Grafos grafosOriginal) {
+    // Obtener los padres del nodo
+    Lista<NodoArbol> padres = obtenerPadres(nodoHijo);
 
-            for (int i = 0; i < padres.getSize(); i++) {
-                NodoArbol nodoPadre = padres.get(i);
-                nivelAntepasados.append(nodoPadre);
+    if (padres.getSize() > 0) {
+        for (int i = 0; i < padres.getSize(); i++) {
+            NodoArbol nodoPadre = padres.get(i);
+            grafosOriginal.addPersona(nodoPadre.getPersona());  // Añadir al grafo
 
-                // Añadir el nodo padre al grafo
-                grafosOriginal.addPersona(nodoPadre.getPersona());
+            // Añadir relación padre-hijo
+            grafosOriginal.addArco1(nodoPadre.getPersona().getId(), nodoHijo.getPersona().getId());
 
-                // Añadir relación padre-hijo (arco hacia el antepasado)
-                grafosOriginal.addArco1(nodoPadre.getPersona().getId(), nodo.getPersona().getId());
+            // Llamada recursiva para agregar los antepasados del padre
+            agregarAntepasadosRecursivos(nodoPadre, grafosOriginal);
+        }
+    }
+}
 
-                // Llamada recursiva para continuar con los antepasados del padre
-                agregarAntepasadosRecursivos(nodoPadre, nivel + 1, antepasadosPorNivel, grafosOriginal);
+    /**
+ * Método para obtener la ascendencia de una persona en forma ordenada.
+ *
+ * @param nombre El nombre de la persona cuya ascendencia se desea obtener.
+ * @return Una representación en String de los antepasados organizados por niveles.
+ */
+public String obtenerAscendenciaOrdenada(String nombre) {
+    Lista<NodoArbol> nodosEncontrados = buscarPorNombre(nombre);
+
+    if (nodosEncontrados.getSize() == 0) {
+        return "No se encontró a ninguna persona con el nombre: " + nombre;
+    }
+
+    // Suponemos que solo se encuentra una persona con el nombre
+    NodoArbol nodoPersona = nodosEncontrados.get(0); // Tomar el primer resultado
+
+    // Lista para almacenar los ancestros por niveles
+    Lista<Lista<String>> ancestrosPorNivel = new Lista<>();
+
+    // Llenar la lista de ancestros por niveles
+    obtenerAncestrosPorNivel(nodoPersona, ancestrosPorNivel, 0);
+
+    // Eliminar duplicados de cada nivel
+    for (int i = 0; i < ancestrosPorNivel.len(); i++) {
+        Lista<String> nivelSinDuplicados = eliminarDuplicados(ancestrosPorNivel.get(i));
+        ancestrosPorNivel.set(i, nivelSinDuplicados);
+    }
+
+    // Construir la representación en String
+    StringBuilder resultado = new StringBuilder();
+    resultado.append("Ascendencia de ").append(nodoPersona.getPersona().getNombre()).append(":\n");
+
+    for (int i = 0; i < ancestrosPorNivel.len(); i++) {
+        resultado.append("Nivel ").append(i + 1).append(": ").append(ancestrosPorNivel.get(i).toString()).append("\n");
+    }
+
+    return resultado.toString();
+}
+
+/**
+ * Método recursivo para obtener los ancestros de una persona organizados por niveles.
+ *
+ * @param nodoActual Nodo actual en el árbol genealógico.
+ * @param ancestrosPorNivel Lista de niveles que almacenará los ancestros.
+ * @param nivel Nivel actual del nodo en el árbol.
+ */
+private void obtenerAncestrosPorNivel(NodoArbol nodoActual, Lista<Lista<String>> ancestrosPorNivel, int nivel) {
+    if (nodoActual == null || nodoActual.getPersona() == null) {
+        return;
+    }
+
+    // Asegurarse de que exista una lista para el nivel actual
+    while (ancestrosPorNivel.len() <= nivel) {
+        ancestrosPorNivel.append(new Lista<>());
+    }
+
+    // Añadir al nivel actual el nombre de la persona
+    ancestrosPorNivel.get(nivel).append(nodoActual.getPersona().getNombre());
+
+    // Llamar recursivamente para cada padre (suponiendo que "bornTo" representa a los padres)
+    Lista<NodoArbol> padres = obtenerPadres(nodoActual); // Obtener la lista de padres
+    for (int i = 0; i < padres.getSize(); i++) {
+        NodoArbol nodoPadre = padres.get(i);
+        obtenerAncestrosPorNivel(nodoPadre, ancestrosPorNivel, nivel + 1);
+    }
+}
+
+/**
+ * Elimina duplicados de una lista.
+ *
+ * @param lista Lista de la que se eliminarán duplicados.
+ * @return Una nueva lista sin duplicados.
+ */
+private Lista<String> eliminarDuplicados(Lista<String> lista) {
+    Lista<String> listaSinDuplicados = new Lista<>();
+    Lista<String>.ListaIterator iterador = lista.iterator();
+
+    while (iterador.hasNext()) {
+        String elemento = iterador.next();
+        if (!listaSinDuplicados.contains(elemento)) {
+            listaSinDuplicados.append(elemento);
+        }
+    }
+
+    return listaSinDuplicados;
+}
+
+
+    
+    public Lista<Persona> buscarPorNombreParcial(String nombreBusqueda) {
+    Lista<Persona> resultado = new Lista<>();
+
+    // Recorrer la lista de personas para encontrar coincidencias con el nombre, apodo, o nombre completo que incluye "Of His Name"
+    for (int i = 0; i < listaPersonas.getSize(); i++) {
+        Persona persona = listaPersonas.get(i);
+        
+        // Verificar coincidencias con el nombre o apodo
+        if ((persona.getNombre() != null && persona.getNombre().toLowerCase().contains(nombreBusqueda.toLowerCase())) ||
+            (persona.getApodo() != null && persona.getApodo().toLowerCase().contains(nombreBusqueda.toLowerCase()))) {
+            resultado.append(persona);
+        }
+        
+        // Verificar coincidencias con el nombre completo que incluye "Of His Name"
+        if (persona.getNombre() != null && persona.getOfHisName() != null) {
+            String nombreCompleto = persona.getNombre() + ", " + persona.getOfHisName() + " of his name";
+            if (nombreCompleto.toLowerCase().contains(nombreBusqueda.toLowerCase())) {
+                resultado.append(persona);
             }
         }
+        
+        // Verificar coincidencias con el apodo explícitamente
+        if (persona.getApodo() != null && persona.getApodo().toLowerCase().contains(nombreBusqueda.toLowerCase())) {
+            resultado.append(persona);
+        }
     }
+
+    // Eliminar duplicados de la lista
+    Lista<Persona> resultadoSinDuplicados = new Lista<>();
+    for (int i = 0; i < resultado.getSize(); i++) {
+        Persona persona = resultado.get(i);
+        if (!resultadoSinDuplicados.contains(persona)) {
+            resultadoSinDuplicados.append(persona);
+        }
+    }
+
+    return resultadoSinDuplicados;
+}
+    
+    public Lista<Persona> obtenerPersonasGeneracion(int numeroGeneracion) {
+    if (numeroGeneracion < 0) {
+        throw new IllegalArgumentException("El número de generación debe ser mayor o igual a 0.");
+    }
+
+    Lista<Lista<NodoArbol>> niveles = new Lista<>();
+
+    NodoArbol raiz = obtenerRaiz();
+    if (raiz == null) {
+        throw new IllegalStateException("El árbol genealógico está vacío.");
+    }
+
+    construirNiveles(raiz, 0, niveles);
+
+    if (numeroGeneracion >= niveles.getSize()) {
+        throw new IllegalArgumentException("El número de generación solicitado supera la profundidad del árbol.");
+    }
+
+    Lista<NodoArbol> generacion = niveles.get(numeroGeneracion);
+    if (generacion.getSize() == 0) {
+        return new Lista<>(); // Retornar una lista vacía si no hay integrantes
+    }
+
+    // Eliminar duplicados
+    Lista<NodoArbol> generacionSinDuplicados = new Lista<>();
+    for (int i = 0; i < generacion.getSize(); i++) {
+        NodoArbol nodo = generacion.get(i);
+        if (!contieneNodo(generacionSinDuplicados, nodo)) {
+            generacionSinDuplicados.append(nodo);
+        }
+    }
+
+    // Crear y llenar la lista de personas
+    Lista<Persona> personasGeneracion = new Lista<>();
+    for (int i = 0; i < generacionSinDuplicados.getSize(); i++) {
+        NodoArbol nodo = generacionSinDuplicados.get(i);
+        personasGeneracion.append(nodo.getPersona());
+    }
+
+    return personasGeneracion;
+}
+
+// Método auxiliar para verificar si un NodoArbol ya está en la lista
+private boolean contieneNodo(Lista<NodoArbol> lista, NodoArbol nodo) {
+    for (int i = 0; i < lista.getSize(); i++) {
+        if (lista.get(i).getPersona().getId().equals(nodo.getPersona().getId())) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+
+// Método auxiliar para construir los niveles del árbol
+private void construirNiveles(NodoArbol nodo, int nivel, Lista<Lista<NodoArbol>> niveles) {
+    // Asegurarse de que la lista tenga espacio para el nivel actual
+    while (niveles.getSize() <= nivel) {
+        niveles.append(new Lista<NodoArbol>());
+    }
+
+    // Agregar el nodo actual al nivel correspondiente
+    niveles.get(nivel).append(nodo);
+
+    // Llamar recursivamente para los hijos del nodo actual
+    Lista<NodoArbol> hijos = nodo.getHijos();
+    for (int i = 0; i < hijos.getSize(); i++) {
+        construirNiveles(hijos.get(i), nivel + 1, niveles);
+    }
+}
+
+// Método para obtener la raíz del árbol genealógico
+private NodoArbol obtenerRaiz() {
+    // Iterar por las personas para encontrar aquella cuyo padre sea "[Unknown]"
+    Lista<String> ids = tablaPersonasPorId.getKeys();
+    for (int i = 0; i < ids.getSize(); i++) {
+        NodoArbol nodo = tablaPersonasPorId.get(ids.get(i));
+        if (nodo != null && esRaiz(nodo.getPersona())) {
+            return nodo; // Persona con "Born to" igual a "[Unknown]" es la raíz
+        }
+    }
+    return null; // Si no se encuentra, el árbol está vacío
+}
+
+// Método auxiliar para verificar si una persona es la raíz
+private boolean esRaiz(Persona persona) {
+    Lista<String> padres = persona.getBornTo();
+    for (int i = 0; i < padres.getSize(); i++) {
+        if (padres.get(i).equals("[Unknown]")) {
+            return true; // La persona tiene como padre "[Unknown]"
+        }
+    }
+    return false; // La persona tiene otros padres o no tiene padres definidos
+}
+
+
+    public int obtenerAltura() {
+    NodoArbol raiz = obtenerRaiz();
+    if (raiz == null) {
+        return 0; // Altura de un árbol vacío
+    }
+    return calcularAltura(raiz);
+}
+
+private int calcularAltura(NodoArbol nodo) {
+    if (nodo == null) {
+        return 0;
+    }
+
+    int alturaMaxima = 0;
+    Lista<NodoArbol> hijos = nodo.getHijos();
+    for (int i = 0; i < hijos.getSize(); i++) {
+        alturaMaxima = Math.max(alturaMaxima, calcularAltura(hijos.get(i)));
+    }
+
+    return 1 + alturaMaxima;
+}
+
 }

@@ -68,5 +68,7 @@ public class NodoArbol {
             System.out.println(hijos.get(i).getPersona().getNombre());
         }
     }
+    
+    
 
 }
