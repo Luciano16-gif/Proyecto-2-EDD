@@ -5,6 +5,11 @@ import Primitivas.Lista.ListaIterator;
 
 /**
  * Clase que representa una persona en el árbol genealógico.
+ * 
+ * @author: Ricardo Paez - Luciano Minardo - Gabriele Colarusso
+ * 
+ * @version 21/11/2024
+ * 
  */
 public class Persona {
     private String id;

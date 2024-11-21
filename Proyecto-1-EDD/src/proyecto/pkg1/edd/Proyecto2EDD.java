@@ -4,6 +4,8 @@ import InterfazGUI.InterfazPrueba1;
 /**
  * Clase que representa el main.
  *
+ * @author: Ricardo Paez - Luciano Minardo - Gabriele Colarusso
+ * 
  * @version 4/11/2024
  */
 public class Proyecto2EDD {

@@ -3,6 +3,7 @@ package Objetos;
 import Primitivas.HashTable;
 import Primitivas.Lista;
 import Primitivas.Lista.ListaIterator;
+import javax.swing.JOptionPane;
 
 /**
  * Clase que representa el árbol genealógico y maneja la construcción del mismo.
@@ -14,6 +15,7 @@ public class ArbolGenealogico {
     private HashTable<String, String> nombreAId; // Mapea nombres (incluyendo apodos y alias únicos) a IDs
     private Lista<Persona> listaPersonas; // Lista de todas las personas
     private HashTable<String, String> nombreAIdModificado;
+    
 
     public ArbolGenealogico() {
         tablaPersonasPorId = new HashTable<>();
@@ -1061,5 +1063,34 @@ private int calcularAltura(NodoArbol nodo) {
 
     return 1 + alturaMaxima;
 }
+
+public void mostrarInformacionNodo(String id) {
+    NodoArbol nodo = tablaPersonasPorId.get(id); // Buscar el nodo por ID
+    if (nodo != null) {
+        Persona persona = nodo.getPersona();
+        if (persona != null) {
+            JOptionPane.showMessageDialog(null,
+                persona.toString(), // Utiliza el método `toString` para mostrar la información
+                "Información de " + persona.getNombre(),
+                JOptionPane.INFORMATION_MESSAGE
+            );
+        } else {
+            JOptionPane.showMessageDialog(null,
+                "No se encontró información asociada a este nodo.",
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+            );
+        }
+    } else {
+        JOptionPane.showMessageDialog(null,
+            "No se encontró el nodo con ID: " + id,
+            "Error",
+            JOptionPane.ERROR_MESSAGE
+        );
+    }
+}
+
+
+
 
 }

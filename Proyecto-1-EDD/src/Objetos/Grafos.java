@@ -10,10 +10,14 @@ import org.graphstream.ui.view.Viewer;
 /**
  * Clase para manejar grafos de personas y arcos.
  *
- * @version 4/11/2024
+ * @author: Ricardo Paez - Luciano Minardo - Gabriele Colarusso
+ * 
+ * 
+ * @version 21/11/2024
  */
 public class Grafos {
     private Graph graph;
+    private ArbolGenealogico arbolGenealogico;
 
     public Grafos() {
         this.graph = new MultiGraph("Árbol Genealógico");
@@ -131,9 +135,9 @@ public class Grafos {
     /**
      * Muestra el árbol genealógico en una ventana gráfica.
      */
-    public void mostrarArbol() {
+    public void mostrarArbol(ArbolGenealogico arbolGenealogico) {
         System.setProperty("org.graphstream.ui", "swing");
-        Clicks visualizador = new Clicks(graph);
+        Clicks visualizador = new Clicks(graph, arbolGenealogico);
     }
 
     /**
