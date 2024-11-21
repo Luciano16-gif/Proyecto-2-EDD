@@ -249,7 +249,7 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
 
         if (personas != null && personas.getSize() > 0) {
             Grafos nuevoGrafo = new Grafos();
-            nuevoGrafo.mostrarArbol();
+            nuevoGrafo.mostrarArbol(arbolGenealogico);
 
             // Construir el árbol genealógico y agregar los arcos al grafo
             arbolGenealogico.construirArbol(personas, nuevoGrafo);
@@ -356,7 +356,8 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
 
                 // Crear una lista de listas para almacenar descendientes por nivel
                 Lista<Lista<NodoArbol>> descendientesPorNivel = new Lista<>();
-                arbolGenealogico.mostrarDescendientes(nodo, 1, descendientesPorNivel); // Nivel inicial es 1 para los hijos
+                Lista<NodoArbol> visitados = new Lista<>(); // Create the 'visitados' list
+                arbolGenealogico.mostrarDescendientes(nodo, 1, descendientesPorNivel, visitados); // Pass 'visitados' as the fourth parameter
 
                 // Imprimir el nombre del padre y sus descendientes, excluyendo los nodos sin descendientes
                 for (int nivel = 0; nivel < descendientesPorNivel.getSize(); nivel++) {
@@ -365,6 +366,7 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
                     // Mostrar el ID del padre de los descendientes, solo si hay descendientes en este nivel
                     if (nivel > 0 && descendientesPorNivel.get(nivel - 1).getSize() > 0 && nivelDescendientes.getSize() > 0) {
                         NodoArbol padre = descendientesPorNivel.get(nivel - 1).get(0);
+                        // Additional logic if needed
                     }
 
                     // Listar los IDs de los hijos de este nivel
@@ -377,6 +379,8 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
                     }
                 }
             }
+        } else {
+            System.out.println("No se encontraron personas con el nombre proporcionado.");
         }
     }//GEN-LAST:event_BotonBuscarPersonaActionPerformed
 
@@ -387,10 +391,11 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
             return;
         }
 
+        // **Create a new Grafos instance**
         Grafos nuevoGrafo = new Grafos();
-        nuevoGrafo.mostrarArbol();
+        nuevoGrafo.mostrarArbol(arbolGenealogico);
 
-        // Llamar al método para mostrar el árbol genealógico de esa persona
+        // Generate the descendants graph
         arbolGenealogico.mostrarArbolGenealogicoPorNombre(nombrePersona, nuevoGrafo);
     }//GEN-LAST:event_BotonGenerarSuArbolActionPerformed
 
@@ -450,7 +455,7 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
         }
 
         Grafos nuevoGrafo = new Grafos();
-        nuevoGrafo.mostrarArbol();
+        nuevoGrafo.mostrarArbol(arbolGenealogico);
 
         // Llamar al método para mostrar el árbol genealógico de esa persona
         arbolGenealogico.mostrarAntepasados(nombrePersona, nuevoGrafo);

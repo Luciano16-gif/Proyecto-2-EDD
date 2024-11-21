@@ -14,6 +14,7 @@ import org.graphstream.ui.view.Viewer;
  */
 public class Grafos {
     private Graph graph;
+    private ArbolGenealogico arbolGenealogico;
 
     public Grafos() {
         this.graph = new MultiGraph("Árbol Genealógico");
@@ -39,36 +40,51 @@ public class Grafos {
     
     
 
-    /**
-     * Añade una persona como nodo en el grafo si no existe ya.
-     *
-     * @param persona Persona a añadir.
-     */
+
     public void addPersona(Persona persona) {
-        String id = persona.getId(); // Identificador único
-        // Verifica si el nodo ya existe antes de agregar
-        if (graph.getNode(id) == null) {
-            graph.addNode(id); // Crea el nodo con el identificador único
-            graph.getNode(id).setAttribute("ui.label", persona.getNombre());
+       String id = persona.getId(); // Identificador único
 
-            // Establecer el estilo del nodo (opcional)
-            graph.getNode(id).setAttribute("ui.style", "fill-color: yellow; shape: circle; size: 15px;");
-            System.out.println("Persona añadida al grafo: " + id);
-        } else {
-            // Opcional: Actualizar el nodo si ya existe
-            // Por ejemplo, actualizar el label si cambió
-            graph.getNode(id).setAttribute("ui.label", persona.getNombre());
-            System.out.println("Persona ya existe en el grafo: " + id);
-        }
-    }
+       // Validate ID and Name
+       if (id == null || id.isEmpty()) {
+           System.out.println("Error: Persona ID is null or empty.");
+           return;
+       }
+       if (persona.getNombre() == null || persona.getNombre().isEmpty()) {
+           System.out.println("Error: Persona nombre is null or empty for ID: " + id);
+           return;
+       }
 
-    /**
-     * Añade un arco dirigido entre dos nodos si no existe ya.
-     *
-     * @param idPadre ID único del padre.
-     * @param idHijo  ID único del hijo.
-     */
+       // **Sanitize ID to remove any invalid characters**
+       id = id.replaceAll("[^a-zA-Z0-9_]", "_");
+
+       // Verifica si el nodo ya existe antes de agregar
+       Node node = graph.getNode(id);
+       if (node == null) {
+           try {
+               node = graph.addNode(id); // Crea el nodo con el identificador único
+               node.setAttribute("ui.label", persona.getNombre());
+
+               // Establecer el estilo del nodo (opcional)
+               node.setAttribute("ui.style", "fill-color: yellow; shape: circle; size: 15px;");
+               System.out.println("Persona añadida al grafo: " + id);
+           } catch (Exception e) {
+               System.out.println("Error adding node with ID: " + id);
+               e.printStackTrace();
+           }
+       } else {
+           // Opcional: Actualizar el nodo si ya existe
+           node.setAttribute("ui.label", persona.getNombre());
+           System.out.println("Persona ya existe en el grafo: " + id);
+       }
+   }
+
+
+
     public void addArco1(String idPadre, String idHijo) {
+        // **Sanitize IDs**
+        idPadre = idPadre.replaceAll("[^a-zA-Z0-9_]", "_");
+        idHijo = idHijo.replaceAll("[^a-zA-Z0-9_]", "_");
+
         // Asegúrate de que el grafo contenga ambos nodos
         if (graph.getNode(idPadre) != null && graph.getNode(idHijo) != null) {
             // Genera un ID único para el arco usando los IDs de los nodos
@@ -76,11 +92,16 @@ public class Grafos {
 
             // Verifica si el arco ya existe antes de agregarlo
             if (graph.getEdge(edgeId) == null) {
-                graph.addEdge(edgeId, idPadre, idHijo, true); // true para crear un arco dirigido
+                try {
+                    graph.addEdge(edgeId, idPadre, idHijo, true); // true para crear un arco dirigido
 
-                // Establecer el estilo del arco (opcional)
-                graph.getEdge(edgeId).setAttribute("ui.style", "fill-color: red;");
-                System.out.println("Arco añadido al grafo: " + idPadre + " -> " + idHijo);
+                    // Establecer el estilo del arco (opcional)
+                    graph.getEdge(edgeId).setAttribute("ui.style", "fill-color: red;");
+                    System.out.println("Arco añadido al grafo: " + idPadre + " -> " + idHijo);
+                } catch (Exception e) {
+                    System.out.println("Error adding edge from " + idPadre + " to " + idHijo);
+                    e.printStackTrace();
+                }
             } else {
                 System.out.println("Arco ya existe en el grafo: " + idPadre + " -> " + idHijo);
             }
@@ -88,6 +109,7 @@ public class Grafos {
             System.out.println("Error: Uno de los nodos no existe en el grafo. Padre: " + idPadre + ", Hijo: " + idHijo);
         }
     }
+
 
     /**
      * Elimina una persona del grafo, incluyendo todos sus arcos conectados.
@@ -131,9 +153,9 @@ public class Grafos {
     /**
      * Muestra el árbol genealógico en una ventana gráfica.
      */
-    public void mostrarArbol() {
+    public void mostrarArbol(ArbolGenealogico arbolGenealogico) {
         System.setProperty("org.graphstream.ui", "swing");
-        Clicks visualizador = new Clicks(graph);
+        Clicks visualizador = new Clicks(graph, arbolGenealogico);
     }
 
     /**

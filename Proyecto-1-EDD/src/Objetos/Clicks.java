@@ -16,11 +16,12 @@ public class Clicks implements ViewerListener {
     protected boolean loop = true;
     private ArbolGenealogico arbolGenealogico;
 
-    public Clicks(Graph grafo) {
+    public Clicks(Graph grafo, ArbolGenealogico arbolGenealogico) {
+        this.arbolGenealogico = arbolGenealogico;
         Graph graph = grafo;
         Viewer viewer = graph.display();
         viewer.setCloseFramePolicy(Viewer.CloseFramePolicy.HIDE_ONLY);
-
+        
         // Activa las opciones de interacción con el mouse
         viewer.getDefaultView().enableMouseOptions();
         
@@ -50,21 +51,21 @@ public class Clicks implements ViewerListener {
 
     @Override
     public void buttonPushed(String id) {
-        System.out.println(id);   
+       arbolGenealogico.mostrarInformacionNodo(id);
     }
 
     @Override
     public void buttonReleased(String id) {
-        System.out.println("Button released on node " + id);
+        //System.out.println("Button released on node " + id);
     }
 
     @Override
     public void mouseOver(String id) {
-        System.out.println("Mouse over node " + id);
+        //System.out.println("Mouse over node " + id);
     }
 
     @Override
     public void mouseLeft(String id) {
-        System.out.println("Mouse left node " + id);
+        //System.out.println("Mouse left node " + id);
     }
 }
