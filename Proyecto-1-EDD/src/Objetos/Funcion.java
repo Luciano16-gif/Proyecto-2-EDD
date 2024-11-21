@@ -15,7 +15,9 @@ import java.io.FileReader;
  * Clase que contiene funciones útiles para el proyecto, incluyendo la lectura
  * del archivo JSON.
  *
- * @version 4/11/2024
+ * @author: Ricardo Paez - Luciano Minardo - Gabriele Colarusso
+ * 
+ * @version 21/11/2024
  */
 public class Funcion {
 
