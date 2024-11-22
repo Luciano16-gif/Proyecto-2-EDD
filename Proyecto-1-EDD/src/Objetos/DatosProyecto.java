@@ -18,6 +18,7 @@ public class DatosProyecto {
         this.hashTable = hashTable;
     }
 
+    // Getters 
     public Lista<Persona> getPersonas() {
         return personas;
     }

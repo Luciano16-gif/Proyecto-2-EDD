@@ -25,6 +25,7 @@ public class JsonArray {
         elementos.append(elemento);
     }
 
+    // Getters y Setters
     public JsonElement get(int index) {
         return elementos.get(index);
     }
