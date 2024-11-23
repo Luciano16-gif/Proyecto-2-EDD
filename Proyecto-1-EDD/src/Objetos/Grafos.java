@@ -36,10 +36,12 @@ public class Grafos {
             "   arrow-size: 8px, 6px;" +
             "}");
     }
-    
-    
 
-
+    /**
+    * Añade una persona al grafo. Si el nodo ya existe, actualiza su etiqueta.
+    *
+    * @param persona Objeto de tipo Persona que se agregará al grafo.
+    */
     public void addPersona(Persona persona) {
        String id = persona.getId(); // Identificador único
 
@@ -78,7 +80,13 @@ public class Grafos {
    }
 
 
-
+    /**
+    * Añade un arco dirigido entre dos nodos en el grafo, asegurándose de que ambos nodos existan.
+    * Si el arco ya existe, no se agrega nuevamente.
+    *
+    * @param idPadre El ID del nodo padre.
+    * @param idHijo El ID del nodo hijo.
+    */
     public void addArco1(String idPadre, String idHijo) {
         // **Sanitize IDs**
         idPadre = idPadre.replaceAll("[^a-zA-Z0-9_]", "_");
@@ -147,7 +155,6 @@ public class Grafos {
         }
         return connectedEdges;
     }
-
 
     /**
      * Muestra el árbol genealógico en una ventana gráfica.

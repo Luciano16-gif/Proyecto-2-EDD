@@ -264,7 +264,14 @@ public class ArbolGenealogico {
     }
     
     
-    
+    /**
+    * Reemplaza un nodo placeholder por un nodo real, actualizando las conexiones de padres, hijos 
+    * y el grafo correspondiente.
+    *
+    * @param nodoPlaceholder El nodo provisional a reemplazar.
+    * @param nodoReal El nodo completo que lo sustituye.
+    * @param grafos El grafo donde se reflejan los cambios.
+    */
     private void actualizarConexiones(NodoArbol nodoPlaceholder, NodoArbol nodoReal, Grafos grafos) {
         // Actualizar padres
         Lista<NodoArbol> padres = nodoPlaceholder.getPadres();
@@ -330,34 +337,42 @@ public class ArbolGenealogico {
         }
     }
     
-private String buscarPersonaPorNombreYContexto(String nombre, NodoArbol nodoPlaceholder) {
-    for (int i = 0; i < listaPersonas.len(); i++) {
-        Persona persona = listaPersonas.get(i);
-        if (persona.getNombre().contains(nombre)) {
-            // Get placeholder's parents
-            Lista<NodoArbol> padresPlaceholder = nodoPlaceholder.getPadres();
-            for (int j = 0; j < padresPlaceholder.len(); j++) {
-                NodoArbol padrePlaceholder = padresPlaceholder.get(j);
-                Persona padrePersona = padrePlaceholder.getPersona();
-                
-                // Check if the placeholder's parent matches any of the person's bornTo
-                Lista<String> bornTo = persona.getBornTo();
-                for (int k = 0; k < bornTo.len(); k++) {
-                    String nombrePadreBornTo = bornTo.get(k);
-                    
-                    // Compare IDs, names, and nicknames, also verify generational context
-                    if ((nombrePadreBornTo.equals(padrePersona.getId()) ||
-                         nombrePadreBornTo.equals(padrePersona.getNombre()) ||
-                         (padrePersona.getApodo() != null && !padrePersona.getApodo().isEmpty() &&
-                          nombrePadreBornTo.equals(padrePersona.getApodo())))) {
-                        return persona.getId();
+    /**
+    * Busca una persona por nombre y contexto generacional, comparando padres del nodo placeholder
+    * con la lista de relaciones "bornTo" de las personas.
+    *
+    * @param nombre Nombre de la persona a buscar.
+    * @param nodoPlaceholder Nodo provisional con contexto de padres.
+    * @return ID de la persona encontrada o null si no coincide.
+    */
+    private String buscarPersonaPorNombreYContexto(String nombre, NodoArbol nodoPlaceholder) {
+        for (int i = 0; i < listaPersonas.len(); i++) {
+            Persona persona = listaPersonas.get(i);
+            if (persona.getNombre().contains(nombre)) {
+                // Get placeholder's parents
+                Lista<NodoArbol> padresPlaceholder = nodoPlaceholder.getPadres();
+                for (int j = 0; j < padresPlaceholder.len(); j++) {
+                    NodoArbol padrePlaceholder = padresPlaceholder.get(j);
+                    Persona padrePersona = padrePlaceholder.getPersona();
+
+                    // Check if the placeholder's parent matches any of the person's bornTo
+                    Lista<String> bornTo = persona.getBornTo();
+                    for (int k = 0; k < bornTo.len(); k++) {
+                        String nombrePadreBornTo = bornTo.get(k);
+
+                        // Compare IDs, names, and nicknames, also verify generational context
+                        if ((nombrePadreBornTo.equals(padrePersona.getId()) ||
+                             nombrePadreBornTo.equals(padrePersona.getNombre()) ||
+                             (padrePersona.getApodo() != null && !padrePersona.getApodo().isEmpty() &&
+                              nombrePadreBornTo.equals(padrePersona.getApodo())))) {
+                            return persona.getId();
+                        }
                     }
                 }
             }
         }
+        return null;
     }
-    return null;
-}
     
     /**
      * Obtiene una lista de padres de un nodo.
@@ -479,6 +494,14 @@ private String buscarPersonaPorNombreYContexto(String nombre, NodoArbol nodoPlac
     }
 
 
+    /**
+    * Muestra los descendientes de un nodo, agrupados por nivel en la lista proporcionada.
+    *
+    * @param nodo Nodo inicial cuyos descendientes se mostrarán.
+    * @param nivel Nivel actual de descendencia.
+    * @param descendientesPorNivel Lista que agrupa los descendientes por niveles.
+    * @param visitados Lista de nodos visitados para evitar recursión infinita.
+    */
     public void mostrarDescendientes(NodoArbol nodo, int nivel, Lista<Lista<NodoArbol>> descendientesPorNivel, Lista<NodoArbol> visitados) {
         if (visitados.contains(nodo)) {
             return; // Node already visited, prevent infinite recursion
@@ -504,7 +527,12 @@ private String buscarPersonaPorNombreYContexto(String nombre, NodoArbol nodoPlac
         }
     }
 
-
+    /**
+    * Muestra el árbol genealógico desde una persona específica, construyendo un grafo con sus descendientes.
+    *
+    * @param nombre Nombre de la persona inicial.
+    * @param grafosOriginal Grafo donde se agregarán las relaciones.
+    */
     public void mostrarArbolGenealogicoPorNombre(String nombre, Grafos grafosOriginal) {
         Lista<NodoArbol> nodosEncontrados = buscarPorNombre(nombre);
 
@@ -540,7 +568,13 @@ private String buscarPersonaPorNombreYContexto(String nombre, NodoArbol nodoPlac
     }
 
 
-
+    /**
+    * Agrega descendientes al grafo recursivamente.
+    *
+    * @param nodoPadre Nodo desde el cual se inician las conexiones.
+    * @param grafosOriginal Grafo que se actualiza con las relaciones.
+    * @param visitados Lista de IDs visitados para evitar ciclos.
+    */
     private void agregarDescendientesRecursivos(NodoArbol nodoPadre, Grafos grafosOriginal, Lista<String> visitados) {
         if (visitados.contains(nodoPadre.getPersona().getId())) {
             return; // Already visited
@@ -564,7 +598,12 @@ private String buscarPersonaPorNombreYContexto(String nombre, NodoArbol nodoPlac
     }
 
 
-    
+    /**
+    * Obtiene la descendencia ordenada de una persona en el árbol genealógico.
+    *
+    * @param nombrePersona Nombre de la persona.
+    * @return Cadena con los descendientes ordenados por nivel.
+    */
     public String obtenerDescendenciaOrdenada(String nombrePersona) {
         // Buscar a la persona en el árbol genealógico
         Lista<NodoArbol> nodosEncontrados = buscarPorNombre(nombrePersona);
@@ -616,7 +655,12 @@ private String buscarPersonaPorNombreYContexto(String nombre, NodoArbol nodoPlac
     }
 
 
-    
+    /**
+    * Busca personas que tengan un título específico.
+    *
+    * @param titulo Título a buscar.
+    * @return Lista de personas con el título dado.
+    */
     public Lista<Persona> buscarPorTitulo(String titulo) {
         Lista<Persona> resultado = new Lista<>();
 
@@ -630,6 +674,12 @@ private String buscarPersonaPorNombreYContexto(String nombre, NodoArbol nodoPlac
         return resultado;
     }
     
+    /**
+    * Busca personas con un nombre específico, ignorando mayúsculas y minúsculas.
+    *
+    * @param nombre Nombre a buscar.
+    * @return Lista de personas que coinciden con el nombre.
+    */
     public Lista<Persona> NombreEspecifico(String nombre){
         Lista<Persona> resultado = new Lista<>();
         for (int i = 0; i < listaPersonas.getSize(); i++) {
@@ -642,6 +692,12 @@ private String buscarPersonaPorNombreYContexto(String nombre, NodoArbol nodoPlac
         return resultado;
     }
     
+    /**
+    * Muestra los antepasados de una persona especificada por su nombre.
+    *
+    * @param nombre Nombre de la persona.
+    * @param grafosOriginal Grafo donde se registrarán los antepasados y sus relaciones.
+    */
     public void mostrarAntepasados(String nombre, Grafos grafosOriginal) {
         // Buscar los nodos correspondientes al nombre
         Lista<NodoArbol> nodosEncontrados = buscarPorNombre(nombre);
@@ -692,6 +748,13 @@ private String buscarPersonaPorNombreYContexto(String nombre, NodoArbol nodoPlac
         }
     }
 
+    /**
+    * Método recursivo para agregar antepasados al grafo.
+    *
+    * @param nodoHijo Nodo del cual se buscan los padres.
+    * @param grafosOriginal Grafo que se está construyendo.
+    * @param visitados Lista de nodos visitados.
+    */
     private void agregarAntepasadosRecursivos(NodoArbol nodoHijo, Grafos grafosOriginal, Lista<String> visitados) {
         if (visitados.contains(nodoHijo.getPersona().getId())) {
             return; // Already visited
@@ -803,7 +866,12 @@ private String buscarPersonaPorNombreYContexto(String nombre, NodoArbol nodoPlac
     }
 
 
-    
+    /**
+    * Busca personas cuyos nombres, apodos o títulos contengan una coincidencia parcial con la cadena dada.
+    *
+    * @param nombreBusqueda Texto a buscar dentro del nombre, apodo o título.
+    * @return Lista de personas que contienen coincidencias parciales.
+    */
     public Lista<Persona> buscarPorNombreParcial(String nombreBusqueda) {
         Lista<Persona> resultado = new Lista<>();
 
@@ -843,6 +911,14 @@ private String buscarPersonaPorNombreYContexto(String nombre, NodoArbol nodoPlac
         return resultadoSinDuplicados;
     }
     
+    /**
+    * Obtiene una lista de personas de una generación específica.
+    *
+    * @param numeroGeneracion Número de generación a buscar (0 para la raíz).
+    * @return Lista de personas pertenecientes a la generación.
+    * @throws IllegalArgumentException Si el número de generación es inválido.
+    * @throws IllegalStateException Si el árbol está vacío.
+    */
     public Lista<Persona> obtenerPersonasGeneracion(int numeroGeneracion) {
         if (numeroGeneracion < 0) {
             throw new IllegalArgumentException("El número de generación debe ser mayor o igual a 0.");
@@ -896,8 +972,12 @@ private String buscarPersonaPorNombreYContexto(String nombre, NodoArbol nodoPlac
     }
 
 
-
-    // Método auxiliar para construir los niveles del árbol
+    /**
+    * Construye los niveles del árbol genealógico.
+    *
+    * @param raiz Nodo raíz del árbol.
+    * @return Lista de listas donde cada nivel contiene los nodos de esa generación.
+    */
     private void construirNiveles(NodoArbol nodo, int nivel, Lista<Lista<NodoArbol>> niveles) {
         // Asegurarse de que la lista tenga espacio para el nivel actual
         while (niveles.getSize() <= nivel) {
@@ -939,7 +1019,11 @@ private String buscarPersonaPorNombreYContexto(String nombre, NodoArbol nodoPlac
         return false; // La persona tiene otros padres o no tiene padres definidos
     }
 
-
+    /**
+    * Calcula la altura del árbol genealógico.
+    *
+    * @return La altura del árbol. Devuelve 0 si el árbol está vacío.
+    */
     public int obtenerAltura() {
         NodoArbol raiz = obtenerRaiz();
         if (raiz == null) {
@@ -948,6 +1032,12 @@ private String buscarPersonaPorNombreYContexto(String nombre, NodoArbol nodoPlac
         return calcularAltura(raiz);
     }
 
+    /**
+    * Método recursivo para calcular la altura de un nodo en el árbol.
+    *
+    * @param nodo Nodo actual.
+    * @return Altura máxima desde el nodo actual hasta las hojas.
+    */
     private int calcularAltura(NodoArbol nodo) {
         if (nodo == null) {
             return 0;
@@ -962,6 +1052,11 @@ private String buscarPersonaPorNombreYContexto(String nombre, NodoArbol nodoPlac
         return 1 + alturaMaxima;
     }
     
+    /**
+    * Muestra la información de un nodo basado en su ID.
+    *
+    * @param id ID del nodo a buscar.
+    */
     public void mostrarInformacionNodo(String id) {
         String originalId;
         // Replace so the id (that the function recieves) matchs with the id inside of tablaPersonasPorId
