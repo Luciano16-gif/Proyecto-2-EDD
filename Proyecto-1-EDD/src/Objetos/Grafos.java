@@ -5,7 +5,6 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.ui.view.Viewer;
 
 /**
  * Clase para manejar grafos de personas y arcos.
@@ -66,7 +65,7 @@ public class Grafos {
 
                // Establecer el estilo del nodo (opcional)
                node.setAttribute("ui.style", "fill-color: yellow; shape: circle; size: 15px;");
-               System.out.println("Persona añadida al grafo: " + id);
+               //System.out.println("Persona añadida al grafo: " + id);
            } catch (Exception e) {
                System.out.println("Error adding node with ID: " + id);
                e.printStackTrace();
@@ -97,7 +96,7 @@ public class Grafos {
 
                     // Establecer el estilo del arco (opcional)
                     graph.getEdge(edgeId).setAttribute("ui.style", "fill-color: red;");
-                    System.out.println("Arco añadido al grafo: " + idPadre + " -> " + idHijo);
+                    //System.out.println("Arco añadido al grafo: " + idPadre + " -> " + idHijo);
                 } catch (Exception e) {
                     System.out.println("Error adding edge from " + idPadre + " to " + idHijo);
                     e.printStackTrace();

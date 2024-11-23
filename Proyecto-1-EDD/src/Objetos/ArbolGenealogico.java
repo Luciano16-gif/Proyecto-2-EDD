@@ -209,7 +209,7 @@ public class ArbolGenealogico {
                     nodoHijo = tablaPersonasPorId.get(idHijo);
                 } else {
                     // Crear placeholder con un ID único
-                    String placeholderId = "[Placeholder]_" + nombreHijo + "_hijo_de_" + padrePersona.getId();
+                    String placeholderId = "[Placeholder] " + nombreHijo + " hijo " + padrePersona.getId();
                     Persona hijoPlaceholder = new Persona(nombreHijo);
                     hijoPlaceholder.setId(placeholderId); // Asegurarse de que el ID es único
                     nodoHijo = new NodoArbol(hijoPlaceholder);
@@ -299,7 +299,7 @@ public class ArbolGenealogico {
         Lista<String> ids = tablaPersonasPorId.keys();
         for (int i = 0; i < ids.len(); i++) {
             String id = ids.get(i);
-            if (id.startsWith("[Placeholder]_")) {
+            if (id.startsWith("[Placeholder]")) {
                 idsPlaceholders.append(id);
             }
         }
@@ -426,12 +426,12 @@ private String buscarPersonaPorNombreYContexto(String nombre, NodoArbol nodoPlac
 
                 // Añadir ambos nombres a la hashtable modificada
                 nombreAIdModificado.put(nombreConOfHisName, id);
-                System.out.println("Añadido a nombreAIdModificado: " + nombreConOfHisName + " -> " + id);
+                //System.out.println("Añadido a nombreAIdModificado: " + nombreConOfHisName + " -> " + id);
 
                 // Si tiene un alias "Known throughout as", añadirlo también
                 if (persona.getApodo() != null && !persona.getApodo().isEmpty()) {
                     nombreAIdModificado.put(persona.getApodo(), id);
-                    System.out.println("Añadido a nombreAIdModificado (apodo): " + persona.getApodo() + " -> " + id);
+                    //System.out.println("Añadido a nombreAIdModificado (apodo): " + persona.getApodo() + " -> " + id);
                 }
             }
         }
@@ -963,7 +963,18 @@ private String buscarPersonaPorNombreYContexto(String nombre, NodoArbol nodoPlac
     }
     
     public void mostrarInformacionNodo(String id) {
-        NodoArbol nodo = tablaPersonasPorId.get(id); // Buscar el nodo por ID
+        String originalId;
+        // Replace so the id (that the function recieves) matchs with the id inside of tablaPersonasPorId
+        originalId = id.replace("_Placeholder_", "[Placeholder]");
+        originalId = originalId.replace("__", ", ").replace("_", " ");
+    
+
+
+        System.out.println("\nTabla information: " + tablaPersonasPorId.getKeys().toString());
+        System.out.println("Id a encontrar: " + id);
+        System.out.println("Original Id: " + originalId);
+        
+        NodoArbol nodo = tablaPersonasPorId.get(originalId); // Buscar el nodo por ID
         if (nodo != null) {
             Persona persona = nodo.getPersona();
             if (persona != null) {
