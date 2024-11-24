@@ -369,8 +369,9 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
         Persona personaSeleccionada = resultados.get(0);
 
         String descendencia = arbolGenealogico.obtenerAscendenciaOrdenada(personaSeleccionada.getNombre());
+        String descendenciaSinCorchetes = descendencia.replace("[", "").replace("]", "");
 
-        textoResultados.setText(descendencia);
+        textoResultados.setText(descendenciaSinCorchetes);
     }//GEN-LAST:event_BotonVerAscendenciaActionPerformed
 
     private void BotonGenerarSuArbolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonGenerarSuArbolActionPerformed
