@@ -12,17 +12,17 @@ import Primitivas.Lista;
 public class NodoArbol {
     private Persona persona;
     private Lista<NodoArbol> hijos;
-    private Lista<NodoArbol> padres; // Nuevo atributo para almacenar los padres
+    private Lista<NodoArbol> padres; 
 
     public NodoArbol(Persona persona) {
         this.persona = persona;
         this.hijos = new Lista<>();
-        this.padres = new Lista<>(); // Inicializamos la lista de padres
+        this.padres = new Lista<>(); 
     }
 
     public void agregarHijo(NodoArbol hijo) {
         this.hijos.append(hijo);
-        hijo.agregarPadre(this); // También agregamos este nodo como padre del hijo
+        hijo.agregarPadre(this); 
     }
 
     public void agregarPadre(NodoArbol padre) {
@@ -34,7 +34,7 @@ public class NodoArbol {
         padres.remove(padre);
     }
 
-
+    // Getters y Setters
     public Lista<NodoArbol> getHijos() {
         return hijos;
     }

@@ -54,10 +54,13 @@ public class Persona {
     public String getId() {
         if (id != null && !id.isEmpty()) {
             return id;
-        } else if (ofHisName != null && !ofHisName.isEmpty()) {
-            return nombre + ", " + ofHisName + " of his name";
         } else {
-            return nombre;
+            // Always use a combination of name and 'Of His Name' for uniqueness
+            String uniqueId = nombre;
+            if (ofHisName != null && !ofHisName.isEmpty()) {
+                uniqueId += ", " + ofHisName + " of his name";
+            }
+            return uniqueId;
         }
     }
 
