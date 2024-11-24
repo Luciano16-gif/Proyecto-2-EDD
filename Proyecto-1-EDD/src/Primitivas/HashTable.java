@@ -1,5 +1,13 @@
 package Primitivas;
 
+/**
+ * Clase que representa la HasHTable, donde tienen sus atributos y metodos
+ *
+ * @author: Ricardo Paez - Luciano Minardo - Gabriele Colarusso
+ * 
+ * @version 21/11/2024
+ */
+
 public class HashTable<K, V> {
     private static final int INITIAL_CAPACITY = 16;
     private Lista<Entry<K, V>>[] buckets;

@@ -6,7 +6,8 @@ import Primitivas.Lista;
 /**
  * Clase auxiliar para encapsular los datos del proyecto.
  *
- * @author ...
+ * @author Ricardo Paez - Luciano Minardo - Gabriele Colarusso
+ * 
  * @version 4/11/2024
  */
 public class DatosProyecto {

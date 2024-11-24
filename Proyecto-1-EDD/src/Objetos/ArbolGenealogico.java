@@ -16,6 +16,7 @@ public class ArbolGenealogico {
     private HashTable<String, String> nombreAId; // Mapea nombres (incluyendo apodos y alias únicos) a IDs
     private Lista<Persona> listaPersonas; // Lista de todas las personas
     private HashTable<String, String> nombreAIdModificado;
+    
 
     public ArbolGenealogico() {
         tablaPersonasPorId = new HashTable<>();
@@ -1065,6 +1066,7 @@ public class ArbolGenealogico {
     
 
 
+
         System.out.println("\nTabla information: " + tablaPersonasPorId.getKeys().toString());
         System.out.println("Id a encontrar: " + id);
         System.out.println("Original Id: " + originalId);
@@ -1092,5 +1094,6 @@ public class ArbolGenealogico {
                 JOptionPane.ERROR_MESSAGE
             );
         }
+
     }
 }

@@ -12,14 +12,22 @@ import Objetos.NodoArbol;
 import Objetos.Persona;
 import Primitivas.HashTable;
 import Primitivas.Lista;
+import java.awt.Graphics;
+import java.awt.Image;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 /**
- *
- * @author nicolagabrielecolarusso
+ * La clase InterfazFinal representa la interfaz gráfica de usuario (GUI) para interactuar con el árbol genealógico
+ * Proporciona funcionalidades para cargar datos, buscar persona, generar sus antepasados, descendientes, buscar por su titulo, nombre, buscar generacion, y tambien ver descendecia y ascedencia
+ * 
+ * @author Ricardo Paez - Luciano Minardo - Gabriele Colarusso
+ * @version 21/11/2024
  */
 public class InterfazPrueba1 extends javax.swing.JFrame {
+    FondoPanel fondo = new FondoPanel();
     private Grafos grafo; 
     private HashTable<String, NodoArbol> tablaPersonasPorId; // Mapea ID de persona a NodoArbol
     private HashTable<String, String> nombreAId; // Mapea nombres (incluyendo apodos y alias únicos) a IDs
@@ -32,6 +40,7 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
      * Creates new form InterfazPrueba1
      */
     public InterfazPrueba1() {
+        this.setContentPane(fondo);
         initComponents();
         grafo = new Grafos();
         tablaPersonasPorId = new HashTable<>();
@@ -67,6 +76,7 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
         textoResultados = new javax.swing.JTextArea();
         BotonListaIntegrantes = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -80,8 +90,11 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
         jPanel4 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Proyecto 2 - Arbol Genealogico");
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(294, 47, -1, -1));
 
         ListadeNobilariosTitulo.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
@@ -89,6 +102,7 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
             }
         });
         jScrollPane2.setViewportView(ListadeNobilariosTitulo);
+
 
         BotonCargarJsonYGrafo.setBackground(new java.awt.Color(204, 204, 255));
         BotonCargarJsonYGrafo.setFont(new java.awt.Font("Impact", 0, 24)); // NOI18N
@@ -98,6 +112,7 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
                 BotonCargarJsonYGrafoActionPerformed(evt);
             }
         });
+        getContentPane().add(BotonCargarJsonYGrafo, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 90, 290, 80));
 
         BotonBuscarNombre.setBackground(new java.awt.Color(204, 204, 255));
         BotonBuscarNombre.setFont(new java.awt.Font("Impact", 0, 18)); // NOI18N
@@ -107,6 +122,7 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
                 BotonBuscarNombreActionPerformed(evt);
             }
         });
+        getContentPane().add(BotonBuscarNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 350, 180, 50));
 
         BotonBuscarGeneracion.setBackground(new java.awt.Color(204, 204, 255));
         BotonBuscarGeneracion.setFont(new java.awt.Font("Impact", 0, 18)); // NOI18N
@@ -116,6 +132,7 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
                 BotonBuscarGeneracionActionPerformed(evt);
             }
         });
+        getContentPane().add(BotonBuscarGeneracion, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 350, 250, 50));
 
         BotonVerAscendencia.setBackground(new java.awt.Color(204, 204, 255));
         BotonVerAscendencia.setFont(new java.awt.Font("Impact", 0, 18)); // NOI18N
@@ -125,15 +142,19 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
                 BotonVerAscendenciaActionPerformed(evt);
             }
         });
+        getContentPane().add(BotonVerAscendencia, new org.netbeans.lib.awtextra.AbsoluteConstraints(840, 390, 180, 60));
+        getContentPane().add(TextoNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 50, 280, -1));
 
         BotonBuscarPersona.setBackground(new java.awt.Color(204, 204, 255));
         BotonBuscarPersona.setFont(new java.awt.Font("Impact", 0, 18)); // NOI18N
+
         BotonBuscarPersona.setText("Imprimir informacion de la persona ");
         BotonBuscarPersona.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BotonBuscarPersonaActionPerformed(evt);
             }
         });
+        getContentPane().add(BotonBuscarPersona, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 90, 270, 60));
 
         BotonGenerarSuArbol.setBackground(new java.awt.Color(204, 204, 255));
         BotonGenerarSuArbol.setFont(new java.awt.Font("Impact", 0, 18)); // NOI18N
@@ -143,6 +164,7 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
                 BotonGenerarSuArbolActionPerformed(evt);
             }
         });
+        getContentPane().add(BotonGenerarSuArbol, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 190, 250, 70));
 
         botonBuscarTitulo.setBackground(new java.awt.Color(204, 204, 255));
         botonBuscarTitulo.setFont(new java.awt.Font("Impact", 0, 18)); // NOI18N
@@ -152,16 +174,19 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
                 botonBuscarTituloActionPerformed(evt);
             }
         });
+        getContentPane().add(botonBuscarTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 350, 180, 50));
 
         textoTitulo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 textoTituloActionPerformed(evt);
             }
         });
+        getContentPane().add(textoTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 310, 340, -1));
 
         textoResultados.setColumns(20);
         textoResultados.setRows(5);
         jScrollPane1.setViewportView(textoResultados);
+
 
         BotonListaIntegrantes.setBackground(new java.awt.Color(204, 204, 255));
         BotonListaIntegrantes.setFont(new java.awt.Font("Impact", 0, 18)); // NOI18N
@@ -171,6 +196,7 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
                 BotonListaIntegrantesActionPerformed(evt);
             }
         });
+        getContentPane().add(BotonListaIntegrantes, new org.netbeans.lib.awtextra.AbsoluteConstraints(840, 460, 180, 60));
 
         jButton1.setBackground(new java.awt.Color(204, 204, 255));
         jButton1.setFont(new java.awt.Font("Impact", 0, 18)); // NOI18N
@@ -180,6 +206,16 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
                 jButton1ActionPerformed(evt);
             }
         });
+        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 190, 270, 70));
+
+        jLabel1.setText("Escribe el nombre completo que deseas buscar");
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 20, 300, -1));
+
+        jLabel2.setText("Selecciona un boton que deas usar: Generar Árbol de descendientes o el de antepasados");
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 160, 550, -1));
+
+        jLabel3.setText("Introduce un nombre, titulo o un numero para buscar la generacion correspondiente");
+        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 280, 530, -1));
 
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -581,40 +617,6 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
         arbolGenealogico.mostrarAntepasados(nombrePersona, nuevoGrafo);
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(InterfazPrueba1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(InterfazPrueba1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(InterfazPrueba1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(InterfazPrueba1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new InterfazPrueba1().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BotonBuscarGeneracion;
@@ -632,6 +634,7 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -645,4 +648,21 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
     private javax.swing.JTextArea textoResultados;
     private javax.swing.JTextField textoTitulo;
     // End of variables declaration//GEN-END:variables
+        
+    class FondoPanel extends JPanel
+    {
+        private Image imagen;
+        
+        @Override
+        public void paint(Graphics g)
+        {
+            imagen = new ImageIcon(getClass().getResource("/Imagenes/ImagenFondoInterfaz.jpg")).getImage();
+            
+            g.drawImage(imagen, 0, 0, getWidth(), getHeight(), this);
+            
+            setOpaque(false);
+            
+            super.paint(g);
+        }
+    }
 }

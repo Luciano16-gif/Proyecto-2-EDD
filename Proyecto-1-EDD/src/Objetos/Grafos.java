@@ -9,7 +9,10 @@ import org.graphstream.graph.implementations.MultiGraph;
 /**
  * Clase para manejar grafos de personas y arcos.
  *
- * @version 4/11/2024
+ * @author: Ricardo Paez - Luciano Minardo - Gabriele Colarusso
+ * 
+ * 
+ * @version 21/11/2024
  */
 public class Grafos {
     private Graph graph;
