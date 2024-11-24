@@ -68,7 +68,6 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
         BotonBuscarGeneracion = new javax.swing.JButton();
         BotonVerAscendencia = new javax.swing.JButton();
         TextoNombre = new javax.swing.JTextField();
-        BotonBuscarPersona = new javax.swing.JButton();
         BotonGenerarSuArbol = new javax.swing.JButton();
         botonBuscarTitulo = new javax.swing.JButton();
         textoTitulo = new javax.swing.JTextField();
@@ -76,25 +75,28 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
         textoResultados = new javax.swing.JTextArea();
         BotonListaIntegrantes = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
-
-        jPanel2 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Proyecto 2 - Arbol Genealogico");
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(294, 47, -1, -1));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(597, 47, -1, -1));
 
         ListadeNobilariosTitulo.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
@@ -103,6 +105,7 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(ListadeNobilariosTitulo);
 
+        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 520, 210, 128));
 
         BotonCargarJsonYGrafo.setBackground(new java.awt.Color(204, 204, 255));
         BotonCargarJsonYGrafo.setFont(new java.awt.Font("Impact", 0, 24)); // NOI18N
@@ -112,7 +115,7 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
                 BotonCargarJsonYGrafoActionPerformed(evt);
             }
         });
-        getContentPane().add(BotonCargarJsonYGrafo, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 90, 290, 80));
+        getContentPane().add(BotonCargarJsonYGrafo, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 70, -1, 63));
 
         BotonBuscarNombre.setBackground(new java.awt.Color(204, 204, 255));
         BotonBuscarNombre.setFont(new java.awt.Font("Impact", 0, 18)); // NOI18N
@@ -122,7 +125,7 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
                 BotonBuscarNombreActionPerformed(evt);
             }
         });
-        getContentPane().add(BotonBuscarNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 350, 180, 50));
+        getContentPane().add(BotonBuscarNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 680, -1, 44));
 
         BotonBuscarGeneracion.setBackground(new java.awt.Color(204, 204, 255));
         BotonBuscarGeneracion.setFont(new java.awt.Font("Impact", 0, 18)); // NOI18N
@@ -132,7 +135,7 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
                 BotonBuscarGeneracionActionPerformed(evt);
             }
         });
-        getContentPane().add(BotonBuscarGeneracion, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 350, 250, 50));
+        getContentPane().add(BotonBuscarGeneracion, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 740, -1, 42));
 
         BotonVerAscendencia.setBackground(new java.awt.Color(204, 204, 255));
         BotonVerAscendencia.setFont(new java.awt.Font("Impact", 0, 18)); // NOI18N
@@ -142,19 +145,8 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
                 BotonVerAscendenciaActionPerformed(evt);
             }
         });
-        getContentPane().add(BotonVerAscendencia, new org.netbeans.lib.awtextra.AbsoluteConstraints(840, 390, 180, 60));
-        getContentPane().add(TextoNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 50, 280, -1));
-
-        BotonBuscarPersona.setBackground(new java.awt.Color(204, 204, 255));
-        BotonBuscarPersona.setFont(new java.awt.Font("Impact", 0, 18)); // NOI18N
-
-        BotonBuscarPersona.setText("Imprimir informacion de la persona ");
-        BotonBuscarPersona.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BotonBuscarPersonaActionPerformed(evt);
-            }
-        });
-        getContentPane().add(BotonBuscarPersona, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 90, 270, 60));
+        getContentPane().add(BotonVerAscendencia, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 680, -1, 44));
+        getContentPane().add(TextoNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 210, 417, 44));
 
         BotonGenerarSuArbol.setBackground(new java.awt.Color(204, 204, 255));
         BotonGenerarSuArbol.setFont(new java.awt.Font("Impact", 0, 18)); // NOI18N
@@ -164,7 +156,7 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
                 BotonGenerarSuArbolActionPerformed(evt);
             }
         });
-        getContentPane().add(BotonGenerarSuArbol, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 190, 250, 70));
+        getContentPane().add(BotonGenerarSuArbol, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 260, -1, 60));
 
         botonBuscarTitulo.setBackground(new java.awt.Color(204, 204, 255));
         botonBuscarTitulo.setFont(new java.awt.Font("Impact", 0, 18)); // NOI18N
@@ -174,19 +166,21 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
                 botonBuscarTituloActionPerformed(evt);
             }
         });
-        getContentPane().add(botonBuscarTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 350, 180, 50));
+        getContentPane().add(botonBuscarTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 740, 144, 42));
 
+        textoTitulo.setFont(new java.awt.Font("Segoe UI Semibold", 0, 12)); // NOI18N
         textoTitulo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 textoTituloActionPerformed(evt);
             }
         });
-        getContentPane().add(textoTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 310, 340, -1));
+        getContentPane().add(textoTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 470, 523, 41));
 
         textoResultados.setColumns(20);
         textoResultados.setRows(5);
         jScrollPane1.setViewportView(textoResultados);
 
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 520, 357, 128));
 
         BotonListaIntegrantes.setBackground(new java.awt.Color(204, 204, 255));
         BotonListaIntegrantes.setFont(new java.awt.Font("Impact", 0, 18)); // NOI18N
@@ -196,7 +190,7 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
                 BotonListaIntegrantesActionPerformed(evt);
             }
         });
-        getContentPane().add(BotonListaIntegrantes, new org.netbeans.lib.awtextra.AbsoluteConstraints(840, 460, 180, 60));
+        getContentPane().add(BotonListaIntegrantes, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 680, 174, 44));
 
         jButton1.setBackground(new java.awt.Color(204, 204, 255));
         jButton1.setFont(new java.awt.Font("Impact", 0, 18)); // NOI18N
@@ -206,184 +200,64 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
                 jButton1ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 190, 270, 70));
+        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 260, 244, 58));
 
-        jLabel1.setText("Escribe el nombre completo que deseas buscar");
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 20, 300, -1));
-
+        jLabel2.setFont(new java.awt.Font("Segoe UI Semibold", 0, 12)); // NOI18N
         jLabel2.setText("Selecciona un boton que deas usar: Generar Árbol de descendientes o el de antepasados");
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 160, 550, -1));
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 180, -1, -1));
 
+        jLabel3.setFont(new java.awt.Font("Segoe UI Semibold", 0, 12)); // NOI18N
         jLabel3.setText("Introduce un nombre, titulo o un numero para buscar la generacion correspondiente");
-        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 280, 530, -1));
+        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 360, -1, -1));
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI Semibold", 0, 12)); // NOI18N
+        jLabel4.setText("Selecciona el Json que deseas cargar para mostrar su Árbol Genealógico");
+        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 40, -1, -1));
 
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(597, 116, -1, -1));
 
-        jLabel1.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
-        jLabel1.setText("Para este text field, es necesario ingresar el nombre completo de la persona.");
+        jLabel9.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
+        jLabel9.setText("Para este text field, es necesario ingresar el nombre completo de la persona.");
+        getContentPane().add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 0, 0));
 
-        jLabel2.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
-        jLabel2.setText("Un ejemplo valido es: William Baratheon, First of his name.");
+        jLabel10.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
+        jLabel10.setText("Un ejemplo valido es: William Baratheon, First of his name.");
+        getContentPane().add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 0, 0));
 
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(763, 116, -1, -1));
 
-        jLabel3.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
-        jLabel3.setText("Para este text field, a la hora de ver ascendencias y descendencias, es recomendable");
+        jLabel11.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
+        jLabel11.setText("Para este text field, a la hora de ver ascendencias y descendencias, es recomendable");
+        getContentPane().add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 0, 0));
 
-        jLabel4.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
-        jLabel4.setText("escribir el nombre completo de la persona en caso de que hayan varios con el mismo nombre");
+        jLabel12.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
+        jLabel12.setText("escribir el nombre completo de la persona en caso de que hayan varios con el mismo nombre");
+        getContentPane().add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 0, 0));
 
-        jLabel5.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
+        jLabel5.setFont(new java.awt.Font("Segoe UI Semibold", 0, 12)); // NOI18N
         jLabel5.setText("Un ejemplo valido es: William Baratheon, First of his name.");
+        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 400, -1, -1));
 
-        jLabel6.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
+        jLabel6.setFont(new java.awt.Font("Segoe UI Semibold", 0, 12)); // NOI18N
         jLabel6.setText("Para buscar por titulo es necesario el titulo completo. Ej: Knight of the Kingsguard.");
+        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 420, -1, -1));
 
-        jLabel7.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
+        jLabel7.setFont(new java.awt.Font("Segoe UI Semibold", 0, 12)); // NOI18N
         jLabel7.setText("Para buscar por nombre no es necesario el nombre completo. ");
+        getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 380, -1, -1));
 
-        jLabel8.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
+        jLabel8.setFont(new java.awt.Font("Segoe UI Semibold", 0, 12)); // NOI18N
         jLabel8.setText("Para buscar por generacion es necesario introducir un numero entero valido.");
+        getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 440, -1, -1));
 
         jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        getContentPane().add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(351, 868, -1, -1));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(351, 351, 351)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(49, 49, 49)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(64, 64, 64)
-                                        .addComponent(jLabel2))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(43, 43, 43)
-                                        .addComponent(TextoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 417, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(105, 105, 105)
-                                        .addComponent(BotonBuscarPersona))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(BotonGenerarSuArbol))
-                                    .addComponent(jLabel1)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(85, 85, 85)
-                                        .addComponent(BotonCargarJsonYGrafo))))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(21, 21, 21)
-                                .addComponent(textoTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 523, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(17, 17, 17)
-                                .addComponent(BotonListaIntegrantes, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(39, 39, 39)
-                                .addComponent(BotonVerAscendencia)
-                                .addGap(35, 35, 35)
-                                .addComponent(BotonBuscarNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(119, 119, 119)
-                                .addComponent(botonBuscarTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(39, 39, 39)
-                                .addComponent(BotonBuscarGeneracion))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(99, 99, 99)
-                                .addComponent(jLabel5))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(31, 31, 31)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel6)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(56, 56, 56)
-                                        .addComponent(jLabel7))))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(40, 40, 40)
-                                .addComponent(jLabel8))
-                            .addComponent(jLabel4)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(25, 25, 25)
-                                .addComponent(jLabel3)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(346, 346, 346))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(166, 166, 166)
-                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(47, 47, 47)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(69, 69, 69)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, 0)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(BotonCargarJsonYGrafo, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(26, 26, 26)
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(TextoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(BotonGenerarSuArbol, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(BotonBuscarPersona, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 75, Short.MAX_VALUE)
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel4)
-                        .addGap(5, 5, 5)
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel7)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel8)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(textoTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(24, 24, 24)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(BotonBuscarNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(BotonVerAscendencia, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(BotonListaIntegrantes, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(botonBuscarTitulo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(BotonBuscarGeneracion, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(397, 397, 397))
-        );
+        jLabel1.setFont(new java.awt.Font("Segoe UI Semibold", 0, 12)); // NOI18N
+        jLabel1.setText("Ingresa un nombre que  deseas ver su antepasado o descendientes");
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 160, -1, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -499,47 +373,6 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
         textoResultados.setText(descendencia);
     }//GEN-LAST:event_BotonVerAscendenciaActionPerformed
 
-    private void BotonBuscarPersonaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonBuscarPersonaActionPerformed
-        String nombreBusqueda = TextoNombre.getText();
-        Lista<NodoArbol> nodos = arbolGenealogico.buscarPorNombre(nombreBusqueda);
-
-        if (nodos.getSize() > 0) {
-            System.out.println("Personas encontradas:");
-            for (int i = 0; i < nodos.getSize(); i++) {
-                NodoArbol nodo = nodos.get(i);
-                Persona persona = nodo.getPersona();
-                JOptionPane.showMessageDialog(this, persona.toString());
-
-                // Crear una lista de listas para almacenar descendientes por nivel
-                Lista<Lista<NodoArbol>> descendientesPorNivel = new Lista<>();
-                Lista<NodoArbol> visitados = new Lista<>(); // Create the 'visitados' list
-                arbolGenealogico.mostrarDescendientes(nodo, 1, descendientesPorNivel, visitados); // Pass 'visitados' as the fourth parameter
-
-                // Imprimir el nombre del padre y sus descendientes, excluyendo los nodos sin descendientes
-                for (int nivel = 0; nivel < descendientesPorNivel.getSize(); nivel++) {
-                    Lista<NodoArbol> nivelDescendientes = descendientesPorNivel.get(nivel);
-
-                    // Mostrar el ID del padre de los descendientes, solo si hay descendientes en este nivel
-                    if (nivel > 0 && descendientesPorNivel.get(nivel - 1).getSize() > 0 && nivelDescendientes.getSize() > 0) {
-                        NodoArbol padre = descendientesPorNivel.get(nivel - 1).get(0);
-                        // Additional logic if needed
-                    }
-
-                    // Listar los IDs de los hijos de este nivel
-                    for (int j = 0; j < nivelDescendientes.getSize(); j++) {
-                        NodoArbol descendiente = nivelDescendientes.get(j);
-                        Persona descendientePersona = descendiente.getPersona();
-
-                        // Almacenar el descendiente en tablaPersonasPorId para acceso rápido
-                        tablaPersonasPorId.put(descendientePersona.getId(), descendiente);
-                    }
-                }
-            }
-        } else {
-            System.out.println("No se encontraron personas con el nombre proporcionado.");
-        }
-    }//GEN-LAST:event_BotonBuscarPersonaActionPerformed
-
     private void BotonGenerarSuArbolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonGenerarSuArbolActionPerformed
         String nombrePersona = TextoNombre.getText();
         if (nombrePersona == null || nombrePersona.isEmpty()) {
@@ -621,7 +454,6 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BotonBuscarGeneracion;
     private javax.swing.JButton BotonBuscarNombre;
-    private javax.swing.JButton BotonBuscarPersona;
     private javax.swing.JButton BotonCargarJsonYGrafo;
     private javax.swing.JButton BotonGenerarSuArbol;
     private javax.swing.JButton BotonListaIntegrantes;
@@ -631,14 +463,17 @@ public class InterfazPrueba1 extends javax.swing.JFrame {
     private javax.swing.JButton botonBuscarTitulo;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
