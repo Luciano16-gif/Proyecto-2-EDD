@@ -1,3 +1,4 @@
+
 package Objetos;
 
 /**
@@ -93,7 +94,7 @@ public class Arco implements Comparable<Arco> {
      * 
      * @return true si el arco ha sido visitado, falso si es lo contrario 
      */
-    public boolean isNodoEstacionVisitado() {
+    public boolean isNodoArbolVisitado() {
         return nodoArbolVisitado;
     }
 

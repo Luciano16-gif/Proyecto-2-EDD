@@ -192,16 +192,16 @@ public class Lista<T> {
     }
     
     // Método para reemplazar un elemento en una posición específica
-public void set(int index, T nuevoDato) {
-    if (index < 0 || index >= size) {
-        throw new IndexOutOfBoundsException("Índice fuera de rango");
+    public void set(int index, T nuevoDato) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Índice fuera de rango");
+        }
+        Nodo<T> actual = getCabeza();
+        for (int i = 0; i < index; i++) {
+            actual = actual.siguiente;
+        }
+        actual.dato = nuevoDato;
     }
-    Nodo<T> actual = getCabeza();
-    for (int i = 0; i < index; i++) {
-        actual = actual.siguiente;
-    }
-    actual.dato = nuevoDato;
-}
 
     
 }

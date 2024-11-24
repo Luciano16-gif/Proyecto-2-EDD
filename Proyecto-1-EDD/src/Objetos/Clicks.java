@@ -16,7 +16,8 @@ public class Clicks implements ViewerListener {
     protected boolean loop = true;
     private ArbolGenealogico arbolGenealogico;
 
-    public Clicks(Graph grafo,ArbolGenealogico arbolGenealogico) {
+
+    public Clicks(Graph grafo, ArbolGenealogico arbolGenealogico) {
         this.arbolGenealogico = arbolGenealogico;
         Graph graph = grafo;
         Viewer viewer = graph.display();
